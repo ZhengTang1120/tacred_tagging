@@ -83,7 +83,7 @@ class DataLoader(object):
                 has_tag = True
             elif masked and d['relation'] != 'no_relation' and d['relation'] == rl:
                 tagged = []
-                masked = [i for i in range(masked[0], masked[1]) if i not in range(ss, se+1) and i not in range(os, os+1)]
+                masked = [i for i in range(masked[0], masked[1]) if i not in range(ss, se+1) and i not in range(os, oe+1)]
                 for i in range(len(masked)):
                     masked[i] += 1
                 has_tag = True
