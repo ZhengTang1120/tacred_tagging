@@ -65,28 +65,6 @@ class DataLoader(object):
             os, oe = d['obj_start'], d['obj_end']
             tokens[ss:se+1] = ['[SUBJ-'+d['subj_type']+']'] * (se-ss+1)
             tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
-            if ss<os:
-                os = os + 2
-                oe = oe + 2
-                tokens.insert(ss, '[SUBJ-SEP]')
-                tokens.insert(se+2, '[SUBJ-SEP]')
-                tokens.insert(os, '[OBJ-SEP]')
-                tokens.insert(oe+2, '[OBJ-SEP]')
-                words.insert(ss, '[SUBJ-SEP]')
-                words.insert(se+2, '[SUBJ-SEP]')
-                words.insert(os, '[OBJ-SEP]')
-                words.insert(oe+2, '[OBJ-SEP]')
-            else:
-                ss = ss + 2
-                se = se + 2
-                tokens.insert(os, '[OBJ-SEP]')
-                tokens.insert(oe+2, '[OBJ-SEP]')
-                tokens.insert(ss, '[SUBJ-SEP]')
-                tokens.insert(se+2, '[SUBJ-SEP]')
-                words.insert(os, '[SUBJ-SEP]')
-                words.insert(oe+2, '[SUBJ-SEP]')
-                words.insert(ss, '[OBJ-SEP]')
-                words.insert(se+2, '[OBJ-SEP]')
             tokens = ['[CLS]'] + tokens
             words = ['[CLS]'] + words
             relation = self.label2id[d['relation']]
@@ -102,8 +80,8 @@ class DataLoader(object):
             deprel = map_to_ids(d['stanford_deprel'], constant.DEPREL_TO_ID)
             head = [int(x) for x in d['stanford_head']]
             assert any([x == 0 for x in head])
-            subj_positions = get_positions(ss+2, se+2, l)
-            obj_positions = get_positions(os+2, oe+2, l)
+            subj_positions = get_positions(ss+1, se+1, l)
+            obj_positions = get_positions(os+1, oe+1, l)
             subj_type = [constant.SUBJ_NER_TO_ID[d['subj_type']]]
             obj_type = [constant.OBJ_NER_TO_ID[d['obj_type']]]
             processed += [(tokens, pos, ner, deprel, head, subj_positions, obj_positions, subj_type, obj_type, relation, words)]
