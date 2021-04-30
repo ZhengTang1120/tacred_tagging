@@ -106,7 +106,7 @@ class DataLoader(object):
             obj_positions = get_positions(os+2, oe+2, l)
             subj_type = [constant.SUBJ_NER_TO_ID[d['subj_type']]]
             obj_type = [constant.OBJ_NER_TO_ID[d['obj_type']]]
-            processed += [(tokens, pos, ner, deprel, subj_positions, obj_positions, subj_type, obj_type, relation, words)]
+            processed += [(tokens, pos, ner, deprel, head, subj_positions, obj_positions, subj_type, obj_type, relation, words)]
         return processed
 
     def gold(self):
@@ -138,14 +138,15 @@ class DataLoader(object):
         pos = get_long_tensor(batch[1], batch_size)
         ner = get_long_tensor(batch[2], batch_size)
         deprel = get_long_tensor(batch[3], batch_size)
-        subj_positions = get_long_tensor(batch[4], batch_size)
-        obj_positions = get_long_tensor(batch[5], batch_size)
-        subj_type = get_long_tensor(batch[6], batch_size)
-        obj_type = get_long_tensor(batch[7], batch_size)
+        head = get_long_tensor(batch[4], batch_size)
+        subj_positions = get_long_tensor(batch[5], batch_size)
+        obj_positions = get_long_tensor(batch[6], batch_size)
+        subj_type = get_long_tensor(batch[7], batch_size)
+        obj_type = get_long_tensor(batch[8], batch_size)
 
-        rels = torch.LongTensor(batch[8])#
+        rels = torch.LongTensor(batch[9])#
 
-        return (words, masks, pos, ner, deprel, entity_positions, subj_positions, obj_positions, subj_type, obj_type, rels, orig_idx)
+        return (words, pos, ner, deprel, head, subj_positions, obj_positions, subj_type, obj_type, rels, orig_idx)
 
     def __iter__(self):
         for i in range(self.__len__()):
