@@ -16,7 +16,7 @@ class BERTencoder(nn.Module):
         self.pos_emb = nn.Embedding(6, 5, padding_idx=constant.PAD_ID)
 
     def forward(self, inputs):
-        words, masks, pos, ner, deprel, ent_pos, subj_pos, obj_pos, subj_type, obj_type = inputs
+        words, masks, ent_pos, subj_pos, obj_pos, subj_type, obj_type = inputs
         outputs = self.model(words)
         h = outputs.last_hidden_state
         # h = torch.cat([h, self.pos_emb(ent_pos)], dim=2)
