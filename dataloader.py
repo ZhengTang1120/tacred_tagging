@@ -104,7 +104,7 @@ class DataLoader(object):
             else:
                 tagging = [0 for i in range(len(tokens))]
             l = len(tokens)
-            if has_tag and sum(tagging)==0:
+            if has_tag and sum(tagging)==0 and (len(masked)!=0 or len(tagged)!=0):
                 print (masked, tagged, pattern, ss, se, os, oe, intervals[c].split('\t')[1])
                 print ([(words[i], tagging[i]) for i in range(l)])
                 print ()
