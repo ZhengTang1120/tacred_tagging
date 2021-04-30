@@ -141,7 +141,7 @@ class BERTtrainer(Trainer):
         inputs, labels, rules, tokens, subj_pos, obj_pos, tagged = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
         rules = rules.data.cpu().numpy().tolist()
         tokens = tokens.data.cpu().numpy().tolist()
-        orig_idx = batch[11]
+        orig_idx = batch[8]
         # forward
         self.encoder.eval()
         self.classifier.eval()
