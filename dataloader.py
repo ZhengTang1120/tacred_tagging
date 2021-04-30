@@ -76,10 +76,6 @@ class DataLoader(object):
                 words.insert(se+2, '[SUBJ-SEP]')
                 words.insert(os, '[OBJ-SEP]')
                 words.insert(oe+2, '[OBJ-SEP]')
-                ner.insert(ss, '[SUBJ-SEP]')
-                ner.insert(se+2, '[SUBJ-SEP]')
-                ner.insert(os, '[OBJ-SEP]')
-                ner.insert(oe+2, '[OBJ-SEP]')
             else:
                 ss = ss + 2
                 se = se + 2
@@ -91,13 +87,8 @@ class DataLoader(object):
                 words.insert(oe+2, '[SUBJ-SEP]')
                 words.insert(ss, '[OBJ-SEP]')
                 words.insert(se+2, '[OBJ-SEP]')
-                ner.insert(os, '[OBJ-SEP]')
-                ner.insert(oe+2, '[OBJ-SEP]')
-                ner.insert(ss, '[SUBJ-SEP]')
-                ner.insert(se+2, '[SUBJ-SEP]')
             tokens = ['[CLS]'] + tokens
             words = ['[CLS]'] + words
-            ner = ['CLS'] + ner
             relation = self.label2id[d['relation']]
             l = len(tokens)
             for i in range(l):
