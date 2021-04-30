@@ -119,7 +119,6 @@ class DataLoader(object):
             obj_type = [constant.OBJ_NER_TO_ID[d['obj_type']]]
             tokens = self.tokenizer.convert_tokens_to_ids(tokens)
             processed += [(tokens, entity_positions, subj_positions, obj_positions, subj_type, obj_type, relation, tagging, has_tag, words)]
-            print (len(entity_positions), len(tokens))
         return processed
 
     def gold(self):
@@ -175,11 +174,11 @@ def get_positions(start_idx, end_idx, length):
 
 def get_positions2(s1, e1, s2, e2, length):
     """ Get subj&obj position sequence. """
-    return [1] + [3] * (s1 - 2) + \
-            [2] * (e1 - s1 + 3) + \
-            [4] * (s2 - e1 - 3) +\
-            [2] * (e2 - s2 + 3) + \
-            [5] * (length - e2 - 2)
+    return [1] + [3] * (s1 - 1) + \
+            [2] * (e1 - s1 + 1) + \
+            [4] * (s2 - e1 - 1) +\
+            [2] * (e2 - s2 + 1) + \
+            [5] * (length - e2 - 1)
 
 def get_long_tensor(tokens_list, batch_size):
     """ Convert list of list of tokens to a padded LongTensor. """
