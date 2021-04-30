@@ -6,7 +6,7 @@ import argparse
 from tqdm import tqdm
 import torch
 
-from loader import DataLoader
+from dataloader import DataLoader
 from trainer import BERTtrainer
 from utils import torch_utils, scorer, constant, helper
 from utils.vocab import Vocab
