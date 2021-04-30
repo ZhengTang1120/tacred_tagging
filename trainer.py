@@ -57,20 +57,18 @@ def unpack_batch(batch, cuda, device):
     rules = None
     if cuda:
         with torch.cuda.device(device):
-            inputs = [batch[0].to('cuda')] + [Variable(b.cuda()) for b in batch[1:10]]
-            labels = Variable(batch[10].cuda())
-            rules  = Variable(batch[12]).cuda()
+            inputs = [batch[0].to('cuda')] + [Variable(b.cuda()) for b in batch[1:7]]
+            labels = Variable(batch[7].cuda())
+            rules  = Variable(batch[9]).cuda()
     else:
-        inputs = [Variable(b) for b in batch[:10]]
-        labels = Variable(batch[10])
-        rules  = Variable(batch[12])
+        inputs = [Variable(b) for b in batch[:7]]
+        labels = Variable(batch[7])
+        rules  = Variable(batch[9])
     tokens = batch[0]
-    head = batch[5]
-    subj_pos = batch[6]
-    obj_pos = batch[7]
+    subj_pos = batch[3]
+    obj_pos = batch[4]
     tagged = batch[-1]
-    lens = batch[5].eq(4).long().sum(1).squeeze()
-    return inputs, labels, rules, tokens, head, subj_pos, obj_pos, lens, tagged
+    return inputs, labels, rules, tokens, subj_pos, obj_pos, tagged
 
 class BERTtrainer(Trainer):
     def __init__(self, opt):
@@ -93,7 +91,7 @@ class BERTtrainer(Trainer):
         )
     
     def update(self, batch, epoch):
-        inputs, labels, rules, tokens, head, subj_pos, obj_pos, lens, tagged = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels, rules, tokens, subj_pos, obj_pos, tagged = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
 
         # step forward
         self.encoder.train()
@@ -109,7 +107,7 @@ class BERTtrainer(Trainer):
             for i, f in enumerate(tagged):
                 if f:
                     loss += self.criterion2(tagging_output[i], rules[i].unsqueeze(1).to(torch.float32))
-                    logits = self.classifier(h[i], inputs[1][i].unsqueeze(0), inputs[6][i].unsqueeze(0), inputs[7][i].unsqueeze(0))
+                    logits = self.classifier(h[i], inputs[1][i].unsqueeze(0), inputs[3][i].unsqueeze(0), inputs[4][i].unsqueeze(0))
                     loss += self.criterion(logits, labels.unsqueeze(1)[i])
         else:
             for i, f in enumerate(tagged):
@@ -118,12 +116,12 @@ class BERTtrainer(Trainer):
                         loss = self.criterion2(tagging_output[i], rules[i].unsqueeze(1).to(torch.float32))
                     else:
                         loss += self.criterion2(tagging_output[i], rules[i].unsqueeze(1).to(torch.float32))
-                    logits = self.classifier(h[i], inputs[1][i].unsqueeze(0), inputs[6][i].unsqueeze(0), inputs[7][i].unsqueeze(0))
+                    logits = self.classifier(h[i], inputs[1][i].unsqueeze(0), inputs[3][i].unsqueeze(0), inputs[4][i].unsqueeze(0))
                     loss += self.criterion(logits, labels.unsqueeze(1)[i])
                 elif labels[i] != 0:
                     tag_cands, n = self.tagger.generate_cand_tags(tagging_output[i], self.opt['device'])
                     if n != -1:
-                        logits = self.classifier(h[i], tag_cands, torch.cat(n*[inputs[6][i].unsqueeze(0)], dim=0), torch.cat(n*[inputs[7][i].unsqueeze(0)], dim=0))
+                        logits = self.classifier(h[i], tag_cands, torch.cat(n*[inputs[3][i].unsqueeze(0)], dim=0), torch.cat(n*[inputs[4][i].unsqueeze(0)], dim=0))
                         best = np.argmax(logits.data.cpu().numpy(), axis=0).tolist()[labels[i]]
                         if loss == 0:
                             loss = self.criterion2(tagging_output[i], tag_cands[best].unsqueeze(1).to(torch.float32))
@@ -140,7 +138,7 @@ class BERTtrainer(Trainer):
         return loss_val
 
     def predict(self, batch, id2label, tokenizer, unsort=True):
-        inputs, labels, rules, tokens, head, subj_pos, obj_pos, lens, tagged = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels, rules, tokens, subj_pos, obj_pos, tagged = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
         rules = rules.data.cpu().numpy().tolist()
         tokens = tokens.data.cpu().numpy().tolist()
         orig_idx = batch[11]
@@ -152,7 +150,7 @@ class BERTtrainer(Trainer):
         tagging_output = self.tagger(h)
         tagging_mask = torch.round(tagging_output).squeeze(2).eq(0)
         tagging = torch.round(tagging_output).squeeze(2)
-        logits = self.classifier(h, tagging_mask, inputs[6], inputs[7])
+        logits = self.classifier(h, tagging_mask, inputs[3], inputs[4])
         loss = self.criterion(logits, labels)
         probs = F.softmax(logits, 1) * torch.round(b_out)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
@@ -160,9 +158,8 @@ class BERTtrainer(Trainer):
         for i, p in enumerate(predictions):
             if p != 0:
                 t = tagging[i]
-                chunk = inputs[5].eq(4).long()[i].data.cpu().numpy().tolist()
+                chunk = inputs[2].eq(4).long()[i].data.cpu().numpy().tolist()
                 t = t.data.cpu().numpy().tolist()
-                l = lens.data.cpu().numpy().tolist()[i]
                 tags += [t]
             else:
                 tags += [[]]
