@@ -14,7 +14,7 @@ from utils import constant, torch_utils
 from transformers import AdamW
 
 class Trainer(object):
-    def __init__(self, opt, emb_matrix=None):
+    def __init__(self, opt):
         raise NotImplementedError
 
     def update(self, batch):
@@ -73,9 +73,8 @@ def unpack_batch(batch, cuda, device):
     return inputs, labels, rules, tokens, head, subj_pos, obj_pos, lens, tagged
 
 class BERTtrainer(Trainer):
-    def __init__(self, opt, emb_matrix=None):
+    def __init__(self, opt):
         self.opt = opt
-        self.emb_matrix = emb_matrix
         self.encoder = BERTencoder()
         self.classifier = BERTclassifier(opt)
         self.tagger = Tagger()

@@ -38,7 +38,7 @@ parser.add_argument('--cpu', action='store_true', help='Ignore CUDA.')
 parser.add_argument('--load', dest='load', action='store_true', help='Load pretrained model.')
 parser.add_argument('--model_file', type=str, help='Filename of the pretrained model.')
 
-parser.add_argument('--device', type=int, default=0, help='Word embedding dimension.')
+parser.add_argument('--device', type=int, default=0, help='gpu device to use.')
 
 args = parser.parse_args()
 
@@ -75,7 +75,7 @@ helper.print_config(opt)
 
 # model
 if not opt['load']:
-    trainer = BERTtrainer(opt, emb_matrix=emb_matrix)
+    trainer = BERTtrainer(opt)
 else:
     # load pretrained model
     model_file = opt['model_file'] 
