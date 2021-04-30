@@ -40,6 +40,8 @@ parser.add_argument('--model_file', type=str, help='Filename of the pretrained m
 
 parser.add_argument('--device', type=int, default=0, help='gpu device to use.')
 
+parser.add_argument('--word_dropout', type=float, default=0.04, help='The rate at which randomly set a word to UNK.')
+
 args = parser.parse_args()
 
 opt = vars(args)
