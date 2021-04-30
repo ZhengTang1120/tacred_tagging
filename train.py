@@ -11,7 +11,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.autograd import Variable
 
-from loader import DataLoader
+from dataloader import DataLoader
 from trainer import BERTtrainer
 from utils import torch_utils, scorer, constant, helper
 from utils.vocab import Vocab
