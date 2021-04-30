@@ -8,7 +8,7 @@ import torch
 import numpy as np
 import string
 
-from utils import constant, helper, vocab
+from utils import constant, helper
 from collections import defaultdict
 from statistics import mean
 
@@ -17,10 +17,9 @@ class DataLoader(object):
     """
     Load data from json files, preprocess and prepare batches.
     """
-    def __init__(self, filename, batch_size, opt, vocab, intervals, patterns, tokenizer, odin, evaluation=False):
+    def __init__(self, filename, batch_size, opt, intervals, patterns, tokenizer, odin, evaluation=False):
         self.batch_size = batch_size
         self.opt = opt
-        self.vocab = vocab
         self.eval = evaluation
         self.label2id = constant.LABEL_TO_ID
         self.intervals = intervals
@@ -30,7 +29,7 @@ class DataLoader(object):
 
         with open(filename) as infile:
             data = json.load(infile)
-        data = self.preprocess(data, vocab, opt)
+        data = self.preprocess(data, opt)
 
         # shuffle for training
         if not evaluation:
@@ -47,7 +46,7 @@ class DataLoader(object):
         self.data = data
         print("{} batches created for {}".format(len(self.data), filename))
 
-    def preprocess(self, data, vocab, opt):
+    def preprocess(self, data, opt):
         """ Preprocess the data and convert to ids. """
         processed = []
         processed_rule = []

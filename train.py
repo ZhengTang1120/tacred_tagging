@@ -14,7 +14,6 @@ from torch.autograd import Variable
 from dataloader import DataLoader
 from trainer import BERTtrainer
 from utils import torch_utils, scorer, constant, helper
-from utils.vocab import Vocab
 
 from transformers import BertTokenizer
 
@@ -59,8 +58,8 @@ tokenizer = BertTokenizer.from_pretrained('SpanBERT/spanbert-large-cased')
 special_tokens_dict = {'additional_special_tokens': constant.ENTITY_TOKENS}
 num_added_toks = tokenizer.add_special_tokens(special_tokens_dict)
 
-train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, vocab, opt['data_dir'] + '/interval_train.txt', opt['data_dir'] + '/pattern_train.txt', tokenizer, opt['data_dir'] + '/odin_train.txt', evaluation=False)
-dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, vocab, opt['data_dir'] + '/interval_dev.txt', opt['data_dir'] + '/pattern_dev.txt', tokenizer, opt['data_dir'] + '/odin_dev.txt',  evaluation=True)
+train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, opt['data_dir'] + '/interval_train.txt', opt['data_dir'] + '/pattern_train.txt', tokenizer, opt['data_dir'] + '/odin_train.txt', evaluation=False)
+dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, opt['data_dir'] + '/interval_dev.txt', opt['data_dir'] + '/pattern_dev.txt', tokenizer, opt['data_dir'] + '/odin_dev.txt',  evaluation=True)
 
 model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
 model_save_dir = opt['save_dir'] + '/' + model_id
@@ -69,7 +68,6 @@ helper.ensure_dir(model_save_dir, verbose=True)
 
 # save config
 helper.save_config(opt, model_save_dir + '/config.json', verbose=True)
-vocab.save(model_save_dir + '/vocab.pkl')
 file_logger = helper.FileLogger(model_save_dir + '/' + opt['log'], header="# epoch\ttrain_loss\tdev_loss\tdev_score\tbest_dev_score")
 
 # print model info
