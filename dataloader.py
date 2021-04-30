@@ -118,12 +118,8 @@ class DataLoader(object):
             subj_type = [constant.SUBJ_NER_TO_ID[d['subj_type']]]
             obj_type = [constant.OBJ_NER_TO_ID[d['obj_type']]]
             tokens = self.tokenizer.convert_tokens_to_ids(tokens)
-            pos = map_to_ids(d['stanford_pos'], constant.POS_TO_ID)
-            ner = map_to_ids(d['stanford_ner'], constant.NER_TO_ID)
-            deprel = map_to_ids(d['stanford_deprel'], constant.DEPREL_TO_ID)
-            head = [int(x) for x in d['stanford_head']]
-            assert any([x == 0 for x in head])
-            processed += [(tokens, pos, ner, deprel, entity_positions, subj_positions, obj_positions, subj_type, obj_type, relation, tagging, has_tag, words)]
+            processed += [(tokens, entity_positions, subj_positions, obj_positions, subj_type, obj_type, relation, tagging, has_tag, words)]
+            print (len(entity_positions), tokens.size())
         return processed
 
     def gold(self):
@@ -152,18 +148,15 @@ class DataLoader(object):
         # convert to tensors
         words = get_long_tensor(words, batch_size)
         # words = self.tokenizer(batch[0], is_split_into_words=True, padding=True, truncation=True, return_tensors="pt")
-        pos = get_long_tensor(batch[1], batch_size)
-        ner = get_long_tensor(batch[2], batch_size)
-        deprel = get_long_tensor(batch[3], batch_size)
-        entity_positions = get_long_tensor(batch[4], batch_size)
-        subj_positions = get_long_tensor(batch[5], batch_size)
-        obj_positions = get_long_tensor(batch[6], batch_size)
-        subj_type = get_long_tensor(batch[7], batch_size)
-        obj_type = get_long_tensor(batch[8], batch_size)
+        entity_positions = get_long_tensor(batch[1], batch_size)
+        subj_positions = get_long_tensor(batch[2], batch_size)
+        obj_positions = get_long_tensor(batch[3], batch_size)
+        subj_type = get_long_tensor(batch[4], batch_size)
+        obj_type = get_long_tensor(batch[5], batch_size)
 
-        rels = torch.LongTensor(batch[9])#
+        rels = torch.LongTensor(batch[6])#
 
-        rule = get_long_tensor(batch[10], batch_size)
+        rule = get_long_tensor(batch[7], batch_size)
         masks = torch.eq(rule, 0)
         return (words, masks, pos, ner, deprel, entity_positions, subj_positions, obj_positions, subj_type, obj_type, rels, orig_idx, rule, batch[-2])
 
