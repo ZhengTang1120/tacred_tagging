@@ -50,12 +50,6 @@ class DataLoader(object):
         """ Preprocess the data and convert to ids. """
         processed = []
         processed_rule = []
-        with open(self.intervals) as f:
-            intervals = f.readlines()
-        with open(self.patterns) as f:
-            patterns = f.readlines()
-        with open(self.odin) as f:
-            odin = f.readlines()
         for c, d in enumerate(data):
             tokens = list(d['token'])
             words  = list(d['token'])
@@ -71,45 +65,6 @@ class DataLoader(object):
             os, oe = d['obj_start'], d['obj_end']
             tokens[ss:se+1] = ['[SUBJ-'+d['subj_type']+']'] * (se-ss+1)
             tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
-            rl, masked = intervals[c].split('\t')
-            rl, pattern = patterns[c].split('\t')
-            ol, tagged = odin[c].split('\t')
-            masked = eval(masked)
-            tagged = eval(tagged)
-            ner = d['stanford_ner']
-            if tagged and d['relation'] != 'no_relation' and d['relation'] == ol:
-                for i in range(len(tagged)):
-                    if tagged[i] < min(os, ss):
-                        tagged[i] += 1
-                    elif tagged[i] <= min(se,oe):
-                        tagged[i] += 2
-                    elif tagged[i] < max(os, ss):
-                        tagged[i] += 3
-                    elif tagged[i] <= max(se, oe):
-                        tagged[i] += 4
-                    else:
-                        tagged[i] += 5
-                has_tag = True
-            elif masked and d['relation'] != 'no_relation' and d['relation'] == rl:
-                tagged = []
-                masked = [i for i in range(masked[0], masked[1]) if i not in range(ss, se+1) and i not in range(os, os+1)]
-                for i in range(len(masked)):
-                    if masked[i] < min(os, ss):
-                        masked[i] += 1
-                    elif masked[i] <= min(se,oe):
-                        masked[i] += 2
-                    elif masked[i] < max(os, ss):
-                        masked[i] += 3
-                    elif masked[i] <= max(se, oe):
-                        masked[i] += 4
-                    else:
-                        masked[i] += 5
-                has_tag = True
-            else:
-                tagged = []
-                pattern = ''
-                masked = range(min(oe, se)+4, max(os, ss)+3)
-                has_tag = False
             if ss<os:
                 os = os + 2
                 oe = oe + 2
@@ -144,25 +99,12 @@ class DataLoader(object):
             words = ['[CLS]'] + words
             ner = ['CLS'] + ner
             relation = self.label2id[d['relation']]
-            if has_tag and relation!=0:
-                if tagged:
-                    tagging = [0 if i not in tagged else 1 for i in range(len(tokens))]
-                else:
-                    tagging = [0 if i not in masked else 1 if (tokens[i] in pattern or (ner[i] in pattern and ner[i]!='O')) and (tokens[i] not in string.punctuation) else 0 for i in range(len(tokens))]
-            # elif relation!=0:
-            #     tagging = [1 if i !=0 else 0 for i in range(len(tokens))]
-            else:
-                tagging = [0 for i in range(len(tokens))]
             l = len(tokens)
             for i in range(l):
                 if tokens[i] == '-LRB-':
                     tokens[i] = '('
                 if tokens[i] == '-RRB-':
                     tokens[i] = ')'
-            if ss<os:
-                entity_positions = get_positions2(ss+2, se+2, os+2, oe+2, l)
-            else:
-                entity_positions = get_positions2(os+2, oe+2, ss+2, se+2, l)
             tokens = self.tokenizer.convert_tokens_to_ids(tokens)
             pos = map_to_ids(d['stanford_pos'], constant.POS_TO_ID)
             ner = map_to_ids(d['stanford_ner'], constant.NER_TO_ID)
@@ -173,7 +115,7 @@ class DataLoader(object):
             obj_positions = get_positions(os+2, oe+2, l)
             subj_type = [constant.SUBJ_NER_TO_ID[d['subj_type']]]
             obj_type = [constant.OBJ_NER_TO_ID[d['obj_type']]]
-            processed += [(tokens, pos, ner, deprel, entity_positions, subj_positions, obj_positions, subj_type, obj_type, relation, tagging, has_tag, words)]
+            processed += [(tokens, pos, ner, deprel, subj_positions, obj_positions, subj_type, obj_type, relation, words)]
         return processed
 
     def gold(self):
@@ -213,9 +155,7 @@ class DataLoader(object):
 
         rels = torch.LongTensor(batch[9])#
 
-        rule = get_long_tensor(batch[10], batch_size)
-        masks = torch.eq(rule, 0)
-        return (words, masks, pos, ner, deprel, entity_positions, subj_positions, obj_positions, subj_type, obj_type, rels, orig_idx, rule, batch[-2])
+        return (words, masks, pos, ner, deprel, entity_positions, subj_positions, obj_positions, subj_type, obj_type, rels, orig_idx)
 
     def __iter__(self):
         for i in range(self.__len__()):
@@ -229,14 +169,6 @@ def get_positions(start_idx, end_idx, length):
     """ Get subj/obj position sequence. """
     return list(range(-start_idx, 0)) + [1000]*(end_idx - start_idx + 1) + \
             list(range(1, length-end_idx))
-
-def get_positions2(s1, e1, s2, e2, length):
-    """ Get subj&obj position sequence. """
-    return [1] + [3] * (s1 - 2) + \
-            [2] * (e1 - s1 + 3) + \
-            [4] * (s2 - e1 - 3) +\
-            [2] * (e2 - s2 + 3) + \
-            [5] * (length - e2 - 2)
 
 def get_long_tensor(tokens_list, batch_size):
     """ Convert list of list of tokens to a padded LongTensor. """
