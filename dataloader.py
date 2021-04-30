@@ -138,13 +138,12 @@ class DataLoader(object):
         pos = get_long_tensor(batch[1], batch_size)
         ner = get_long_tensor(batch[2], batch_size)
         deprel = get_long_tensor(batch[3], batch_size)
-        entity_positions = get_long_tensor(batch[4], batch_size)
-        subj_positions = get_long_tensor(batch[5], batch_size)
-        obj_positions = get_long_tensor(batch[6], batch_size)
-        subj_type = get_long_tensor(batch[7], batch_size)
-        obj_type = get_long_tensor(batch[8], batch_size)
+        subj_positions = get_long_tensor(batch[4], batch_size)
+        obj_positions = get_long_tensor(batch[5], batch_size)
+        subj_type = get_long_tensor(batch[6], batch_size)
+        obj_type = get_long_tensor(batch[7], batch_size)
 
-        rels = torch.LongTensor(batch[9])#
+        rels = torch.LongTensor(batch[8])#
 
         return (words, masks, pos, ner, deprel, entity_positions, subj_positions, obj_positions, subj_type, obj_type, rels, orig_idx)
 
