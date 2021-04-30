@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
 
-from bert import BERTencoder, BERTclassifier, Tagger
+from bert import BERTencoder, BERTclassifier
 from utils import constant, torch_utils
 
 from transformers import AdamW
@@ -34,7 +34,6 @@ class Trainer(object):
             exit()
         self.classifier.load_state_dict(checkpoint['classifier'])
         self.encoder.load_state_dict(checkpoint['encoder'])
-        self.tagger.load_state_dict(checkpoint['tagger'])
         device = self.opt['device']
         self.opt = checkpoint['config']
         self.opt['device'] = device
@@ -43,7 +42,6 @@ class Trainer(object):
         params = {
                 'classifier': self.classifier.state_dict(),
                 'encoder': self.encoder.state_dict(),
-                'tagger': self.tagger.state_dict(),
                 'config': self.opt,
                 }
         try:
@@ -77,14 +75,12 @@ class BERTtrainer(Trainer):
         self.opt = opt
         self.encoder = BERTencoder()
         self.classifier = BERTclassifier(opt)
-        self.tagger = Tagger()
         self.criterion = nn.CrossEntropyLoss(ignore_index=0)
         self.criterion2 = nn.BCELoss()
-        self.parameters = [p for p in self.classifier.parameters() if p.requires_grad] + [p for p in self.encoder.parameters() if p.requires_grad]+ [p for p in self.tagger.parameters() if p.requires_grad]
+        self.parameters = [p for p in self.classifier.parameters() if p.requires_grad] + [p for p in self.encoder.parameters() if p.requires_grad]
         if opt['cuda']:
             with torch.cuda.device(self.opt['device']):
                 self.encoder.cuda()
-                self.tagger.cuda()
                 self.classifier.cuda()
                 self.criterion.cuda()
         self.optimizer = AdamW(
@@ -98,12 +94,10 @@ class BERTtrainer(Trainer):
         # step forward
         self.encoder.train()
         self.classifier.train()
-        self.tagger.train()
         self.optimizer.zero_grad()
 
         loss = 0
         o, b_out = self.encoder(inputs)
-        tagging_output = self.tagger(h)
         loss = self.criterion2(b_out, (~(labels.eq(0))).to(torch.float32).unsqueeze(1))
         h = o.pooler_output
         logits = self.classifier(h)
@@ -125,9 +119,7 @@ class BERTtrainer(Trainer):
         # forward
         self.encoder.eval()
         self.classifier.eval()
-        self.tagger.eval()
         h, b_out = self.encoder(inputs)
-        tagging_output = self.tagger(h)
         tagging_mask = torch.round(tagging_output).squeeze(2).eq(0)
         tagging = torch.round(tagging_output).squeeze(2)
         logits = self.classifier(h, tagging_mask, inputs[6], inputs[7])
