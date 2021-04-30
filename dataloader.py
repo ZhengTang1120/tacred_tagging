@@ -37,7 +37,7 @@ class DataLoader(object):
             random.shuffle(indices)
             data = [data[i] for i in indices]
         self.id2label = dict([(v,k) for k,v in self.label2id.items()])
-        self.labels = [self.id2label[d[-4]] for d in data]
+        self.labels = [self.id2label[d[-2]] for d in data]
         self.words = [d[-1] for d in data]
         self.num_examples = len(data)
         
