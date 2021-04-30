@@ -1,8 +1,24 @@
-from transformers import BertTokenizer
-from dataloader import DataLoader
+import os
+import sys
+from datetime import datetime
+import time
+import numpy as np
+import random
 import argparse
+from shutil import copyfile
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.autograd import Variable
+
+from data.loader import DataLoader
+from model.trainer import BERTtrainer
 from utils import torch_utils, scorer, constant, helper
-from trainer import BERTtrainer
+from utils.vocab import Vocab
+
+from nltk.translate.bleu_score import corpus_bleu, sentence_bleu
+
+from transformers import BertTokenizer
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', type=str, default='dataset/tacred')
@@ -80,7 +96,6 @@ dev_score_history = []
 current_lr = opt['lr']
 
 global_step = 0
-global_start_time = time.time()
 format_str = '{}: step {}/{} (epoch {}/{}), loss = {:.6f} ({:.3f} sec/batch), lr: {:.6f}'
 max_steps = len(train_batch) * opt['num_epoch']
 
