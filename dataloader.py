@@ -198,10 +198,7 @@ class DataLoader(object):
         lens = [len(x) for x in batch[0]]
         batch, orig_idx = sort_all(batch, lens)
         # word dropout
-        if not self.eval:
-            words = [word_dropout(sent, self.opt['word_dropout']) for sent in batch[0]]
-        else:
-            words = batch[0]
+        words = batch[0]
         # convert to tensors
         words = get_long_tensor(words, batch_size)
         # words = self.tokenizer(batch[0], is_split_into_words=True, padding=True, truncation=True, return_tensors="pt")

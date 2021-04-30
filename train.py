@@ -39,8 +39,7 @@ parser.add_argument('--load', dest='load', action='store_true', help='Load pretr
 parser.add_argument('--model_file', type=str, help='Filename of the pretrained model.')
 
 parser.add_argument('--device', type=int, default=0, help='gpu device to use.')
-
-parser.add_argument('--word_dropout', type=float, default=0.04, help='The rate at which randomly set a word to UNK.')
+parser.add_argument('--pooling', choices=['max', 'avg', 'sum'], default='max', help='Pooling function type. Default max.')
 
 args = parser.parse_args()
 
