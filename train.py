@@ -40,6 +40,7 @@ parser.add_argument('--model_file', type=str, help='Filename of the pretrained m
 
 parser.add_argument('--device', type=int, default=0, help='gpu device to use.')
 parser.add_argument('--pooling', choices=['max', 'avg', 'sum'], default='max', help='Pooling function type. Default max.')
+parser.add_argument('--decay_epoch', type=int, default=5, help='Decay learning rate after this epoch.')
 
 args = parser.parse_args()
 
@@ -139,8 +140,7 @@ for epoch in range(1, opt['num_epoch']+1):
         os.remove(model_file)
 
     # lr schedule
-    if len(dev_score_history) > opt['decay_epoch'] and dev_score <= dev_score_history[-1] and \
-            opt['optim'] in ['sgd', 'adagrad', 'adadelta']:
+    if len(dev_score_history) > opt['decay_epoch'] and dev_score <= dev_score_history[-1]:
         current_lr *= opt['lr_decay']
         trainer.update_lr(current_lr)
 
