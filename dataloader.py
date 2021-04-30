@@ -105,7 +105,7 @@ class DataLoader(object):
                 tagging = [0 for i in range(len(tokens))]
             l = len(tokens)
             if has_tag and sum(tagging)==0:
-                print (masked, tagged, pattern)
+                print (masked, tagged, pattern, ss, se, os, oe)
                 print ([(words[i], tagging[i]) for i in range(l)])
                 print ()
             for i in range(l):
