@@ -41,6 +41,7 @@ parser.add_argument('--model_file', type=str, help='Filename of the pretrained m
 parser.add_argument('--device', type=int, default=0, help='gpu device to use.')
 parser.add_argument('--pooling', choices=['max', 'avg', 'sum'], default='max', help='Pooling function type. Default max.')
 parser.add_argument('--decay_epoch', type=int, default=5, help='Decay learning rate after this epoch.')
+parser.add_argument('--lr_decay', type=float, default=0.9, help='Learning rate decay rate.')
 
 args = parser.parse_args()
 
