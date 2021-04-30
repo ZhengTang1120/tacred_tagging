@@ -104,6 +104,7 @@ class DataLoader(object):
             else:
                 tagging = [0 for i in range(len(tokens))]
             l = len(tokens)
+            print ([(words[i], tagging[i]) for i in range(l)])
             for i in range(l):
                 if tokens[i] == '-LRB-':
                     tokens[i] = '('
@@ -119,6 +120,7 @@ class DataLoader(object):
             obj_type = [constant.OBJ_NER_TO_ID[d['obj_type']]]
             tokens = self.tokenizer.convert_tokens_to_ids(tokens)
             processed += [(tokens, entity_positions, subj_positions, obj_positions, subj_type, obj_type, relation, tagging, has_tag, words)]
+        exit()
         return processed
 
     def gold(self):
