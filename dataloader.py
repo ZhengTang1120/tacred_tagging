@@ -102,7 +102,7 @@ class DataLoader(object):
         words = get_long_tensor(words, batch_size)
         # words = self.tokenizer(batch[0], is_split_into_words=True, padding=True, truncation=True, return_tensors="pt")
 
-        rels = torch.LongTensor(batch[5])#
+        rels = torch.LongTensor(batch[1])#
 
         return (words, rels, orig_idx)
 
