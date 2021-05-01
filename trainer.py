@@ -161,12 +161,12 @@ class BERTtrainer(Trainer):
                 chunk = inputs[2].eq(4).long()[i].data.cpu().numpy().tolist()
                 t = t.data.cpu().numpy().tolist()
                 tags += [t]
-                if sum(rules[i])!=0 and tagged:
-                    r = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(rules[i])
-                    pr = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(t) if sum(t)!=0 else 0
-                    r2 = sum([1 if chunk[j]==rules[i][j] else 0 for j in range(len(chunk)) if rules[i][j]!=0])/sum(rules[i])
-                    pr2 = sum([1 if chunk[j]==rules[i][j] else 0 for j in range(len(chunk)) if rules[i][j]!=0])/sum(chunk) if sum(chunk)!=0 else 0
-                    print ('%.6f, %.6f, %.6f, %.6f'%(r, pr, r2, pr2))
+                # if sum(rules[i])!=0 and tagged:
+                #     r = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(rules[i])
+                #     pr = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(t) if sum(t)!=0 else 0
+                #     r2 = sum([1 if chunk[j]==rules[i][j] else 0 for j in range(len(chunk)) if rules[i][j]!=0])/sum(rules[i])
+                #     pr2 = sum([1 if chunk[j]==rules[i][j] else 0 for j in range(len(chunk)) if rules[i][j]!=0])/sum(chunk) if sum(chunk)!=0 else 0
+                #     print ('%.6f, %.6f, %.6f, %.6f'%(r, pr, r2, pr2))
             else:
                 tags += [[]]
         if unsort:
