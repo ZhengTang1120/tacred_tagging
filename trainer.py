@@ -55,11 +55,11 @@ def unpack_batch(batch, cuda, device):
     rules = None
     if cuda:
         with torch.cuda.device(device):
-            inputs = [batch[0].to('cuda')] + [Variable(b.cuda()) for b in batch[1:9]]
-            labels = Variable(batch[9].cuda())
+            inputs = [batch[0].to('cuda')]
+            labels = Variable(batch[1].cuda())
     else:
-        inputs = [Variable(b) for b in batch[:9]]
-        labels = Variable(batch[9])
+        inputs = [Variable(batch[0])]
+        labels = Variable(batch[1])
     tokens = batch[0]
     return inputs, labels, tokens
 
@@ -105,7 +105,7 @@ class BERTtrainer(Trainer):
     def predict(self, batch, id2label, tokenizer, unsort=True):
         inputs, labels, tokens = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
         tokens = tokens.data.cpu().numpy().tolist()
-        orig_idx = batch[10]
+        orig_idx = batch[2]
         # forward
         self.encoder.eval()
         self.classifier.eval()
