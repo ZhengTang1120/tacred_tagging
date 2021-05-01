@@ -68,8 +68,7 @@ class BERTtrainer(Trainer):
         self.opt = opt
         self.encoder = BERTencoder()
         self.classifier = BERTclassifier(opt)
-        self.criterion = nn.CrossEntropyLoss(ignore_index=0)
-        self.criterion2 = nn.BCELoss()
+        self.criterion = nn.CrossEntropyLoss()
         self.parameters = [p for p in self.classifier.parameters() if p.requires_grad] + [p for p in self.encoder.parameters() if p.requires_grad]
         if opt['cuda']:
             with torch.cuda.device(self.opt['device']):
@@ -91,7 +90,6 @@ class BERTtrainer(Trainer):
 
         loss = 0
         o, b_out = self.encoder(inputs)
-        loss = self.criterion2(b_out, (~(labels.eq(0))).to(torch.float32).unsqueeze(1))
         h = o.pooler_output
         logits = self.classifier(h)
         loss += self.criterion(logits, labels)
