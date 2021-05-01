@@ -68,7 +68,7 @@ x = 0
 exact_match = 0
 other = 0
 for c, b in enumerate(batch):
-    preds, ts, tagged, ids = trainer.predict(b, id2label, tokenizer)
+    preds = trainer.predict(b, id2label, tokenizer)
     predictions += preds
     tags += ts
     goldt += tagged
