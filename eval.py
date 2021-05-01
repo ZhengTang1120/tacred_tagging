@@ -60,9 +60,6 @@ label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
 
 predictions = []
-tags = []
-goldt = []
-inputs = []
 
 x = 0
 exact_match = 0
@@ -71,8 +68,6 @@ for c, b in enumerate(batch):
     preds = trainer.predict(b, id2label, tokenizer)
     predictions += preds
     batch_size = len(preds)
-    for i in range(batch_size):
-        inputs += [[tokenizer.convert_ids_to_tokens(j) for j in ids[i]]]
 output = list()
 for i, p in enumerate(predictions):
         predictions[i] = id2label[p]
