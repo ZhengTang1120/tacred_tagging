@@ -117,7 +117,7 @@ for epoch in range(1, opt['num_epoch']+1):
     predictions = []
     dev_loss = 0
     for _, batch in enumerate(dev_batch):
-        preds, ts, tagged, ids = trainer.predict(batch, id2label, tokenizer)
+        preds, ts, tagged, ids, _, _ = trainer.predict(batch, id2label, tokenizer)
         predictions += preds
     predictions = [id2label[p] for p in predictions]
     train_loss = train_loss / train_batch.num_examples * opt['batch_size'] # avg loss per batch

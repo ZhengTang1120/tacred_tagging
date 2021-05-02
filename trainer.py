@@ -155,12 +155,18 @@ class BERTtrainer(Trainer):
         probs = F.softmax(logits, 1) * torch.round(b_out)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         tags = []
+        subjs = []
+        objs = []
         for i, p in enumerate(predictions):
             if p != 0:
                 t = tagging[i]
                 chunk = inputs[2].eq(4).long()[i].data.cpu().numpy().tolist()
                 t = t.data.cpu().numpy().tolist()
+                s = inputs[3].eq(1000).long()[i].data.cpu().numpy().tolist()
+                o = inputs[4].eq(1000).long()[i].data.cpu().numpy().tolist()
                 tags += [t]
+                subjs += [s]
+                objs += [o]
                 # if sum(rules[i])!=0 and tagged:
                 #     r = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(rules[i])
                 #     pr = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(t) if sum(t)!=0 else 0
@@ -170,6 +176,6 @@ class BERTtrainer(Trainer):
             else:
                 tags += [[]]
         if unsort:
-            _, predictions, probs, tags, rules, tokens = [list(t) for t in zip(*sorted(zip(orig_idx,\
-                    predictions, probs, tags, rules, tokens)))]
+            _, predictions, probs, tags, rules, tokens, subjs, objs = [list(t) for t in zip(*sorted(zip(orig_idx,\
+                    predictions, probs, tags, rules, tokens, subjs, objs)))]
         return predictions, tags, rules, tokens

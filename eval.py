@@ -63,14 +63,18 @@ predictions = []
 tags = []
 goldt = []
 inputs = []
+subjs = []
+objs = []
 
 x = 0
 exact_match = 0
 other = 0
 for c, b in enumerate(batch):
-    preds, ts, tagged, ids = trainer.predict(b, id2label, tokenizer)
+    preds, ts, tagged, ids, s, o = trainer.predict(b, id2label, tokenizer)
     predictions += preds
     tags += ts
+    subjs += s
+    objs += o
     goldt += tagged
     batch_size = len(preds)
     for i in range(batch_size):
@@ -78,8 +82,10 @@ for c, b in enumerate(batch):
 output = list()
 for i, p in enumerate(predictions):
         predictions[i] = id2label[p]
-        output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'raw_words':batch.words[i], 'predicted_tags':[], 'gold_tags':[]})
+        output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'raw_words':batch.words[i], 'predicted_tags':[], 'gold_tags':[], 'subj':[], 'obj':[]})
         if p!=0:
+            output[-1]['subj'] = [subjs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
+            output[-1]['obj'] = [objs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
             if sum(goldt[i])!=0:
                 output[-1]['gold_tags'] = [goldt[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
                 # print (id2label[p], batch.gold()[i])
