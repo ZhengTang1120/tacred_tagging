@@ -158,15 +158,15 @@ class BERTtrainer(Trainer):
         subjs = []
         objs = []
         for i, p in enumerate(predictions):
+            s = inputs[3].eq(1000).long()[i].data.cpu().numpy().tolist()
+            o = inputs[4].eq(1000).long()[i].data.cpu().numpy().tolist()
+            subjs += [s]
+            objs += [o]
             if p != 0:
                 t = tagging[i]
                 chunk = inputs[2].eq(4).long()[i].data.cpu().numpy().tolist()
                 t = t.data.cpu().numpy().tolist()
-                s = inputs[3].eq(1000).long()[i].data.cpu().numpy().tolist()
-                o = inputs[4].eq(1000).long()[i].data.cpu().numpy().tolist()
                 tags += [t]
-                subjs += [s]
-                objs += [o]
                 # if sum(rules[i])!=0 and tagged:
                 #     r = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(rules[i])
                 #     pr = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(t) if sum(t)!=0 else 0
