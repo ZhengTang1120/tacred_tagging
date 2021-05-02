@@ -178,4 +178,4 @@ class BERTtrainer(Trainer):
         if unsort:
             _, predictions, probs, tags, rules, tokens, subjs, objs = [list(t) for t in zip(*sorted(zip(orig_idx,\
                     predictions, probs, tags, rules, tokens, subjs, objs)))]
-        return predictions, tags, rules, tokens
+        return predictions, tags, rules, tokens, subjs, objs
