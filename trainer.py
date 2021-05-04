@@ -62,7 +62,7 @@ def unpack_batch(batch, cuda, device):
         labels = Variable(batch[1])
         rules  = Variable(batch[3])
     tokens = batch[0]
-    return inputs, labels, tokens, rule, batch[-1]
+    return inputs, labels, tokens, rules, batch[-1]
 
 class BERTtrainer(Trainer):
     def __init__(self, opt):
