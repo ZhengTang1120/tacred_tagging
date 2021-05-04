@@ -110,6 +110,9 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
         o, b_out = self.encoder(inputs)
+        a = o.attentions
+        a = a[-1]#.data.cpu().numpy()
+        print (a.size())
         h = o.pooler_output
         logits = self.classifier(h)
         loss = self.criterion(logits, labels)
