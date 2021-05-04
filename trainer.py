@@ -52,16 +52,17 @@ class Trainer(object):
 
 
 def unpack_batch(batch, cuda, device):
-    rules = None
     if cuda:
         with torch.cuda.device(device):
             inputs = [batch[0].to('cuda')]
             labels = Variable(batch[1].cuda())
+            rules  = Variable(batch[4]).cuda()
     else:
         inputs = [Variable(batch[0])]
         labels = Variable(batch[1])
+        rules  = Variable(batch[4])
     tokens = batch[0]
-    return inputs, labels, tokens
+    return inputs, labels, tokens, rule, batch[-1]
 
 class BERTtrainer(Trainer):
     def __init__(self, opt):
@@ -81,7 +82,7 @@ class BERTtrainer(Trainer):
         )
     
     def update(self, batch, epoch):
-        inputs, labels, tokens = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels, tokens, _, _ = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
 
         # step forward
         self.encoder.train()
@@ -103,7 +104,7 @@ class BERTtrainer(Trainer):
         return loss_val
 
     def predict(self, batch, id2label, tokenizer, unsort=True):
-        inputs, labels, tokens = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels, tokens, rules, tagged = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
         tokens = tokens.data.cpu().numpy().tolist()
         orig_idx = batch[2]
         # forward
@@ -111,13 +112,22 @@ class BERTtrainer(Trainer):
         self.classifier.eval()
         o, b_out = self.encoder(inputs)
         a = o.attentions
-        a = a[-1]#.data.cpu().numpy()
-        print (a.size())
+        a = a[-1].data.cpu().numpy()
         h = o.pooler_output
         logits = self.classifier(h)
         loss = self.criterion(logits, labels)
         probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
+        for i, p in enumerate(predictions):
+            if sum(rules[i])!=0 and tagged[i]:
+                    prs = []
+                    for k in range(len(a[i])):
+                        top_attn = a[i][k][0].argsort()[:5]
+                        r = sum([1 if j in top_attn else 0 for j in range(len(rules[i])) if rules[i][j]!=0])/sum(rules[i])
+                        pr = sum([1 if j in top_attn else 0 for j in range(len(rules[i])) if rules[i][j]!=0])/5
+                        
+                        prs += ['%.6f, %.6f'%(r, pr)]
+                    print (','.join(prs))
         tags = predictions
         if unsort:
             _, predictions, probs = [list(t) for t in zip(*sorted(zip(orig_idx,\

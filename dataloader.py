@@ -34,8 +34,8 @@ class DataLoader(object):
             random.shuffle(indices)
             data = [data[i] for i in indices]
         self.id2label = dict([(v,k) for k,v in self.label2id.items()])
-        self.labels = [self.id2label[d[-2]] for d in data]
-        self.words = [d[-1] for d in data]
+        self.labels = [self.id2label[d[-4]] for d in data]
+        self.words = [d[-3] for d in data]
         self.num_examples = len(data)
         
         # chunk into batches
@@ -47,6 +47,8 @@ class DataLoader(object):
         """ Preprocess the data and convert to ids. """
         processed = []
         processed_rule = []
+        with open(self.tagging) as f:
+            tagged_ids = f.readlines()
         for c, d in enumerate(data):
             tokens = list(d['token'])
             words  = list(d['token'])
@@ -62,9 +64,23 @@ class DataLoader(object):
             os, oe = d['obj_start'], d['obj_end']
             tokens[ss:se+1] = ['[SUBJ-'+d['subj_type']+']'] * (se-ss+1)
             tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
+            tagged = eval(tagged)
+            ner = d['stanford_ner']
+            if len(tagged)!=0 and d['relation'] != 'no_relation' and d['relation'] == ol:
+                for i in range(len(tagged)):
+                    tagged[i] += 1
+                has_tag = True
+            else:
+                tagged = []
+                pattern = ''
+                has_tag = False
             tokens = ['[CLS]'] + tokens
             words = ['[CLS]'] + words
             relation = self.label2id[d['relation']]
+            if has_tag:
+                tagging = [0 if i not in tagged else 1 for i in range(len(tokens))]
+            else:
+                tagging = [0 for i in range(len(tokens))]
             l = len(tokens)
             for i in range(l):
                 if tokens[i] == '-LRB-':
@@ -72,7 +88,7 @@ class DataLoader(object):
                 if tokens[i] == '-RRB-':
                     tokens[i] = ')'
             tokens = self.tokenizer.convert_tokens_to_ids(tokens)
-            processed += [(tokens, relation, words)]
+            processed += [(tokens, relation, words, tagging, has_tag)]
         return processed
 
     def gold(self):
@@ -103,8 +119,8 @@ class DataLoader(object):
         # words = self.tokenizer(batch[0], is_split_into_words=True, padding=True, truncation=True, return_tensors="pt")
 
         rels = torch.LongTensor(batch[1])#
-
-        return (words, rels, orig_idx)
+        rule = get_long_tensor(batch[3], batch_size)
+        return (words, rels, orig_idx, rule, batch[-1])
 
     def __iter__(self):
         for i in range(self.__len__()):
