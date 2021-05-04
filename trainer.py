@@ -56,11 +56,11 @@ def unpack_batch(batch, cuda, device):
         with torch.cuda.device(device):
             inputs = [batch[0].to('cuda')]
             labels = Variable(batch[1].cuda())
-            rules  = Variable(batch[4]).cuda()
+            rules  = Variable(batch[3]).cuda()
     else:
         inputs = [Variable(batch[0])]
         labels = Variable(batch[1])
-        rules  = Variable(batch[4])
+        rules  = Variable(batch[3])
     tokens = batch[0]
     return inputs, labels, tokens, rule, batch[-1]
 
