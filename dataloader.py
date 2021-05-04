@@ -17,12 +17,13 @@ class DataLoader(object):
     """
     Load data from json files, preprocess and prepare batches.
     """
-    def __init__(self, filename, batch_size, opt, tokenizer, evaluation=False):
+    def __init__(self, filename, batch_size, opt, tokenizer, tagging=None, evaluation=False):
         self.batch_size = batch_size
         self.opt = opt
         self.eval = evaluation
         self.label2id = constant.LABEL_TO_ID
         self.tokenizer = tokenizer
+        self.tagging = tagging
 
         with open(filename) as infile:
             data = json.load(infile)
@@ -45,10 +46,9 @@ class DataLoader(object):
 
     def preprocess(self, data, opt):
         """ Preprocess the data and convert to ids. """
-        processed = []
-        processed_rule = []
-        with open(self.tagging) as f:
-            tagged_ids = f.readlines()
+        if self.tagging:
+            with open(self.tagging) as f:
+                tagged_ids = f.readlines()
         for c, d in enumerate(data):
             tokens = list(d['token'])
             words  = list(d['token'])
