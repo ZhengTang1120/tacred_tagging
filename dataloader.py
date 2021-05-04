@@ -46,6 +46,7 @@ class DataLoader(object):
 
     def preprocess(self, data, opt):
         """ Preprocess the data and convert to ids. """
+        processed = []
         if self.tagging:
             with open(self.tagging) as f:
                 tagged_ids = f.readlines()
