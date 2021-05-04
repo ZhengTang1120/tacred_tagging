@@ -162,7 +162,7 @@ class BERTtrainer(Trainer):
             o = inputs[4].eq(1000).long()[i].data.cpu().numpy().tolist()
             subjs += [s]
             objs += [o]
-            if p != 0:
+            if sum(rules[i]) != 0:
                 t = tagging[i]
                 chunk = inputs[2].eq(4).long()[i].data.cpu().numpy().tolist()
                 t = t.data.cpu().numpy().tolist()
