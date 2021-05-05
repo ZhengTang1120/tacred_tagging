@@ -79,15 +79,18 @@ helper.print_config(opt)
 # model
 if not opt['load']:
     trainer = BERTtrainer(opt)
+    trainer.encoder.model.resize_token_embeddings(len(tokenizer)) 
 else:
     # load pretrained model
     model_file = opt['model_file'] 
     print("Loading model from {}".format(model_file))
     model_opt = torch_utils.load_config(model_file)
     trainer = BERTtrainer(model_opt)
-    trainer.load(model_file)  
+    trainer.encoder.model.resize_token_embeddings(len(tokenizer)) 
+    trainer.load(model_file)
+    opt['device'] = args.device
 
-trainer.encoder.model.resize_token_embeddings(len(tokenizer)) 
+
 
 id2label = dict([(v,k) for k,v in label2id.items()])
 dev_score_history = []
