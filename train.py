@@ -84,7 +84,6 @@ else:
     model_file = opt['model_file'] 
     print("Loading model from {}".format(model_file))
     model_opt = torch_utils.load_config(model_file)
-    model_opt['optim'] = opt['optim']
     trainer = BERTtrainer(model_opt)
     trainer.load(model_file)  
 
