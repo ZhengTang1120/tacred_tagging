@@ -53,7 +53,7 @@ trainer.load(model_file)
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
-batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer,  opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset), evaluation=True)
+batch = DataLoader(data_file, opt['batch_size'], opt, opt['data_dir'] + '/interval_{}.txt'.format(args.dataset), opt['data_dir'] + '/pattern_{}.txt'.format(args.dataset), tokenizer,  opt['data_dir'] + '/odin_{}.txt'.format(args.dataset), evaluation=True)
 
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
