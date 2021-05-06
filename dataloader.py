@@ -17,13 +17,15 @@ class DataLoader(object):
     """
     Load data from json files, preprocess and prepare batches.
     """
-    def __init__(self, filename, batch_size, opt, tokenizer, tagging, evaluation=False):
+    def __init__(self, filename, batch_size, opt, intervals, patterns, tokenizer, odin, evaluation=False):
         self.batch_size = batch_size
         self.opt = opt
         self.eval = evaluation
         self.label2id = constant.LABEL_TO_ID
+        self.intervals = intervals
+        self.patterns = patterns
         self.tokenizer = tokenizer
-        self.tagging = tagging
+        self.odin = odin
 
         with open(filename) as infile:
             data = json.load(infile)
@@ -48,8 +50,12 @@ class DataLoader(object):
         """ Preprocess the data and convert to ids. """
         processed = []
         processed_rule = []
-        with open(self.tagging) as f:
-            tagged_ids = f.readlines()
+        with open(self.intervals) as f:
+            intervals = f.readlines()
+        with open(self.patterns) as f:
+            patterns = f.readlines()
+        with open(self.odin) as f:
+            odin = f.readlines()
         for c, d in enumerate(data):
             tokens = list(d['token'])
             words  = list(d['token'])
@@ -65,23 +71,36 @@ class DataLoader(object):
             os, oe = d['obj_start'], d['obj_end']
             tokens[ss:se+1] = ['[SUBJ-'+d['subj_type']+']'] * (se-ss+1)
             tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
-            ol, tagged = tagged_ids[c].split('\t')
+            rl, masked = intervals[c].split('\t')
+            rl, pattern = patterns[c].split('\t')
+            ol, tagged = odin[c].split('\t')
+            masked = eval(masked)
             tagged = eval(tagged)
             ner = d['stanford_ner']
-            if len(tagged)!=0 and d['relation'] != 'no_relation' and d['relation'] == ol:
+            if tagged and d['relation'] != 'no_relation' and d['relation'] == ol:
                 for i in range(len(tagged)):
                     tagged[i] += 1
+                has_tag = True
+            elif masked and d['relation'] != 'no_relation' and d['relation'] == rl:
+                tagged = []
+                masked = [i for i in range(masked[0], masked[1]) if i not in range(ss, se+1) and i not in range(os, oe+1)]
+                for i in range(len(masked)):
+                    masked[i] += 1
                 has_tag = True
             else:
                 tagged = []
                 pattern = ''
+                masked = []
                 has_tag = False
             tokens = ['[CLS]'] + tokens
             words = ['[CLS]'] + words
             ner = ['CLS'] + ner
             relation = self.label2id[d['relation']]
-            if has_tag:
-                tagging = [0 if i not in tagged else 1 for i in range(len(tokens))]
+            if has_tag and relation!=0:
+                if tagged:
+                    tagging = [0 if i not in tagged else 1 for i in range(len(tokens))]
+                else:
+                    tagging = [0 if i not in masked else 1 if (tokens[i] in pattern or (ner[i] in pattern and ner[i]!='O')) and (tokens[i] not in string.punctuation) else 0 for i in range(len(tokens))]
             else:
                 tagging = [0 for i in range(len(tokens))]
             l = len(tokens)
