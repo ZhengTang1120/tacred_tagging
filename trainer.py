@@ -122,7 +122,7 @@ class BERTtrainer(Trainer):
             if sum(rules[i])!=0 and tagged[i]:
                     prs = []
                     for k in range(len(a[i])):
-                        top_attn = a[i][k][0].argsort()[:5]
+                        top_attn = a[i][k][0].argsort()[:sum(rules[i])+1]
                         r = sum([1 if j in top_attn else 0 for j in range(len(rules[i])) if rules[i][j]!=0])/sum(rules[i])
                         pr = sum([1 if j in top_attn else 0 for j in range(len(rules[i])) if rules[i][j]!=0])/5
                         
