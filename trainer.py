@@ -126,7 +126,7 @@ class BERTtrainer(Trainer):
                         r = sum([1 if j in top_attn else 0 for j in range(len(rules[i])) if rules[i][j]!=0])/sum(rules[i])
                         pr = sum([1 if j in top_attn else 0 for j in range(len(rules[i])) if rules[i][j]!=0])/5
                         
-                        prs += ['%.6f, %.6f'%(r, pr)]
+                        prs += ['%.6f, %.6f,'%(r, pr)]
                     print (','.join(prs))
         tags = predictions
         if unsort:
