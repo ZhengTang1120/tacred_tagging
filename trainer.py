@@ -118,13 +118,6 @@ class BERTtrainer(Trainer):
         loss = self.criterion(logits, labels)
         probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
-        subjs = []
-        objs = []
-        for i, p in enumerate(predictions):
-            s = inputs[3].eq(1000).long()[i].data.cpu().numpy().tolist()
-            o = inputs[4].eq(1000).long()[i].data.cpu().numpy().tolist()
-            subjs += [s]
-            objs += [o]
         # for i, p in enumerate(predictions):
         #     if sum(rules[i])!=0 and tagged[i]:
         #             prs = []
@@ -137,7 +130,7 @@ class BERTtrainer(Trainer):
         #             print (','.join(prs))
         tags = predictions
         if unsort:
-            _, predictions, probs,a,tokens,subjs,objs = [list(t) for t in zip(*sorted(zip(orig_idx,\
-                    predictions, probs,a,tokens,subjs,objs)))]
-        return predictions,a,tokens,subjs,objs
+            _, predictions, probs,a,tokens = [list(t) for t in zip(*sorted(zip(orig_idx,\
+                    predictions, probs,a,tokens)))]
+        return predictions,a,tokens
 

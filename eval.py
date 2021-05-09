@@ -65,22 +65,16 @@ x = 0
 exact_match = 0
 other = 0
 attns = []
-subjs = []
-objs = []
 for c, b in enumerate(batch):
-    preds, attn, ids, s, o = trainer.predict(b, id2label, tokenizer)
+    preds, attn, ids = trainer.predict(b, id2label, tokenizer)
     predictions += preds
     attns += attn
-    subjs += [s]
-    objs += [o]
     batch_size = len(preds)
     for i in range(batch_size):
         inputs += [[tokenizer.convert_ids_to_tokens(j) for j in ids[i]]]
 output = list()
 for i, p in enumerate(predictions):
-        output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'raw_words':batch.words[i], 'predicted_tags':[], 'subj':[], 'obj':[]})
-        output[-1]['subj'] = [subjs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
-        output[-1]['obj'] = [objs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
+        output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'raw_words':inputs[i], 'predicted_tags':[]})
         output[-1]['predicted_tags'] = [[attns[i][k][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]'] for k in range(16)]
         predictions[i] = id2label[p]
 with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
