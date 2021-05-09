@@ -112,14 +112,18 @@ class BERTtrainer(Trainer):
         self.classifier.eval()
         o, b_out = self.encoder(inputs)
         a = o.attentions
-        print (a[-1].size())
-        a = a[-1].permute(3,0,1,2)[0].data.cpu().numpy().tolist()
+        a = a[-1].permute(2,0,1,3)[0].data.cpu().numpy().tolist()
         h = o.pooler_output
         logits = self.classifier(h)
         loss = self.criterion(logits, labels)
         probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
-        # for i, p in enumerate(predictions):
+        for i, p in enumerate(predictions):
+            for k in range(16):
+                print (a[k])
+                print (sum(a[k]))
+                print (o.attentions[-1][i].permute(2,0,1)[0][k])
+                print (sum(o.attentions[-1][i].permute(2,0,1)[0][k]))
         #     if sum(rules[i])!=0 and tagged[i]:
         #             prs = []
         #             for k in range(len(a[i])):
