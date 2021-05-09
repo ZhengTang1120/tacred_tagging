@@ -65,10 +65,14 @@ x = 0
 exact_match = 0
 other = 0
 attns = []
+subjs = []
+objs = []
 for c, b in enumerate(batch):
-    preds, attn, ids = trainer.predict(b, id2label, tokenizer)
+    preds, attn, ids, s, o = trainer.predict(b, id2label, tokenizer)
     predictions += preds
     attns += attn
+    subjs += [s]
+    objs += [o]
     batch_size = len(preds)
     for i in range(batch_size):
         inputs += [[tokenizer.convert_ids_to_tokens(j) for j in ids[i]]]
