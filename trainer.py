@@ -130,6 +130,8 @@ class BERTtrainer(Trainer):
         #             print (','.join(prs))
         tags = predictions
         if unsort:
-            _, predictions, probs,a = [list(t) for t in zip(*sorted(zip(orig_idx,\
+            _, predictions, probs,a,tokens = [list(t) for t in zip(*sorted(zip(orig_idx,\
                     predictions, probs,a)))]
-        return predictions,a
+        return predictions,a,tokens
+
+        

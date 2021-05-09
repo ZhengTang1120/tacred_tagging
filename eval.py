@@ -66,7 +66,7 @@ exact_match = 0
 other = 0
 attns = []
 for c, b in enumerate(batch):
-    preds, attn = trainer.predict(b, id2label, tokenizer)
+    preds, attn, ids = trainer.predict(b, id2label, tokenizer)
     predictions += preds
     attns += attn
     batch_size = len(preds)
