@@ -131,7 +131,6 @@ class BERTtrainer(Trainer):
         tags = predictions
         if unsort:
             _, predictions, probs,a,tokens = [list(t) for t in zip(*sorted(zip(orig_idx,\
-                    predictions, probs,a)))]
+                    predictions, probs,a,tokens)))]
         return predictions,a,tokens
 
-        
