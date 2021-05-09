@@ -118,21 +118,17 @@ class BERTtrainer(Trainer):
         loss = self.criterion(logits, labels)
         probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
-        # for i, p in enumerate(predictions):
-        #     for k in range(16):
-        #         print (a[i][k])
-        #         print (sum(a[i][k]))
-        #         print (o.attentions[-1][i].permute(2,0,1)[0][k])
-        #         print (sum(o.attentions[-1][i].permute(2,0,1)[0][k]))
-        #     if sum(rules[i])!=0 and tagged[i]:
-        #             prs = []
-        #             for k in range(len(a[i])):
-        #                 top_attn = a[i][k][0].argsort()[:sum(rules[i])+1]
-        #                 r = sum([1 if j in top_attn else 0 for j in range(len(rules[i])) if rules[i][j]!=0])/sum(rules[i])
-        #                 pr = sum([1 if j in top_attn else 0 for j in range(len(rules[i])) if rules[i][j]!=0])/5
+        for i, p in enumerate(predictions):
+            for k in range(16):
+            if sum(rules[i])!=0 and tagged[i]:
+                    prs = []
+                    for k in range(len(a[i])):
+                        top_attn = a[i][k][0].argsort()[:sum(rules[i])+1]
+                        r = sum([1 if j in top_attn else 0 for j in range(len(rules[i])) if rules[i][j]!=0])/sum(rules[i])
+                        pr = sum([1 if j in top_attn else 0 for j in range(len(rules[i])) if rules[i][j]!=0])/5
                         
-        #                 prs += ['%.6f, %.6f,'%(r, pr)]
-        #             print (','.join(prs))
+                        prs += ['%.6f, %.6f,'%(r, pr)]
+                    print (','.join(prs))
         tags = predictions
         if unsort:
             _, predictions, probs,a,tokens = [list(t) for t in zip(*sorted(zip(orig_idx,\
