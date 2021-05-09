@@ -112,7 +112,7 @@ class BERTtrainer(Trainer):
         self.classifier.eval()
         o, b_out = self.encoder(inputs)
         a = o.attentions
-        a = a[-1].transpose(0, 1)[0].data.cpu().numpy().tolist()
+        a = a[-1].permute(2,0,1).data.cpu().numpy().tolist()
         h = o.pooler_output
         logits = self.classifier(h)
         loss = self.criterion(logits, labels)
