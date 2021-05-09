@@ -77,7 +77,7 @@ for i, p in enumerate(predictions):
     output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p]})
     output[-1]['raw_words'] = [inputs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
     a = [[attns[i][k][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]'] for k in range(16)]
-    output[-1]['predicted_tags'] = [[1 if a[k][j] in sorted(a[k])[:5] else 0 for j in range(a[k])] for k in range(16)]
+    output[-1]['predicted_tags'] = [[1 if a[k][j] in sorted(a[k])[:5] else 0 for j in range(len(a[k]))] for k in range(16)]
     predictions[i] = id2label[p]
 with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
     f.write(json.dumps(output, indent=4))
