@@ -119,7 +119,6 @@ class BERTtrainer(Trainer):
         probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         for i, p in enumerate(predictions):
-            for k in range(16):
             if sum(rules[i])!=0 and tagged[i]:
                     prs = []
                     for k in range(len(a[i])):
