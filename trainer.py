@@ -112,7 +112,7 @@ class BERTtrainer(Trainer):
         self.classifier.eval()
         o, b_out = self.encoder(inputs)
         a = o.attentions
-        print (o.attentions.size())
+        print (len(o.attentions) a[-1].size())
         a = a[-1].data.cpu().numpy().tolist()
         h = o.pooler_output
         logits = self.classifier(h)
