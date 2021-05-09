@@ -74,10 +74,11 @@ for c, b in enumerate(batch):
         inputs += [[tokenizer.convert_ids_to_tokens(j) for j in ids[i]]]
 output = list()
 for i, p in enumerate(predictions):
-        output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p]})
-        output[-1]['raw_words'] = [inputs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
-        output[-1]['predicted_tags'] = [[attns[i][k][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]'] for k in range(16)]
-        predictions[i] = id2label[p]
+    print (len(attns[i]), len(attns[i][0]), len(inputs[i]))
+    output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p]})
+    output[-1]['raw_words'] = [inputs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
+    output[-1]['predicted_tags'] = [[attns[i][k][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]'] for k in range(16)]
+    predictions[i] = id2label[p]
 with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
     f.write(json.dumps(output, indent=4))
 p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
