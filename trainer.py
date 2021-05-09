@@ -122,6 +122,7 @@ class BERTtrainer(Trainer):
             if sum(rules[i])!=0 and tagged[i]:
                     prs = []
                     for k in range(len(a[i])):
+                        l = len([j for j in tokens[i] if tokenizer.convert_ids_to_tokens(j) != '[PAD]'])
                         top_attn = a[i][k].argsort()[:sum(rules[i])+1]
                         r = sum([1 if j in top_attn else 0 for j in range(len(rules[i])) if rules[i][j]!=0])/sum(rules[i])
                         pr = sum([1 if j in top_attn else 0 for j in range(len(rules[i])) if rules[i][j]!=0])/5
