@@ -72,10 +72,9 @@ def predict(text):
     return probs
 
 for i, text in enumerate(batch.words):
-    for data in b:
-        probs = predict(text)
-        pred = np.argmax(probs, axis=1).tolist()
-        predictions += [pred]
+    probs = predict(text)
+    pred = np.argmax(probs, axis=1).tolist()
+    predictions += [pred]
     
 
 p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
