@@ -133,5 +133,8 @@ class BERTtrainer(Trainer):
         o, b_out = self.encoder([torch.LongTensor([tokens]).to('cuda')])
         h = o.pooler_output
         logits = self.classifier(h)
+        print (logits.size())
+        probs = F.softmax(logits, 1)
+        print (probs.size())
         probs = F.softmax(logits, 1).data.cpu().numpy()
         return probs
