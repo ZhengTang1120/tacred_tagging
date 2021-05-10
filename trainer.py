@@ -128,7 +128,7 @@ class BERTtrainer(Trainer):
         # forward
         self.encoder.eval()
         self.classifier.eval()
-        o, b_out = self.encoder(tokens)
+        o, b_out = self.encoder([tokens])
         h = o.pooler_output
         logits = self.classifier(h)
         loss = self.criterion(logits, labels)
