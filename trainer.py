@@ -112,13 +112,10 @@ class BERTtrainer(Trainer):
         o, b_out = self.encoder(inputs)
         a = o.attentions
         a = a[-1]#.data.cpu().numpy()
-        print (a.size())
         h = o.pooler_output
         logits = self.classifier(h)
         loss = self.criterion(logits, labels)
-        print (logits.size())
         probs = F.softmax(logits, 1)
-        print (probs.size())
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         tags = predictions
         if unsort:
@@ -133,8 +130,6 @@ class BERTtrainer(Trainer):
         o, b_out = self.encoder([torch.LongTensor([tokens]).to('cuda')])
         h = o.pooler_output
         logits = self.classifier(h)
-        print (logits.size())
         probs = F.softmax(logits, 1)
-        print (probs.size())
         probs = F.softmax(logits, 1).data.cpu().numpy()
         return probs

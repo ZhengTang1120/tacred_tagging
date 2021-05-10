@@ -65,11 +65,10 @@ label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
 
 predictions = []
-trainer.predict(batch[0], id2label, tokenizer)
 
 def predict(text):
     tokens = tokenizer.convert_tokens_to_ids(text)
-    preds, probs = trainer.predict_text(tokens)
+    probs = trainer.predict_text(tokens)
     return probs
 
 for i, text in enumerate(batch.words):
