@@ -128,7 +128,7 @@ class BERTtrainer(Trainer):
         # forward
         self.encoder.eval()
         self.classifier.eval()
-        o, b_out = self.encoder([torch.LongTensor(tokens)])
+        o, b_out = self.encoder([torch.LongTensor(tokens).to('cuda')])
         h = o.pooler_output
         logits = self.classifier(h)
         loss = self.criterion(logits, labels)
