@@ -99,7 +99,7 @@ class DataLoader(object):
             subj_type = [constant.SUBJ_NER_TO_ID[d['subj_type']]]
             obj_type = [constant.OBJ_NER_TO_ID[d['obj_type']]]
             tokens = self.tokenizer.convert_tokens_to_ids(tokens)
-            if has_tag or relation == 0:
+            if self.eval or has_tag or relation == 0:
                 processed += [(tokens, entity_positions, subj_positions, obj_positions, subj_type, obj_type, relation, tagging, has_tag, words)]
         return processed
 
