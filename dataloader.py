@@ -62,6 +62,8 @@ class DataLoader(object):
             os, oe = d['obj_start'], d['obj_end']
             tokens[ss:se+1] = ['[SUBJ-'+d['subj_type']+']'] * (se-ss+1)
             tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
+            words[ss:se+1] = ['[SUBJ-'+d['subj_type']+']'] * (se-ss+1)
+            words[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
             tokens = ['[CLS]'] + tokens
             words = ['[CLS]'] + words
             relation = self.label2id[d['relation']]

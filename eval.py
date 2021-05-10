@@ -16,6 +16,9 @@ from transformers import BertTokenizer
 
 import json
 
+from lime import lime_text
+from lime.lime_text import LimeTextExplainer
+
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
 parser.add_argument('--model', type=str, default='best_model.pt', help='Name of the model file.')
@@ -29,6 +32,8 @@ parser.add_argument('--cpu', action='store_true')
 parser.add_argument('--device', type=int, default=0, help='Word embedding dimension.')
 
 args = parser.parse_args()
+
+
 
 torch.manual_seed(args.seed)
 random.seed(1234)
@@ -61,18 +66,18 @@ id2label = dict([(v,k) for k,v in label2id.items()])
 
 predictions = []
 
-x = 0
-exact_match = 0
-other = 0
-for c, b in enumerate(batch):
-    preds = trainer.predict(b, id2label, tokenizer)
-    predictions += preds
-    batch_size = len(preds)
-output = list()
-for i, p in enumerate(predictions):
-        predictions[i] = id2label[p]
-with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
-    f.write(json.dumps(output))
+def predict(text):
+    tokens = tokenizer.convert_tokens_to_ids(text)
+    preds, probs = trainer.predict_text(tokens)
+    return probs
+
+for i, text in enumerate(batch.words):
+    for data in b:
+        probs = predict(text)
+        pred = np.argmax(probs, axis=1).tolist()
+        predictions += [pred]
+    
+
 p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
 print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
 

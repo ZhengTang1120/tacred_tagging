@@ -123,3 +123,14 @@ class BERTtrainer(Trainer):
             _, predictions, probs = [list(t) for t in zip(*sorted(zip(orig_idx,\
                     predictions, probs)))]
         return predictions
+
+    def predict_text(self, tokens):
+        # forward
+        self.encoder.eval()
+        self.classifier.eval()
+        o, b_out = self.encoder(tokens)
+        h = o.pooler_output
+        logits = self.classifier(h)
+        loss = self.criterion(logits, labels)
+        probs = F.softmax(logits, 1).data.cpu().numpy()
+        return probs
