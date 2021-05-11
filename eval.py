@@ -69,14 +69,15 @@ explainer = LimeTextExplainer(class_names=id2label,split_expression='=SEP=')
 predictions = []
 
 def predict(text):
-    print (text)
+    text = [t.split('=SEP=') for t in text]
     tokens = tokenizer.convert_tokens_to_ids(text)
     probs = trainer.predict_text(tokens)
     return probs
 
 for i, text in enumerate(batch.words):
+    text = ['=SEP='.join(text)]
     probs = predict(text)
-    exp = explainer.explain_instance('=SEP='.join(text), predict, num_features=6)
+    exp = explainer.explain_instance(text[0], predict, num_features=6)
     l = label2id[batch.gold()[i]]
     print ('Explanation for class %s' % id2label[l])
     print ('\n'.join(map(str, exp.as_list(label=l))))
