@@ -74,8 +74,9 @@ def chunks(lst, n):
 def predict(text):
     text = [t.split('=SEP=') for t in text]
     tokens = [tokenizer.convert_tokens_to_ids(t) for t in text]
+    probs = None
     for batch in chunks(tokens, 40):
-        probs = np.concatenate((probs, trainer.predict_text(tokens)), axis=1)
+        probs = trainer.predict_text(tokens) if probs is None else np.concatenate((probs, trainer.predict_text(tokens)), axis=1)
     return probs
 
 for i, text in enumerate(batch.words):
