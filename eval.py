@@ -88,7 +88,7 @@ for i, raw in enumerate(batch.words):
     if tagged and batch.gold()[i] != 'no_relation':
         l = label2id[batch.gold()[i]]
         exp = explainer.explain_instance(text[0], predict, num_features=len(raw), num_samples=2000, labels=[0, 41])
-        print (batch.gold()[i], tagged, exp.as_map())
+        print (batch.gold()[i], tagged, json.dumps(exp.as_map()))
         print (raw)
         # r = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(rules[i])
         # pr = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(t) if sum(t)!=0 else 0
