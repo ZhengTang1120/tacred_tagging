@@ -78,13 +78,18 @@ def predict(text):
     for batch in chunks(tokens, 40):
         probs = trainer.predict_text(batch) if probs is None else np.concatenate((probs, trainer.predict_text(batch)), axis=0)
     return probs
-
-for i, text in enumerate(batch.words):
-    text = ['=SEP='.join(text)]
+with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
+    tagged_ids = f.readlines()
+for i, raw in enumerate(batch.words):
+    text = ['=SEP='.join(raw)]
     probs = predict(text)
-    exp = explainer.explain_instance(text[0], predict, num_features=6, num_samples=2000)
-    print ('\n'.join(map(str, exp.as_list())))
-    print ()
+    ol, tagged = tagged_ids[i].split('\t')
+        tagged = eval(tagged)
+    if tagged is not None and batch.gold()[i] != 'no_relation':
+        exp = explainer.explain_instance(text[0], predict, num_features=6, num_samples=2000)
+        print (batch.gold()[i], tagged, exp.as_map())
+        # r = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(rules[i])
+        # pr = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(t) if sum(t)!=0 else 0
     pred = np.argmax(probs, axis=1).tolist()
     predictions += [id2label[pred[0]]]
 
