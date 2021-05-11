@@ -76,7 +76,7 @@ def predict(text):
 for i, text in enumerate(batch.words):
     probs = predict(text)
     pred = np.argmax(probs, axis=1).tolist()
-    predictions += [pred]
+    predictions += pred
     
 
 p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
