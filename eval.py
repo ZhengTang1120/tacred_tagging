@@ -88,11 +88,13 @@ for i, raw in enumerate(batch.words):
     if tagged and batch.gold()[i] != 'no_relation':
         l = label2id[batch.gold()[i]]
         exp = explainer.explain_instance(text[0], predict, num_features=len(raw), num_samples=2000, labels=[l])
-        lime_token = set([t[0] for t in sorted(exp.as_list(label=l), key=lambda tup: tup[1], reverse=True)[:len(tagged)]])
-        tagged_token = set([raw[t+1] for t in tagged])
+        lime_token = set([t[0] for t in sorted(exp.as_list(label=l), key=lambda tup: tup[1], reverse=True)[:len(tagged)+2]])
+        tagged_token = set([raw[t+1] for t in tagged]+[w for w in raw if 'SUBJ-' in w or 'OBJ-' in w])
         print (lime_token, tagged_token)
-        # r = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(rules[i])
-        # pr = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(t) if sum(t)!=0 else 0
+        overlap = lime_token.intersection(tagged_token)
+        r = len(overlap)/len(tagged_token)
+        pr = len(overlap)/len(lime_token)
+        print (r, ",", pr)
     pred = np.argmax(probs, axis=1).tolist()
     predictions += [id2label[pred[0]]]
 
