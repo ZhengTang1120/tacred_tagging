@@ -51,7 +51,6 @@ model_file = args.model_dir + '/' + args.model
 print("Loading model from {}".format(model_file))
 opt = torch_utils.load_config(model_file)
 opt['device'] = args.device
-opt['cuda'] = False
 trainer = BERTtrainer(opt)
 trainer.encoder.model.resize_token_embeddings(len(tokenizer)) 
 trainer.load(model_file)
