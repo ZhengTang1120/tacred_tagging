@@ -86,7 +86,7 @@ for i, raw in enumerate(batch.words):
     ol, tagged = tagged_ids[i].split('\t')
     tagged = eval(tagged)
     if tagged and batch.gold()[i] != 'no_relation':
-        exp = explainer.explain_instance(text[0], predict, num_features=len(tagged), num_samples=2000)
+        exp = explainer.explain_instance(text[0], predict, num_features=len(raw), num_samples=2000)
         print (batch.gold()[i], tagged, exp.as_map(), exp.as_list())
         print (raw)
         # r = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(rules[i])
