@@ -88,10 +88,9 @@ for i, raw in enumerate(batch.words):
     if tagged and batch.gold()[i] != 'no_relation':
         l = label2id[batch.gold()[i]]
         exp = explainer.explain_instance(text[0], predict, num_features=len(raw), num_samples=2000, labels=[l])
-        print (batch.gold()[i], tagged, exp.as_map()[l], exp.as_list(label=l))
-        print (raw)
-        exp.save_to_file('lime_test.html')
-        exit()
+        lime_token = set([t[0] for t in sorted(exp.as_list(label=l), key=lambda tup: tup[1], reverse=True)[:len(tagged)]])
+        tagged_token = set([raw[t+1] for t in tagged])
+        print (lime_token, tagged_token)
         # r = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(rules[i])
         # pr = sum([1 if t[j]==rules[i][j] else 0 for j in range(len(t)) if rules[i][j]!=0])/sum(t) if sum(t)!=0 else 0
     pred = np.argmax(probs, axis=1).tolist()
