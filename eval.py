@@ -70,7 +70,7 @@ predictions = []
 
 def predict(text):
     text = [t.split('=SEP=') for t in text]
-    tokens = tokenizer.convert_tokens_to_ids(text)
+    tokens = [tokenizer.convert_tokens_to_ids(t) for t in text]
     probs = trainer.predict_text(tokens)
     return probs
 
