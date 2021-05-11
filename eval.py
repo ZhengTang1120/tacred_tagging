@@ -91,7 +91,6 @@ for i, raw in enumerate(batch.words):
         lime_token = set([t[0] for t in sorted(exp.as_list(label=l), key=lambda tup: tup[1], reverse=True)[:len(tagged)+2]]) - set([w for w in raw if 'SUBJ-' in w or 'OBJ-' in w])
         lime_token = set(list(lime_token)[:len(tagged)])
         tagged_token = set([raw[t+1] for t in tagged])
-        print (lime_token, tagged_token)
         overlap = lime_token.intersection(tagged_token)
         r = len(overlap)/len(tagged_token)
         pr = len(overlap)/len(lime_token)
