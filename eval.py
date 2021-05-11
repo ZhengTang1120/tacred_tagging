@@ -35,8 +35,6 @@ parser.add_argument('--device', type=int, default=0, help='Word embedding dimens
 
 args = parser.parse_args()
 
-
-
 torch.manual_seed(args.seed)
 random.seed(1234)
 if args.cpu:
@@ -64,8 +62,10 @@ batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, evaluation=True
 
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
-id2label = dict([(v,k) for k,v in label2id.items()])
-
+id2label = [-1 for k in label2id]
+for k,v in label2id.items():
+    id2label[v] = k
+# explainer = LimeTextExplainer(class_names=id2label)
 predictions = []
 
 def predict(text):
@@ -75,7 +75,15 @@ def predict(text):
 
 for i, text in enumerate(batch.words):
     probs = predict(text)
+    # exp = explainer.explain_instance(text, predict, num_features=6)
+    l = label2id[batch.gold()[i]]
+    # print ('Explanation for class %s' % id2label[l])
+    # print ('\n'.join(map(str, exp.as_list(label=l))))
+    # print ()
+    print (probs)
     pred = np.argmax(probs, axis=1).tolist()
+    print (pred, l)
+    print ()
     predictions += pred
     
 
