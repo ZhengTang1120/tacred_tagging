@@ -80,11 +80,8 @@ for i, text in enumerate(batch.words):
     # print ('Explanation for class %s' % id2label[l])
     # print ('\n'.join(map(str, exp.as_list(label=l))))
     # print ()
-    print (probs)
     pred = np.argmax(probs, axis=1).tolist()
-    print (pred, l)
-    print ()
-    predictions += pred
+    predictions += [id2label[pred[0]]]
     
 
 p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
