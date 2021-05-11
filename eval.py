@@ -87,12 +87,8 @@ p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
 print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
 predictions = []    
 for c, b in enumerate(batch):
-    preds, attn, ids = trainer.predict(b, id2label, tokenizer)
+    preds = trainer.predict(b, id2label, tokenizer)
     predictions += preds
-    attns += attn
-    batch_size = len(preds)
-    for i in range(batch_size):
-        inputs += [[tokenizer.convert_ids_to_tokens(j) for j in ids[i]]]
 for i, p in enumerate(predictions):
     predictions[i] = id2label[p]
 p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
