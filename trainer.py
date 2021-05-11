@@ -130,6 +130,5 @@ class BERTtrainer(Trainer):
         o, b_out = self.encoder([torch.LongTensor(tokens)])
         h = o.pooler_output
         logits = self.classifier(h)
-        probs = F.softmax(logits, 1)
-        probs = F.softmax(logits, 1).data.cpu().numpy()
+        probs = F.softmax(logits, 1).detach().numpy()
         return probs
