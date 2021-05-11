@@ -84,7 +84,7 @@ for i, raw in enumerate(batch.words):
     text = ['=SEP='.join(raw)]
     probs = predict(text)
     ol, tagged = tagged_ids[i].split('\t')
-        tagged = eval(tagged)
+    tagged = eval(tagged)
     if tagged is not None and batch.gold()[i] != 'no_relation':
         exp = explainer.explain_instance(text[0], predict, num_features=6, num_samples=2000)
         print (batch.gold()[i], tagged, exp.as_map())
