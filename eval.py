@@ -68,17 +68,21 @@ for k,v in label2id.items():
     id2label[v] = k
 explainer = LimeTextExplainer(class_names=id2label,split_expression='=SEP=')
 predictions = []
-
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
 def predict(text):
     text = [t.split('=SEP=') for t in text]
     tokens = [tokenizer.convert_tokens_to_ids(t) for t in text]
-    probs = trainer.predict_text(tokens)
+    for batch in chunks(tokens, 40):
+        probs = np.concatenate((probs, trainer.predict_text(tokens)), axis=1)
     return probs
 
 for i, text in enumerate(batch.words):
     text = ['=SEP='.join(text)]
     probs = predict(text)
-    exp = explainer.explain_instance(text[0], predict, num_features=6, num_samples=20)
+    exp = explainer.explain_instance(text[0], predict, num_features=6, num_samples=2000)
     l = label2id[batch.gold()[i]]
     print ('\n'.join(map(str, exp.as_list())))
     print ()
