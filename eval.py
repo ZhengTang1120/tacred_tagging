@@ -77,7 +77,7 @@ def predict(text):
 for i, text in enumerate(batch.words):
     text = ['=SEP='.join(text)]
     probs = predict(text)
-    exp = explainer.explain_instance(text[0], predict, num_features=6)
+    exp = explainer.explain_instance(text[0], predict, num_features=6, num_samples=500)
     l = label2id[batch.gold()[i]]
     print ('Explanation for class %s' % id2label[l])
     print ('\n'.join(map(str, exp.as_list(label=l))))
