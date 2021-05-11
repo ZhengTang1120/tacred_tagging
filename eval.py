@@ -83,7 +83,6 @@ for i, text in enumerate(batch.words):
     text = ['=SEP='.join(text)]
     probs = predict(text)
     exp = explainer.explain_instance(text[0], predict, num_features=6, num_samples=2000)
-    l = label2id[batch.gold()[i]]
     print ('\n'.join(map(str, exp.as_list())))
     print ()
     pred = np.argmax(probs, axis=1).tolist()
