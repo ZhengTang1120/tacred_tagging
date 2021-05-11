@@ -131,4 +131,5 @@ class BERTtrainer(Trainer):
         h = o.pooler_output
         logits = self.classifier(h)
         probs = F.softmax(logits, 1).detach().cpu().numpy()
+        torch.cuda.empty_cache()
         return probs
