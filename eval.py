@@ -85,7 +85,7 @@ limes = []
 raw = batch.words[65]
 text = ['=SEP='.join(raw)]
 probs = predict(text)
-ol, tagged = tagged_ids[i].split('\t')
+ol, tagged = tagged_ids[65].split('\t')
 tagged = eval(tagged)
 # if tagged and batch.gold()[i] != 'no_relation':
 l = label2id[batch.gold()[65]]
