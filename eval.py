@@ -16,7 +16,7 @@ from transformers import BertTokenizer
 
 import json
 
-import numpy as np
+from scipy.special import softmax
 
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
@@ -60,13 +60,7 @@ batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, opt['data_dir']
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
-def softmax(X):
-    theta = 2.0                         # determinism parameter
 
-    ps = np.exp(X * theta)
-    ps /= np.sum(ps)
-
-    return ps
 predictions = []
 inputs = []
 x = 0
