@@ -78,8 +78,8 @@ output = list()
 for i, p in enumerate(predictions):
     output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p]})
     output[-1]['raw_words'] = [inputs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
-    print (attns[i][k][:len(output[-1]['raw_words'])].shape)
-    chunked_attn = [[softmax(attns[i][k][:len(output[-1]['raw_words'])])] for k in range(16)]
+    print (attns[i][0][:len(output[-1]['raw_words'])].shape)
+    chunked_attn = [[softmax(attns[i][k][:len(output[-1]['raw_words'])], , axis=0)] for k in range(16)]
     output[-1]['predicted_tags'] = [[float(attns[i][k][j]) for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]'] for k in range(16)]
     print (sum(output[-1]['predicted_tags'][0]))
     predictions[i] = id2label[p]
