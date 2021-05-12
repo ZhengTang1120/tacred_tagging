@@ -101,7 +101,7 @@ for i, raw in enumerate(batch.words):
     predictions += [id2label[pred[0]]]
 output = list()
 for i, p in enumerate(predictions):
-    output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p]})
+    output.append({'gold_label':batch.gold()[i], 'predicted_label':p})
     output[-1]['raw_words'] = batch.words[i]
     output[-1]['predicted_tags'] = [1 if w in overlap else 0 for w in batch.words[i]]
 with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
