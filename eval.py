@@ -86,14 +86,14 @@ for i, raw in enumerate(batch.words):
     probs = predict(text)
     ol, tagged = tagged_ids[i].split('\t')
     tagged = eval(tagged)
-    if tagged and batch.gold()[i] != 'no_relation':
-        l = label2id[batch.gold()[i]]
-        exp = explainer.explain_instance(text[0], predict, num_features=len(raw), num_samples=2000, labels=[l])
-        lime_token = set([t[0] for t in sorted(exp.as_list(label=l), key=lambda tup: tup[1], reverse=True)[:len(tagged)+2]]) - set([w for w in raw if 'SUBJ-' in w or 'OBJ-' in w])
-        lime_token = set(list(lime_token)[:len(tagged)])
-        tagged_token = set([raw[t+1] for t in tagged])
-        overlap = lime_token.intersection(tagged_token)
-        limes += [overlap]
+    # if tagged and batch.gold()[i] != 'no_relation':
+    l = label2id[batch.gold()[i]]
+    exp = explainer.explain_instance(text[0], predict, num_features=len(raw), num_samples=2000, labels=[l])
+    lime_token = set([t[0] for t in sorted(exp.as_list(label=l), key=lambda tup: tup[1], reverse=True)[:len(tagged)+2]]) - set([w for w in raw if 'SUBJ-' in w or 'OBJ-' in w])
+    lime_token = set(list(lime_token)[:len(tagged)])
+    tagged_token = set([raw[t+1] for t in tagged])
+    overlap = lime_token.intersection(tagged_token)
+    limes += [overlap]
         # r = len(overlap)/len(tagged_token)
         # pr = len(overlap)/len(lime_token)
         # print (r, ",", pr)
