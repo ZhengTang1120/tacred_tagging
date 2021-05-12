@@ -80,6 +80,7 @@ def predict(text):
     return probs
 with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     tagged_ids = f.readlines()
+limes = []
 for i, raw in enumerate(batch.words):
     text = ['=SEP='.join(raw)]
     probs = predict(text)
@@ -92,12 +93,19 @@ for i, raw in enumerate(batch.words):
         lime_token = set(list(lime_token)[:len(tagged)])
         tagged_token = set([raw[t+1] for t in tagged])
         overlap = lime_token.intersection(tagged_token)
-        r = len(overlap)/len(tagged_token)
-        pr = len(overlap)/len(lime_token)
-        print (r, ",", pr)
+        limes += [overlap]
+        # r = len(overlap)/len(tagged_token)
+        # pr = len(overlap)/len(lime_token)
+        # print (r, ",", pr)
     pred = np.argmax(probs, axis=1).tolist()
     predictions += [id2label[pred[0]]]
-
+output = list()
+for i, p in enumerate(predictions):
+    output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p]})
+    output[-1]['raw_words'] = batch.words[i]
+    output[-1]['predicted_tags'] = [1 if w in overlap else 0 for w in batch.words[i]]
+with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
+    f.write(json.dumps(output, indent=4))
 p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
 print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
 
