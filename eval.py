@@ -58,7 +58,13 @@ batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, opt['data_dir']
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
+def softmax(X):
+    theta = 2.0                         # determinism parameter
 
+    ps = np.exp(X * theta)
+    ps /= np.sum(ps)
+
+    return ps
 predictions = []
 inputs = []
 x = 0
@@ -76,10 +82,11 @@ output = list()
 for i, p in enumerate(predictions):
     output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p]})
     output[-1]['raw_words'] = [inputs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
+    chunked_attn = [[softmax(attns[i][k][:len(output[-1]['raw_words'])])] for k in range(16)]
     output[-1]['predicted_tags'] = [[attns[i][k][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]'] for k in range(16)]
     predictions[i] = id2label[p]
-# with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
-#     f.write(json.dumps(output, indent=4))
+with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
+    f.write(json.dumps(output, indent=4))
 p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
 print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
 
