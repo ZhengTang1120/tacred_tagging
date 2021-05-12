@@ -84,9 +84,9 @@ output = list()
 for i, p in enumerate(predictions):
     output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p]})
     output[-1]['raw_words'] = [inputs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
-    chunked_attn = [[softmax(attns[i][k][:len(output[-1]['raw_words'])]).tolist()] for k in range(16)]
-    output[-1]['predicted_tags'] = [[attns[i][k][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]'] for k in range(16)]
-    print (output[-1])
+    chunked_attn = [[softmax(attns[i][k][:len(output[-1]['raw_words'])])] for k in range(16)]
+    output[-1]['predicted_tags'] = [[float(attns[i][k][j]) for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]'] for k in range(16)]
+    print (sum(output[-1]['predicted_tags'][0]))
     predictions[i] = id2label[p]
 with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
     f.write(json.dumps(output, indent=4))
