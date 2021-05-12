@@ -65,7 +65,7 @@ label2id = constant.LABEL_TO_ID
 id2label = [-1 for k in label2id]
 for k,v in label2id.items():
     id2label[v] = k
-explainer = LimeTextExplainer(class_names=id2label,split_expression=' ')
+explainer = LimeTextExplainer(class_names=id2label,split_expression='=SEP=')
 predictions = []
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
@@ -83,18 +83,18 @@ with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
 limes = []
 # for i, raw in enumerate(batch.words):
 raw = batch.words[65]
-text = [' '.join(raw)]
+text = ['=SEP='.join(raw)]
 probs = predict(text)
 ol, tagged = tagged_ids[i].split('\t')
 tagged = eval(tagged)
 # if tagged and batch.gold()[i] != 'no_relation':
-l = label2id[batch.gold()[i]]
+l = label2id[batch.gold()[65]]
 pred = np.argmax(probs, axis=1).tolist()
 predictions += [id2label[pred[0]]]
 print (text)
-print (id2label[pred[0]], batch.gold()[i])
+print (id2label[pred[0]], batch.gold()[65])
 exp = explainer.explain_instance(text[0], predict, num_features=len(raw), num_samples=2000, labels=[pred[0], l])
-exp.save_to_file('lime_sample%d.html'%i)
+exp.save_to_file('lime_sample%d.html'%65)
 #     lime_token = set([t[0] for t in sorted(exp.as_list(label=l), key=lambda tup: tup[1], reverse=True)[:5]]) - set([w for w in raw if 'SUBJ-' in w or 'OBJ-' in w])
 #     # lime_token = set(list(lime_token)[:len(tagged)])
 #     # tagged_token = set([raw[t+1] for t in tagged])
@@ -110,7 +110,7 @@ exp.save_to_file('lime_sample%d.html'%i)
 #     output[-1]['predicted_tags'] = [1 if w in limes[i] else 0 for w in batch.words[i]]
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output, indent=4))
-p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
-print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
+# p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
+# print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
 
 
