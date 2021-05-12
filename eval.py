@@ -65,7 +65,7 @@ label2id = constant.LABEL_TO_ID
 id2label = [-1 for k in label2id]
 for k,v in label2id.items():
     id2label[v] = k
-explainer = LimeTextExplainer(class_names=id2label,split_expression='=SEP=')
+explainer = LimeTextExplainer(class_names=id2label,split_expression=' ')
 predictions = []
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
@@ -82,8 +82,8 @@ with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     tagged_ids = f.readlines()
 limes = []
 # for i, raw in enumerate(batch.words):
-raw = batch.words[65]
-text = ['=SEP='.join(raw)]
+raw = batch.words[65]+['[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]']
+text = [' '.join(raw)]
 probs = predict(text)
 ol, tagged = tagged_ids[65].split('\t')
 tagged = eval(tagged)
