@@ -90,7 +90,7 @@ for i, raw in enumerate(batch.words):
     l = label2id[batch.gold()[i]]
     pred = np.argmax(probs, axis=1).tolist()
     predictions += [id2label[pred[0]]]
-    exp = explainer.explain_instance(text[0], predict, num_features=len(raw), num_samples=2000, labels=[l, pred[0]])
+    exp = explainer.explain_instance(text[0], predict, num_features=len(raw), num_samples=2000, labels=[pred[0], l])
     exp.save_to_file('lime_sample%d.html'%i)
 #     lime_token = set([t[0] for t in sorted(exp.as_list(label=l), key=lambda tup: tup[1], reverse=True)[:5]]) - set([w for w in raw if 'SUBJ-' in w or 'OBJ-' in w])
 #     # lime_token = set(list(lime_token)[:len(tagged)])
