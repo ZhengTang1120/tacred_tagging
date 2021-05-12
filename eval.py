@@ -16,6 +16,8 @@ from transformers import BertTokenizer
 
 import json
 
+import numpy as np
+
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
 parser.add_argument('--model', type=str, default='best_model.pt', help='Name of the model file.')
