@@ -82,19 +82,17 @@ with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     tagged_ids = f.readlines()
 limes = []
 # for i, raw in enumerate(batch.words):
-raw = batch.words[65]+['[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]']
+raw = batch.words[0]+['[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]', '[PAD]']
 text = [' '.join(raw)]
 probs = predict(text)
-ol, tagged = tagged_ids[65].split('\t')
+ol, tagged = tagged_ids[0].split('\t')
 tagged = eval(tagged)
 # if tagged and batch.gold()[i] != 'no_relation':
-l = label2id[batch.gold()[65]]
+l = label2id[batch.gold()[0]]
 pred = np.argmax(probs, axis=1).tolist()
 predictions += [id2label[pred[0]]]
-print (text)
-print (id2label[pred[0]], batch.gold()[65])
 exp = explainer.explain_instance(text[0], predict, num_features=len(raw), num_samples=2000, labels=[pred[0], l])
-exp.save_to_file('lime_sample%d.html'%65)
+exp.save_to_file('lime_sample%d.html'%0)
 #     lime_token = set([t[0] for t in sorted(exp.as_list(label=l), key=lambda tup: tup[1], reverse=True)[:5]]) - set([w for w in raw if 'SUBJ-' in w or 'OBJ-' in w])
 #     # lime_token = set(list(lime_token)[:len(tagged)])
 #     # tagged_token = set([raw[t+1] for t in tagged])
