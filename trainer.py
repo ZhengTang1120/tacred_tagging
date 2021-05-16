@@ -112,7 +112,7 @@ class BERTtrainer(Trainer):
         self.classifier.eval()
         o, b_out = self.encoder(inputs)
         a = o.attentions
-        a = a[-1].permute(2,0,1,3)[0].data.cpu().numpy()
+        a = a[-1].permute(2,0,1,3)[0]#.data.cpu().numpy()
         v = o.last_hidden_state
         h = o.pooler_output
         v = torch.sum(v**2, dim=2)
