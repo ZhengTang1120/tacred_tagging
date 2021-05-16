@@ -116,10 +116,10 @@ class BERTtrainer(Trainer):
         v = o.last_hidden_state
         h = o.pooler_output
         v = torch.sum(v**2, dim=2).unsqueeze(2).expand(-1, -1, 16).transpose(1,2)
-        print (a.size(), v.size())
-        w = torch.mul(a,v)
-        print (w.size())
-        exit()
+        # print (a.size(), v.size())
+        w = torch.mul(a,v).data.cpu().numpy()
+        # print (w.size())
+        # exit()
         logits = self.classifier(h)
         loss = self.criterion(logits, labels)
         probs = F.softmax(logits, 1)
@@ -137,7 +137,7 @@ class BERTtrainer(Trainer):
         #             print (','.join(prs))
         tags = predictions
         if unsort:
-            _, predictions, probs,a,tokens = [list(t) for t in zip(*sorted(zip(orig_idx,\
-                    predictions, probs,a,tokens)))]
-        return predictions,a,tokens
+            _, predictions, probs,w,tokens = [list(t) for t in zip(*sorted(zip(orig_idx,\
+                    predictions, probs,w,tokens)))]
+        return predictions,w,tokens
 
