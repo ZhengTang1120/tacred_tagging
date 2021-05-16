@@ -115,9 +115,9 @@ class BERTtrainer(Trainer):
         a = a[-1].permute(2,0,1,3)[0]#.data.cpu().numpy()
         v = o.last_hidden_state
         h = o.pooler_output
-        v = torch.sum(v**2, dim=2)
+        v = torch.sum(v**2, dim=2).expand(-1, 16)
         print (a.size(), v.size())
-        w = torch.bmm(a,v)
+        w = torch.mul(a,v)
         print (w.size())
         exit()
         logits = self.classifier(h)
