@@ -113,7 +113,13 @@ class BERTtrainer(Trainer):
         o, b_out = self.encoder(inputs)
         a = o.attentions
         a = a[-1].permute(2,0,1,3)[0].data.cpu().numpy()
+        v = o.last_hidden_state
         h = o.pooler_output
+        v = torch.sum(v**2, dim=2)
+        print (a.size(), v.size())
+        w = torch.bmm(a,v)
+        print (w.size())
+        exit()
         logits = self.classifier(h)
         loss = self.criterion(logits, labels)
         probs = F.softmax(logits, 1)
