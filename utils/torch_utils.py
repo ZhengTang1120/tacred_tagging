@@ -154,6 +154,7 @@ def load(model, optimizer, filename):
     return model, optimizer, opt
 
 def load_config(filename):
+    dump = torch.load(filename)
     try:
         dump = torch.load(filename)
     except BaseException:
