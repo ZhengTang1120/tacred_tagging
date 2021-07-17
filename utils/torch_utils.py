@@ -153,11 +153,11 @@ def load(model, optimizer, filename):
     opt = dump['config']
     return model, optimizer, opt
 
-def load_config(filename):
-    dump = torch.load(filename)
-    # try:
-    #     dump = torch.load(filename)
-    # except BaseException:
-    #     print("[ Fail: model loading failed. ]")
+def load_config(filename, device):
+    try:
+        with torch.cuda.device(device):
+            dump = torch.load(filename)
+    except BaseException:
+        print("[ Fail: model loading failed. ]")
     return dump['config']
 
