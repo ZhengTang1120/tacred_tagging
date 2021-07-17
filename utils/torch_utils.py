@@ -154,7 +154,7 @@ def load(model, optimizer, filename):
     return model, optimizer, opt
 
 def load_config(filename, device):
-    device = torch.device("cuda:"+device)
+    device = torch.device("cuda:"+str(device))
     dump = torch.load(filename, map_location=device)
     return dump['config']
 
