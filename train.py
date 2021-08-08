@@ -94,7 +94,7 @@ format_str = '{}: step {}/{} (epoch {}/{}), loss = {:.6f} ({:.3f} sec/batch), lr
 max_steps = len(train_batch) * opt['num_epoch']
 
 chunks = np.array_split(np.array(range(len(train_batch))),6)
-print (chunks)
+
 # start training
 for j, c in enumerate(chunks):
     model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
@@ -110,7 +110,6 @@ for j, c in enumerate(chunks):
         train_loss = 0
         for i, batch in enumerate(train_batch):
             if i not in c:
-                print (i)
                 start_time = time.time()
                 global_step += 1
                 loss = trainer.update(batch, epoch)
