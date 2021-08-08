@@ -16,6 +16,8 @@ from transformers import BertTokenizer
 
 import json
 
+import numpy as np
+
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
 parser.add_argument('--model', type=str, default='best_model.pt', help='Name of the model file.')
@@ -42,13 +44,11 @@ special_tokens_dict = {'additional_special_tokens': constant.ENTITY_TOKENS}
 num_added_toks = tokenizer.add_special_tokens(special_tokens_dict)
 
 # load opt
-model_file = args.model_dir + '/' + args.model
+model_file = args.model_dir + '_0/' + args.model
 print("Loading model from {}".format(model_file))
 opt = torch_utils.load_config(model_file)
 opt['device'] = args.device
-trainer = BERTtrainer(opt)
-trainer.encoder.model.resize_token_embeddings(len(tokenizer)) 
-trainer.load(model_file)
+
 
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
@@ -66,19 +66,24 @@ inputs = []
 subjs = []
 objs = []
 
-x = 0
-exact_match = 0
-other = 0
-for c, b in enumerate(batch):
-    preds, ts, tagged, ids, s, o = trainer.predict(b, id2label, tokenizer)
-    predictions += preds
-    tags += ts
-    subjs += s
-    objs += o
-    goldt += tagged
-    batch_size = len(preds)
-    for i in range(batch_size):
-        inputs += [[tokenizer.convert_ids_to_tokens(j) for j in ids[i]]]
+chunks = np.array_split(np.array(range(len(batch))),5)
+
+for x, ch in enumerate(chunks):
+    model_file = args.model_dir + '_%d/'%x + args.model
+    trainer = BERTtrainer(opt)
+    trainer.encoder.model.resize_token_embeddings(len(tokenizer)) 
+    trainer.load(model_file)
+    for c, b in enumerate(batch):
+        if c in ch:
+            preds, ts, tagged, ids, s, o = trainer.predict(b, id2label, tokenizer)
+            predictions += preds
+            tags += ts
+            subjs += s
+            objs += o
+            goldt += tagged
+            batch_size = len(preds)
+            for i in range(batch_size):
+                inputs += [[tokenizer.convert_ids_to_tokens(j) for j in ids[i]]]
 output = list()
 for i, p in enumerate(predictions):
         predictions[i] = id2label[p]
