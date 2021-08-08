@@ -93,7 +93,7 @@ global_step = 0
 format_str = '{}: step {}/{} (epoch {}/{}), loss = {:.6f} ({:.3f} sec/batch), lr: {:.6f}'
 max_steps = len(train_batch) * opt['num_epoch']
 
-chunks = np.array_split(np.array(range(len(train_batch))),6)
+chunks = np.array_split(np.array(range(len(train_batch))),5)
 
 # start training
 for j, c in enumerate(chunks):
