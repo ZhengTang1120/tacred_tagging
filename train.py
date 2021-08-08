@@ -66,15 +66,6 @@ num_added_toks = tokenizer.add_special_tokens(special_tokens_dict)
 train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer, opt['data_dir'] + '/tagging_train_%s.txt'%opt["rule_num"], evaluation=False)
 dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, tokenizer, opt['data_dir'] + '/tagging_dev.txt',  evaluation=True)
 
-model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
-model_save_dir = opt['save_dir'] + '/' + model_id
-opt['model_save_dir'] = model_save_dir
-helper.ensure_dir(model_save_dir, verbose=True)
-
-# save config
-helper.save_config(opt, model_save_dir + '/config.json', verbose=True)
-file_logger = helper.FileLogger(model_save_dir + '/' + opt['log'], header="# epoch\ttrain_loss\tdev_loss\tdev_score\tbest_dev_score")
-
 # print model info
 helper.print_config(opt)
 
@@ -102,54 +93,67 @@ global_step = 0
 format_str = '{}: step {}/{} (epoch {}/{}), loss = {:.6f} ({:.3f} sec/batch), lr: {:.6f}'
 max_steps = len(train_batch) * opt['num_epoch']
 
+chunks = np.array_split(np.array(range(len(train_batch))),6)
+
 # start training
-for epoch in range(1, opt['num_epoch']+1):
-    train_loss = 0
-    for i, batch in enumerate(train_batch):
-        start_time = time.time()
-        global_step += 1
-        loss = trainer.update(batch, epoch)
-        train_loss += loss
-        if global_step % opt['log_step'] == 0:
-            duration = time.time() - start_time
-            print(format_str.format(datetime.now(), global_step, max_steps, epoch,\
-                    opt['num_epoch'], loss, duration, current_lr))
+for j, c in enumerate(chunks):
+    model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
+    model_id += '_%d'%j
+    model_save_dir = opt['save_dir'] + '/' + model_id
+    opt['model_save_dir'] = model_save_dir
+    helper.ensure_dir(model_save_dir, verbose=True)
 
-    # eval on dev
-    x = 0
-    print("Evaluating on dev set...")
-    predictions = []
-    dev_loss = 0
-    for _, batch in enumerate(dev_batch):
-        preds, ts, tagged, ids, _, _ = trainer.predict(batch, id2label, tokenizer)
-        predictions += preds
-    predictions = [id2label[p] for p in predictions]
-    train_loss = train_loss / train_batch.num_examples * opt['batch_size'] # avg loss per batch
-    dev_loss = dev_loss / dev_batch.num_examples * opt['batch_size']
+    # save config
+    helper.save_config(opt, model_save_dir + '/config.json', verbose=True)
+    file_logger = helper.FileLogger(model_save_dir + '/' + opt['log'], header="# epoch\ttrain_loss\tdev_loss\tdev_score\tbest_dev_score")
+    for epoch in range(1, opt['num_epoch']+1):
+        train_loss = 0
+        for i, batch in enumerate(train_batch):
+            if i not in c:
+                start_time = time.time()
+                global_step += 1
+                loss = trainer.update(batch, epoch)
+                train_loss += loss
+                if global_step % opt['log_step'] == 0:
+                    duration = time.time() - start_time
+                    print(format_str.format(datetime.now(), global_step, max_steps, epoch,\
+                            opt['num_epoch'], loss, duration, current_lr))
 
-    dev_p, dev_r, dev_f1 = scorer.score(dev_batch.gold(), predictions)
-    print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
-        train_loss, dev_loss, dev_f1))
-    dev_score = dev_f1
-    file_logger.log("{}\t{:.6f}\t{:.6f}\t{:.4f}\t{:.4f}".format(epoch, train_loss, dev_loss, dev_score, max([dev_score] + dev_score_history)))
+        # eval on dev
+        x = 0
+        print("Evaluating on dev set...")
+        predictions = []
+        dev_loss = 0
+        for _, batch in enumerate(dev_batch):
+            preds, ts, tagged, ids, _, _ = trainer.predict(batch, id2label, tokenizer)
+            predictions += preds
+        predictions = [id2label[p] for p in predictions]
+        train_loss = train_loss / train_batch.num_examples * opt['batch_size'] # avg loss per batch
+        dev_loss = dev_loss / dev_batch.num_examples * opt['batch_size']
 
-    # save
-    model_file = model_save_dir + '/checkpoint_epoch_{}.pt'.format(epoch)
-    trainer.save(model_file, epoch)
-    if epoch == 1 or dev_score > max(dev_score_history):
-        copyfile(model_file, model_save_dir + '/best_model.pt')
-        print("new best model saved.")
-        file_logger.log("new best model saved at epoch {}: {:.2f}\t{:.2f}\t{:.2f}"\
-            .format(epoch, dev_p*100, dev_r*100, dev_score*100))
-    if epoch % opt['save_epoch'] != 0:
-        os.remove(model_file)
+        dev_p, dev_r, dev_f1 = scorer.score(dev_batch.gold(), predictions)
+        print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
+            train_loss, dev_loss, dev_f1))
+        dev_score = dev_f1
+        file_logger.log("{}\t{:.6f}\t{:.6f}\t{:.4f}\t{:.4f}".format(epoch, train_loss, dev_loss, dev_score, max([dev_score] + dev_score_history)))
 
-    # lr schedule
-    if len(dev_score_history) > opt['decay_epoch'] and dev_score <= dev_score_history[-1]:
-        current_lr *= opt['lr_decay']
-        trainer.update_lr(current_lr)
+        # save
+        model_file = model_save_dir + '/checkpoint_epoch_{}.pt'.format(epoch)
+        trainer.save(model_file, epoch)
+        if epoch == 1 or dev_score > max(dev_score_history):
+            copyfile(model_file, model_save_dir + '/best_model.pt')
+            print("new best model saved.")
+            file_logger.log("new best model saved at epoch {}: {:.2f}\t{:.2f}\t{:.2f}"\
+                .format(epoch, dev_p*100, dev_r*100, dev_score*100))
+        if epoch % opt['save_epoch'] != 0:
+            os.remove(model_file)
 
-    dev_score_history += [dev_score]
-    print("")
+        # lr schedule
+        if len(dev_score_history) > opt['decay_epoch'] and dev_score <= dev_score_history[-1]:
+            current_lr *= opt['lr_decay']
+            trainer.update_lr(current_lr)
 
-print("Training ended with {} epochs.".format(epoch))
+        dev_score_history += [dev_score]
+        print("")
+
+    print("Training ended with {} epochs.".format(epoch))
