@@ -53,7 +53,7 @@ opt['device'] = args.device
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
-batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer,  opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset), evaluation=True)
+batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer,  opt['data_dir'] + '/tagging_{}_full.txt'.format(args.dataset), evaluation=True)
 
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
