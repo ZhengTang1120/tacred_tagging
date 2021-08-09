@@ -86,20 +86,20 @@ for x, ch in enumerate(chunks):
                 inputs += [[tokenizer.convert_ids_to_tokens(j) for j in ids[i]]]
 output = list()
 for i, p in enumerate(predictions):
-        predictions[i] = id2label[p]
-        output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'raw_words':batch.words[i], 'predicted_tags':[], 'gold_tags':[], 'subj':[], 'obj':[]})
-        output[-1]['subj'] = [subjs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
-        output[-1]['obj'] = [objs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
-        if sum(goldt[i])!=0:
-            output[-1]['gold_tags'] = [goldt[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
-                # print (id2label[p], batch.gold()[i])
-                # print ([(goldt[i][j], tags[i][j], batch.words[i][j])for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]'])
-                # print ()
-        if p!=0 and sum(tags[i])!=0:
-            output[-1]['predicted_tags'] = [tags[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
-                # print (id2label[p], batch.gold()[i])
-                # print ([(tags[i][j], batch.words[i][j])for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]'])
-                # print ()
+    predictions[i] = id2label[p]
+    output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'raw_words':batch.words[i], 'predicted_tags':[], 'gold_tags':[], 'subj':[], 'obj':[]})
+    output[-1]['subj'] = [subjs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
+    output[-1]['obj'] = [objs[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
+    if sum(goldt[i])!=0:
+        output[-1]['gold_tags'] = [goldt[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
+            # print (id2label[p], batch.gold()[i])
+            # print ([(goldt[i][j], tags[i][j], batch.words[i][j])for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]'])
+            # print ()
+    if p!=0 and sum(tags[i])!=0:
+        output[-1]['predicted_tags'] = [tags[i][j] for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]']
+            # print (id2label[p], batch.gold()[i])
+            # print ([(tags[i][j], batch.words[i][j])for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]'])
+            # print ()
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
 p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
