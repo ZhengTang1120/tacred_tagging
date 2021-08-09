@@ -66,7 +66,7 @@ num_added_toks = tokenizer.add_special_tokens(special_tokens_dict)
 train_batch = None
 for i in range(5):
     if i != int(opt["chunk_id"]):
-        if train_batch:
+        if train_batch is None:
             train_batch =  DataLoader(opt['data_dir'] + '/train_%d.json'%i, opt['batch_size'], opt, tokenizer, opt['data_dir'] + '/tagging_train_%d.txt'%i, evaluation=False)
         else:
             train_batch += DataLoader(opt['data_dir'] + '/train_%d.json'%i, opt['batch_size'], opt, tokenizer, opt['data_dir'] + '/tagging_train_%d.txt'%i, evaluation=False)
