@@ -144,6 +144,11 @@ class DataLoader(object):
         for i in range(self.__len__()):
             yield self.__getitem__(i)
 
+    def __add__(self, o):
+        self.data += o.data
+        self.labels += o.labels
+        return self
+
 def map_to_ids(tokens, vocab):
     ids = [constant.SOS_ID] + [vocab[t] if t in vocab else constant.UNK_ID for t in tokens] + [constant.EOS_ID]
     return ids
