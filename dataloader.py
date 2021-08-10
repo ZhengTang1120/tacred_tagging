@@ -32,7 +32,6 @@ class DataLoader(object):
         # shuffle for training
         if not evaluation:
             indices = list(range(len(data)))
-            random.shuffle(indices)
             data = [data[i] for i in indices]
         self.id2label = dict([(v,k) for k,v in self.label2id.items()])
         self.labels = [self.id2label[d[-4]] for d in data]
@@ -143,11 +142,6 @@ class DataLoader(object):
     def __iter__(self):
         for i in range(self.__len__()):
             yield self.__getitem__(i)
-
-    def __add__(self, o):
-        self.data += o.data
-        self.labels += o.labels
-        return self
 
 def map_to_ids(tokens, vocab):
     ids = [constant.SOS_ID] + [vocab[t] if t in vocab else constant.UNK_ID for t in tokens] + [constant.EOS_ID]
