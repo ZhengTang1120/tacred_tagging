@@ -38,7 +38,7 @@ parser.add_argument('--cpu', action='store_true', help='Ignore CUDA.')
 parser.add_argument('--load', dest='load', action='store_true', help='Load pretrained model.')
 parser.add_argument('--model_file', type=str, help='Filename of the pretrained model.')
 
-parser.add_argument('--rule_num', type=str, help='number of rules being used')
+parser.add_argument('--chunk', type=str, help='number of rules being used')
 
 parser.add_argument('--device', type=int, default=0, help='gpu device to use.')
 parser.add_argument('--pooling', choices=['max', 'avg', 'sum'], default='max', help='Pooling function type. Default max.')
@@ -63,8 +63,8 @@ tokenizer = BertTokenizer.from_pretrained('SpanBERT/spanbert-large-cased')
 special_tokens_dict = {'additional_special_tokens': constant.ENTITY_TOKENS}
 num_added_toks = tokenizer.add_special_tokens(special_tokens_dict)
 
-train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer, opt['data_dir'] + '/tagging_train_%s.txt'%opt["rule_num"], evaluation=False)
-dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, tokenizer, opt['data_dir'] + '/tagging_dev.txt',  evaluation=True)
+train_batch = DataLoader(opt['data_dir'] + '/train_%s.json'%opt["chunk"], opt['batch_size'], opt, tokenizer, opt['data_dir'] + '/tagging_train_%s.txt'%opt["chunk"], evaluation=False)
+dev_batch = DataLoader(opt['data_dir'] + '/dev_%s.json'%opt["chunk"], opt['batch_size'], opt, tokenizer, opt['data_dir'] + '/tagging_dev_%s.txt'%opt["chunk"],  evaluation=True)
 
 model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
 model_save_dir = opt['save_dir'] + '/' + model_id
