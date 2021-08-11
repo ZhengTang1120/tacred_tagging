@@ -20,7 +20,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
 parser.add_argument('--model', type=str, default='best_model.pt', help='Name of the model file.')
 parser.add_argument('--data_dir', type=str, default='dataset/tacred')
-parser.add_argument('--dataset', type=str, default='test', help="Evaluate on dev or test.")
 
 parser.add_argument('--seed', type=int, default=1234)
 parser.add_argument('--cuda', type=bool, default=torch.cuda.is_available())
@@ -51,9 +50,9 @@ trainer.encoder.model.resize_token_embeddings(len(tokenizer))
 trainer.load(model_file)
 
 # load data
-data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
+data_file = opt['data_dir'] + '/dev_%s.json'%opt["chunk"]
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
-batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer,  opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset), evaluation=True)
+batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, opt['data_dir'] + '/tagging_dev_%s.txt'%opt["chunk"],  evaluation=True)
 
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
@@ -98,7 +97,7 @@ for i, p in enumerate(predictions):
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
 p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
-print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
+print("chunk {} evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(opt['chunk'],p,r,f1))
 
 print("Evaluation ended.")
 
