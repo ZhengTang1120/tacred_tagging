@@ -67,7 +67,7 @@ train_batch = DataLoader(opt['data_dir'] + '/train_%s.json'%opt["chunk"], opt['b
 dev_batch = DataLoader(opt['data_dir'] + '/dev_%s.json'%opt["chunk"], opt['batch_size'], opt, tokenizer, opt['data_dir'] + '/tagging_dev_%s.txt'%opt["chunk"],  evaluation=True)
 
 model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
-model_save_dir = opt['save_dir'] + '/' + model_id
+model_save_dir = opt['save_dir'] + '/' + model_id + '_' + opt["chunk"]
 opt['model_save_dir'] = model_save_dir
 helper.ensure_dir(model_save_dir, verbose=True)
 
