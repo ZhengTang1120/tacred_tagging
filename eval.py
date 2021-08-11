@@ -69,7 +69,7 @@ objs = []
 chunks = np.array_split(np.array(range(len(batch))),5)
 
 for x, ch in enumerate(chunks):
-    model_file = args.model_dir + '_%d/'%x + args.model
+    model_file = args.model_dir + '_%d/'%0 + args.model
     trainer = BERTtrainer(opt)
     trainer.encoder.model.resize_token_embeddings(len(tokenizer)) 
     trainer.load(model_file)
