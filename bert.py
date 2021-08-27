@@ -65,6 +65,7 @@ class Tagger(nn.Module):
                     ct.append(1)
                 cand_tags += temp
                 if len(cand_tags) > 2048:
+                    print (len(cand_tags))
                     return None, -1
             elif t > self.threshold1:
                 for ct in cand_tags:
