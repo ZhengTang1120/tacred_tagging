@@ -94,6 +94,7 @@ class BERTtrainer(Trainer):
         loss = self.criterion2(b_out, (~(labels.eq(0))).to(torch.float32).unsqueeze(1))
         h = o.pooler_output
         logits = self.classifier(h)
+        print (logits.size(), labels.size())
         loss += self.criterion(logits, labels)
         if loss != 0:
             loss_val = loss.item()
