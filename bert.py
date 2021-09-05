@@ -31,12 +31,12 @@ class BERTclassifier(nn.Module):
         self.classifier = nn.Linear(in_dim, opt['num_class'])
         self.opt = opt
 
-    def forward(self, h, masks, subj_pos, obj_pos):
-        subj_mask, obj_mask = subj_pos.eq(1000).unsqueeze(2), obj_pos.eq(1000).unsqueeze(2)
+    def forward(self, h)#, masks, subj_pos, obj_pos):
+        # subj_mask, obj_mask = subj_pos.eq(1000).unsqueeze(2), obj_pos.eq(1000).unsqueeze(2)
         
-        pool_type = self.opt['pooling']
-        out_mask = masks.unsqueeze(2).eq(0) + subj_mask + obj_mask
-        cls_out = pool(h, out_mask.eq(0), type=pool_type)
+        # pool_type = self.opt['pooling']
+        # out_mask = masks.unsqueeze(2).eq(0) + subj_mask + obj_mask
+        cls_out = h#pool(h, out_mask.eq(0), type=pool_type)
         logits = self.classifier(cls_out)
         return logits
 
