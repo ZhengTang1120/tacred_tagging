@@ -104,7 +104,7 @@ class BERTtrainer(Trainer):
         # tagging_output = self.tagger(h)
         loss = self.criterion2(b_out, (~(labels.eq(0))).to(torch.float32).unsqueeze(1))
         logits = self.classifier(h)
-        loss += self.criterion(logits, labels)
+        loss += self.criterion(logits, labels.long())
         # if epoch <= 5:
         #     for i, f in enumerate(tagged):
         #         if f:
