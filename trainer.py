@@ -110,7 +110,6 @@ class BERTtrainer(Trainer):
 
     def predict(self, batch, id2label, tokenizer, unsort=True):
         inputs, labels, tokens, subj_pos, obj_pos = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
-        tokens = tokens.data.cpu().numpy().tolist()
         orig_idx = batch[8]
         # forward
         self.encoder.eval()
@@ -126,9 +125,9 @@ class BERTtrainer(Trainer):
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
             
         if unsort:
-            _, predictions, probs, tokens, subjs, objs = [list(t) for t in zip(*sorted(zip(orig_idx,\
-                    predictions, probs, tokens, subjs, objs)))]
-        return predictions, tokens, subjs, objs
+            _, predictions, probs = [list(t) for t in zip(*sorted(zip(orig_idx,\
+                    predictions, probs)))]
+        return predictions
 
 
 
