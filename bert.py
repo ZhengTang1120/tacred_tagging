@@ -33,7 +33,7 @@ class BERTclassifier(nn.Module):
 
     def forward(self, h, masks, subj_pos, obj_pos):
         subj_mask, obj_mask = subj_pos.eq(1000).unsqueeze(2), obj_pos.eq(1000).unsqueeze(2)
-        print (masks.device(), subj_mask.device())
+        print (masks.device, subj_mask.device)
         pool_type = self.opt['pooling']
         out_mask = masks.unsqueeze(2).eq(0) + subj_mask + obj_mask
         cls_out = pool(h, out_mask.eq(0), type=pool_type)
