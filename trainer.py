@@ -97,7 +97,7 @@ class BERTtrainer(Trainer):
         loss = 0
         h, b_out = self.encoder(inputs)
         loss = self.criterion2(b_out, (~(labels.eq(0))).to(torch.float32).unsqueeze(1))
-        if opt['mask'] == 1:
+        if self.opt['mask'] == 1:
             mask = ent_pos.ge(1)
             print (ent_pos[0])
             print (mask[0])
@@ -124,6 +124,14 @@ class BERTtrainer(Trainer):
         # forward
         self.encoder.eval()
         self.classifier.eval()
+        if self.opt['mask'] == 1:
+            mask = ent_pos.ge(1)
+            print (ent_pos[0])
+            print (mask[0])
+        else:
+            mask = ent_pos.eq(4)
+            print (ent_pos[0])
+            print (mask[0])
         h, b_out = self.encoder(inputs)
         logits = self.classifier(h, mask, inputs[3], inputs[4])
         loss = self.criterion(logits, labels)
