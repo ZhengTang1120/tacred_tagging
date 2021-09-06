@@ -62,8 +62,7 @@ def unpack_batch(batch, cuda, device):
     tokens = batch[0]
     subj_pos = batch[3]
     obj_pos = batch[4]
-    ent_pos = batch[2]
-    return inputs, labels, tokens, subj_pos, obj_pos, ent_pos
+    return inputs, labels, tokens, subj_pos, obj_pos
 
 class BERTtrainer(Trainer):
     def __init__(self, opt):
@@ -84,7 +83,7 @@ class BERTtrainer(Trainer):
         )
     
     def update(self, batch, epoch):
-        inputs, labels, tokens, subj_pos, obj_pos, ent_pos = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels, tokens, subj_pos, obj_pos = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
 
         # step forward
         self.encoder.train()
@@ -95,9 +94,9 @@ class BERTtrainer(Trainer):
         h, b_out = self.encoder(inputs)
         loss = self.criterion2(b_out, (~(labels.eq(0))).to(torch.float32).unsqueeze(1))
         if self.opt['mask'] == 1:
-            mask = ent_pos.ge(1)
+            mask = inputs[2].ge(1)
         else:
-            mask = ent_pos.eq(4)
+            mask = inputs[2].eq(4)
         logits = self.classifier(h, mask, inputs[3], inputs[4])
         loss += self.criterion(logits, labels.long())
         if loss != 0:
@@ -110,16 +109,16 @@ class BERTtrainer(Trainer):
         return loss_val
 
     def predict(self, batch, id2label, tokenizer, unsort=True):
-        inputs, labels, tokens, subj_pos, obj_pos, ent_pos = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels, tokens, subj_pos, obj_pos = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
         tokens = tokens.data.cpu().numpy().tolist()
         orig_idx = batch[8]
         # forward
         self.encoder.eval()
         self.classifier.eval()
         if self.opt['mask'] == 1:
-            mask = ent_pos.ge(1)
+            mask = inputs[2].ge(1)
         else:
-            mask = ent_pos.eq(4)
+            mask = inputs[2].eq(4)
         h, b_out = self.encoder(inputs)
         logits = self.classifier(h, mask, inputs[3], inputs[4])
         loss = self.criterion(logits, labels)
