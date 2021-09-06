@@ -52,21 +52,18 @@ class Trainer(object):
 
 
 def unpack_batch(batch, cuda, device):
-    rules = None
     if cuda:
         with torch.cuda.device(device):
             inputs = [batch[0].to('cuda')] + [Variable(b.cuda()) for b in batch[1:7]]
             labels = Variable(batch[7].cuda())
-            rules  = Variable(batch[9]).cuda()
     else:
         inputs = [Variable(b) for b in batch[:7]]
         labels = Variable(batch[7])
-        rules  = Variable(batch[9])
     tokens = batch[0]
     subj_pos = batch[3]
     obj_pos = batch[4]
     ent_pos = batch[2]
-    return inputs, labels, rules, tokens, subj_pos, obj_pos, ent_pos
+    return inputs, labels, tokens, subj_pos, obj_pos, ent_pos
 
 class BERTtrainer(Trainer):
     def __init__(self, opt):
@@ -87,7 +84,7 @@ class BERTtrainer(Trainer):
         )
     
     def update(self, batch, epoch):
-        inputs, labels, rules, tokens, subj_pos, obj_pos, ent_pos = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels, tokens, subj_pos, obj_pos, ent_pos = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
 
         # step forward
         self.encoder.train()
@@ -99,12 +96,8 @@ class BERTtrainer(Trainer):
         loss = self.criterion2(b_out, (~(labels.eq(0))).to(torch.float32).unsqueeze(1))
         if self.opt['mask'] == 1:
             mask = ent_pos.ge(1)
-            print (ent_pos[0])
-            print (mask[0])
         else:
             mask = ent_pos.eq(4)
-            print (ent_pos[0])
-            print (mask[0])
         logits = self.classifier(h, mask, inputs[3], inputs[4])
         loss += self.criterion(logits, labels.long())
         if loss != 0:
@@ -117,8 +110,7 @@ class BERTtrainer(Trainer):
         return loss_val
 
     def predict(self, batch, id2label, tokenizer, unsort=True):
-        inputs, labels, rules, tokens, subj_pos, obj_pos, ent_pos = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
-        rules = rules.data.cpu().numpy().tolist()
+        inputs, labels, tokens, subj_pos, obj_pos, ent_pos = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
         tokens = tokens.data.cpu().numpy().tolist()
         orig_idx = batch[8]
         # forward
@@ -126,12 +118,8 @@ class BERTtrainer(Trainer):
         self.classifier.eval()
         if self.opt['mask'] == 1:
             mask = ent_pos.ge(1)
-            print (ent_pos[0])
-            print (mask[0])
         else:
             mask = ent_pos.eq(4)
-            print (ent_pos[0])
-            print (mask[0])
         h, b_out = self.encoder(inputs)
         logits = self.classifier(h, mask, inputs[3], inputs[4])
         loss = self.criterion(logits, labels)
