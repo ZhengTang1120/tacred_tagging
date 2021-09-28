@@ -81,7 +81,7 @@ class DataLoader(object):
             tokens = ['[CLS]'] + tokens
             words = ['[CLS]'] + words
             ner = ['CLS'] + ner
-            relation = self.label2id[d['relation']]
+            relation = self.label2id['no_relation']
             if has_tag:
                 tagging = [0 if i not in tagged else 1 for i in range(len(tokens))]
             else:
