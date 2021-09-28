@@ -67,7 +67,7 @@ class DataLoader(object):
             tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
             # ol, tagged = tagged_ids[c].split('\t')
             # tagged = eval(tagged)
-            # ner = d['stanford_ner']
+            ner = d['stanford_ner']
             # if len(tagged)!=0 and d['relation'] != 'no_relation' and d['relation'] == ol:
             #     for i in range(len(tagged)):
             #         tagged[i] += 1
