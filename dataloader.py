@@ -64,7 +64,7 @@ class DataLoader(object):
             tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
             tokens = ['[CLS]'] + tokens
             words = ['[CLS]'] + words
-            relation = self.label2id[d['relation']]
+            relation = "no_relation"#self.label2id[d['relation']]
             l = len(tokens)
             for i in range(l):
                 if tokens[i] == '-LRB-':
