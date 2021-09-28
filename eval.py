@@ -53,7 +53,7 @@ trainer.load(model_file)
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
-batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer,  opt['data_dir'] + '/tagging_dev.txt', evaluation=True)
+batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer,  opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset), evaluation=True)
 
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
@@ -95,11 +95,10 @@ for i, p in enumerate(predictions):
                 # print (id2label[p], batch.gold()[i])
                 # print ([(tags[i][j], batch.words[i][j])for j in range(len(inputs[i])) if inputs[i][j] != '[PAD]'])
                 # print ()
-        print (predictions[i])
-# with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
-#     f.write(json.dumps(output))
-# p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
-# print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
+with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
+    f.write(json.dumps(output))
+p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
+print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
 
-# print("Evaluation ended.")
+print("Evaluation ended.")
 

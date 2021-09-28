@@ -48,8 +48,8 @@ class DataLoader(object):
         """ Preprocess the data and convert to ids. """
         processed = []
         processed_rule = []
-        # with open(self.tagging) as f:
-        #     tagged_ids = f.readlines()
+        with open(self.tagging) as f:
+            tagged_ids = f.readlines()
         for c, d in enumerate(data):
             tokens = list(d['token'])
             words  = list(d['token'])
@@ -65,23 +65,21 @@ class DataLoader(object):
             os, oe = d['obj_start'], d['obj_end']
             tokens[ss:se+1] = ['[SUBJ-'+d['subj_type']+']'] * (se-ss+1)
             tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
-            # ol, tagged = tagged_ids[c].split('\t')
-            # tagged = eval(tagged)
+            ol, tagged = tagged_ids[c].split('\t')
+            tagged = eval(tagged)
             ner = d['stanford_ner']
-            # if len(tagged)!=0 and d['relation'] != 'no_relation' and d['relation'] == ol:
-            #     for i in range(len(tagged)):
-            #         tagged[i] += 1
-            #     has_tag = True
-            # else:
-            #     tagged = []
-            #     pattern = ''
-            #     has_tag = False
-            tagged = []
-            has_tag = False
+            if len(tagged)!=0 and d['relation'] != 'no_relation' and d['relation'] == ol:
+                for i in range(len(tagged)):
+                    tagged[i] += 1
+                has_tag = True
+            else:
+                tagged = []
+                pattern = ''
+                has_tag = False
             tokens = ['[CLS]'] + tokens
             words = ['[CLS]'] + words
             ner = ['CLS'] + ner
-            relation = self.label2id['no_relation']
+            relation = self.label2id[d['relation']]
             if has_tag:
                 tagging = [0 if i not in tagged else 1 for i in range(len(tokens))]
             else:
