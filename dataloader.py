@@ -50,18 +50,13 @@ class DataLoader(object):
         for c, d in enumerate(data):
             tokens = list()#(d['token'])
             words  = list(d['token'])
-            for i in range(len(words)):
-                if words[i].lower() == '-lrb-':
-                    words[i] = '('
-                if words[i].lower() == '-rrb-':
-                    words[i] = ')'
-            if opt['lower']:
-                tokens = [t.lower() for t in tokens]
+            # if opt['lower']:
+            #     tokens = [t.lower() for t in tokens]
             # anonymize tokens
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
 
-            for i, t in words:
+            for i, t in enumerate(words):
                 if i == ss:
                     tokens.append('[SUBJ-'+d['subj_type']+']')
                 if i == os:
