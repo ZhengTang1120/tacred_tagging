@@ -16,7 +16,8 @@ class BERTencoder(nn.Module):
 
     def forward(self, inputs):
         words = inputs[0]
-        outputs = self.model(words, output_attentions=True)
+        mask = inputs[1]
+        outputs = self.model(words, attention_mask=mask, output_attentions=True)
         # h = outputs.last_hidden_state
         out = torch.sigmoid(self.classifier(outputs.pooler_output))
         
@@ -27,9 +28,10 @@ class BERTclassifier(nn.Module):
         super().__init__()
         in_dim = 1024
         self.classifier = nn.Linear(in_dim, opt['num_class'])
+        self.dropout = nn.Dropout(constant.DROPOUT_PROB)
         self.opt = opt
 
     def forward(self, h):
-        cls_out = h#pool(h, out_mask.eq(0), type=pool_type)
+        cls_out = self.dropout(h)#pool(h, out_mask.eq(0), type=pool_type)
         logits = self.classifier(cls_out)
         return logits

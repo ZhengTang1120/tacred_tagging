@@ -70,7 +70,7 @@ class DataLoader(object):
                 else:
                     t = convert_token(t)
                     for sub_token in self.tokenizer.tokenize(t):
-                        tokens.append(sub_token)
+                        tokens.append(self.tokenizer.convert_tokens_to_ids(sub_token))
             # tokens[ss:se+1] = ['[SUBJ-'+d['subj_type']+']'] * (se-ss+1)
             # tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
             # tokens = ['[CLS]'] + tokens
@@ -83,7 +83,8 @@ class DataLoader(object):
             #     if tokens[i].lower() == '-rrb-':
             #         tokens[i] = ')'
             # tokens = self.tokenizer.convert_tokens_to_ids(tokens)
-            processed += [(tokens, relation, words)]
+            mask = [1] * len(tokens)
+            processed += [(tokens, mask, relation, words)]
         return processed
 
     def gold(self):
@@ -109,13 +110,15 @@ class DataLoader(object):
         batch, orig_idx = sort_all(batch, lens)
         # word dropout
         words = batch[0]
+        mask = batch[1]
         # convert to tensors
         words = get_long_tensor(words, batch_size)
+        mask = get_long_tensor(mask, batch_size)
         # words = self.tokenizer(batch[0], is_split_into_words=True, padding=True, truncation=True, return_tensors="pt")
 
-        rels = torch.LongTensor(batch[1])#
+        rels = torch.LongTensor(batch[2])#
 
-        return (words, rels, orig_idx)
+        return (words, mask, rels, orig_idx)
 
     def __iter__(self):
         for i in range(self.__len__()):
