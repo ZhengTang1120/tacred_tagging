@@ -59,8 +59,8 @@ elif args.cuda:
 
 tokenizer = BertTokenizer.from_pretrained('./spanbert_hf/', local_files_only=True)
 
-train_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, tokenizer, evaluation=False)
-dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, tokenizer,  evaluation=True)
+train_batch = DataLoader(opt['data_dir'] + '/sample.json', opt['batch_size'], opt, tokenizer, evaluation=False)
+dev_batch = DataLoader(opt['data_dir'] + '/sample.json', opt['batch_size'], opt, tokenizer,  evaluation=True)
 
 model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
 model_save_dir = opt['save_dir'] + '/' + model_id
