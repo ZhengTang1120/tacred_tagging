@@ -44,6 +44,8 @@ class DataLoader(object):
         print("{} batches created for {}".format(len(self.data), filename))
 
     def preprocess(self, data, opt):
+
+
         """ Preprocess the data and convert to ids. """
         processed = []
         processed_rule = []
@@ -58,9 +60,9 @@ class DataLoader(object):
 
             for i, t in enumerate(words):
                 if i == ss:
-                    tokens.append('[SUBJ-'+d['subj_type']+']')
+                    tokens.append("[unused%d]"%ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']'])
                 if i == os:
-                    tokens.append('[OBJ-'+d['obj_type']+']')
+                    tokens.append("[unused%d]"%ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']'])
                 if i>=ss and i<=se:
                     pass
                 elif i>=os and i<=oe:
@@ -81,9 +83,6 @@ class DataLoader(object):
             #     if tokens[i].lower() == '-rrb-':
             #         tokens[i] = ')'
             # tokens = self.tokenizer.convert_tokens_to_ids(tokens)
-            print (tokens)
-            print (words)
-            print ()
             processed += [(tokens, relation, words)]
         return processed
 
