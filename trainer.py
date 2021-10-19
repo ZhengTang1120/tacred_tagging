@@ -78,6 +78,7 @@ class BERTtrainer(Trainer):
         self.optimizer = AdamW(
             self.parameters,
             lr=opt['lr'],
+            weight_decay=0.01
         )
     
     def update(self, batch, epoch):

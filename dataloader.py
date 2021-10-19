@@ -51,9 +51,9 @@ class DataLoader(object):
             tokens = list(d['token'])
             words  = list(d['token'])
             for i in range(len(words)):
-                if words[i] == '-LRB-':
+                if words[i].lower() == '-lrb-':
                     words[i] = '('
-                if words[i] == '-RRB-':
+                if words[i].lower() == '-rrb-':
                     words[i] = ')'
             if opt['lower']:
                 tokens = [t.lower() for t in tokens]
@@ -67,9 +67,9 @@ class DataLoader(object):
             relation = self.label2id["no_relation"]#self.label2id[d['relation']]
             l = len(tokens)
             for i in range(l):
-                if tokens[i] == '-LRB-':
+                if tokens[i].lower() == '-lrb-':
                     tokens[i] = '('
-                if tokens[i] == '-RRB-':
+                if tokens[i].lower() == '-rrb-':
                     tokens[i] = ')'
             tokens = self.tokenizer.convert_tokens_to_ids(tokens)
             processed += [(tokens, relation, words)]
