@@ -48,7 +48,7 @@ class DataLoader(object):
         processed = []
         processed_rule = []
         for c, d in enumerate(data):
-            tokens = list(d['token'])
+            tokens = list()#(d['token'])
             words  = list(d['token'])
             for i in range(len(words)):
                 if words[i].lower() == '-lrb-':
@@ -60,18 +60,35 @@ class DataLoader(object):
             # anonymize tokens
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
-            tokens[ss:se+1] = ['[SUBJ-'+d['subj_type']+']'] * (se-ss+1)
-            tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
-            tokens = ['[CLS]'] + tokens
-            words = ['[CLS]'] + words
-            relation = self.label2id[d['relation']]
-            l = len(tokens)
-            for i in range(l):
-                if tokens[i].lower() == '-lrb-':
-                    tokens[i] = '('
-                if tokens[i].lower() == '-rrb-':
-                    tokens[i] = ')'
-            tokens = self.tokenizer.convert_tokens_to_ids(tokens)
+
+            for i, t in words:
+                if i == ss:
+                    tokens.append('[SUBJ-'+d['subj_type']+']')
+                if i == os:
+                    tokens.append('[OBJ-'+d['obj_type']+']')
+                if i>=ss and i<=se:
+                    pass
+                elif i>=os and i<=oe:
+                    pass
+                else:
+                    t = convert_token(t)
+                    for sub_token in tokenizer.tokenize(t):
+                        tokens.append(sub_token)
+            # tokens[ss:se+1] = ['[SUBJ-'+d['subj_type']+']'] * (se-ss+1)
+            # tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
+            # tokens = ['[CLS]'] + tokens
+            # words = ['[CLS]'] + words
+            # relation = self.label2id[d['relation']]
+            # l = len(tokens)
+            # for i in range(l):
+            #     if tokens[i].lower() == '-lrb-':
+            #         tokens[i] = '('
+            #     if tokens[i].lower() == '-rrb-':
+            #         tokens[i] = ')'
+            # tokens = self.tokenizer.convert_tokens_to_ids(tokens)
+            print (tokens)
+            print (words)
+            print ()
             processed += [(tokens, relation, words)]
         return processed
 
@@ -123,3 +140,19 @@ def sort_all(batch, lens):
     unsorted_all = [lens] + [range(len(lens))] + list(batch)
     sorted_all = [list(t) for t in zip(*sorted(zip(*unsorted_all), reverse=True))]
     return sorted_all[2:], sorted_all[1]
+
+def convert_token(token):
+    """ Convert PTB tokens to normal tokens """
+    if (token.lower() == '-lrb-'):
+            return '('
+    elif (token.lower() == '-rrb-'):
+        return ')'
+    elif (token.lower() == '-lsb-'):
+        return '['
+    elif (token.lower() == '-rsb-'):
+        return ']'
+    elif (token.lower() == '-lcb-'):
+        return '{'
+    elif (token.lower() == '-rcb-'):
+        return '}'
+    return token
