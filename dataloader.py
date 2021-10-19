@@ -60,9 +60,9 @@ class DataLoader(object):
 
             for i, t in enumerate(words):
                 if i == ss:
-                    tokens.append("[unused%d]"%ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']'])
+                    tokens.append("[unused%d]"%constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']'])
                 if i == os:
-                    tokens.append("[unused%d]"%ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']'])
+                    tokens.append("[unused%d]"%constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']'])
                 if i>=ss and i<=se:
                     pass
                 elif i>=os and i<=oe:
