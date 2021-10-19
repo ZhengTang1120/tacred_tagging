@@ -50,8 +50,8 @@ class DataLoader(object):
         for c, d in enumerate(data):
             tokens = list()#(d['token'])
             words  = list(d['token'])
-            # if opt['lower']:
-            #     tokens = [t.lower() for t in tokens]
+            if opt['lower']:
+                tokens = [t.lower() for t in tokens]
             # anonymize tokens
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
