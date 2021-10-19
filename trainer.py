@@ -99,6 +99,8 @@ class BERTtrainer(Trainer):
             self.optimizer.step()
         else:
             loss_val = 0
+        h = None
+        logits = None
         return loss_val
 
     def predict(self, batch, id2label, tokenizer, unsort=True):
