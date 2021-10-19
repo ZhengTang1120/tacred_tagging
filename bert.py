@@ -12,16 +12,13 @@ class BERTencoder(nn.Module):
         super().__init__()
         in_dim = 1024
         self.model = BertModel.from_pretrained("SpanBERT/spanbert-large-cased")
-        self.classifier = nn.Linear(in_dim, 1)
 
     def forward(self, inputs):
         words = inputs[0]
         mask = inputs[1]
         outputs = self.model(words, attention_mask=mask, output_attentions=True)
-        # h = outputs.last_hidden_state
-        out = torch.sigmoid(self.classifier(outputs.pooler_output))
         
-        return outputs, out
+        return outputs.pooler_output
 
 class BERTclassifier(nn.Module):
     def __init__(self, opt):

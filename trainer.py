@@ -90,7 +90,6 @@ class BERTtrainer(Trainer):
 
         loss = 0
         o, b_out = self.encoder(inputs)
-        h = o.pooler_output
         logits = self.classifier(h)
         loss += self.criterion(logits, labels)
         if loss != 0:
@@ -112,7 +111,6 @@ class BERTtrainer(Trainer):
         a = o.attentions
         a = a[-1]#.data.cpu().numpy()
         # print (a.size())
-        h = o.pooler_output
         logits = self.classifier(h)
         loss = self.criterion(logits, labels)
         probs = F.softmax(logits, 1)
