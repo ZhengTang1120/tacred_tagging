@@ -89,7 +89,7 @@ class BERTtrainer(Trainer):
         self.optimizer.zero_grad()
 
         loss = 0
-        o, b_out = self.encoder(inputs)
+        h = self.encoder(inputs)
         logits = self.classifier(h)
         loss += self.criterion(logits, labels)
         if loss != 0:
@@ -107,10 +107,7 @@ class BERTtrainer(Trainer):
         # forward
         self.encoder.eval()
         self.classifier.eval()
-        o, b_out = self.encoder(inputs)
-        a = o.attentions
-        a = a[-1]#.data.cpu().numpy()
-        # print (a.size())
+        h = self.encoder(inputs)
         logits = self.classifier(h)
         loss = self.criterion(logits, labels)
         probs = F.softmax(logits, 1)
