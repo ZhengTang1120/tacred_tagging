@@ -86,8 +86,6 @@ else:
     trainer = BERTtrainer(model_opt)
     trainer.load(model_file)  
 
-trainer.encoder.model.resize_token_embeddings(len(tokenizer)) 
-
 id2label = dict([(v,k) for k,v in label2id.items()])
 dev_score_history = []
 current_lr = opt['lr']
