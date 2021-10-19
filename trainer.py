@@ -77,8 +77,7 @@ class BERTtrainer(Trainer):
                 self.criterion.cuda()
         self.optimizer = AdamW(
             self.parameters,
-            lr=opt['lr'],
-            weight_decay=0.01
+            lr=opt['lr']
         )
     
     def update(self, batch, epoch):
