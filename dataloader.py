@@ -51,18 +51,18 @@ class DataLoader(object):
         processed_rule = []
         for c, d in enumerate(data):
             tokens = list()#(d['token'])
-            words  = list(d['token'])
-            if opt['lower']:
-                tokens = [t.lower() for t in tokens]
+            words  = list()#(d['token'])
+            # if opt['lower']:
+            #     tokens = [t.lower() for t in tokens]
             # anonymize tokens
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
 
-            for i, t in enumerate(words):
+            for i, t in enumerate(d['token']):
                 if i == ss:
-                    tokens.append("[unused%d]"%constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']'])
+                    words.append("[unused%d]"%constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']'])
                 if i == os:
-                    tokens.append("[unused%d]"%constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']'])
+                    words.append("[unused%d]"%constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']'])
                 if i>=ss and i<=se:
                     pass
                 elif i>=os and i<=oe:
@@ -70,7 +70,7 @@ class DataLoader(object):
                 else:
                     t = convert_token(t)
                     for sub_token in self.tokenizer.tokenize(t):
-                        tokens.append(self.tokenizer.convert_tokens_to_ids(sub_token))
+                        words.append(sub_token)
             # tokens[ss:se+1] = ['[SUBJ-'+d['subj_type']+']'] * (se-ss+1)
             # tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
             # tokens = ['[CLS]'] + tokens
@@ -83,6 +83,7 @@ class DataLoader(object):
             #     if tokens[i].lower() == '-rrb-':
             #         tokens[i] = ')'
             # tokens = self.tokenizer.convert_tokens_to_ids(tokens)
+            tokens = [self.tokenizer.convert_tokens_to_ids(w) for w in words]
             mask = [1] * len(tokens)
             processed += [(tokens, mask, relation, words)]
         return processed
