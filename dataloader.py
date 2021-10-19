@@ -84,6 +84,8 @@ class DataLoader(object):
             #         tokens[i] = ')'
             # tokens = self.tokenizer.convert_tokens_to_ids(tokens)
             tokens = [self.tokenizer.convert_tokens_to_ids(w) for w in words]
+            if len(tokens) > 128:
+                tokens = tokens[:128]
             mask = [1] * len(tokens)
             processed += [(tokens, mask, relation, words)]
         return processed
