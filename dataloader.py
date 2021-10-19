@@ -67,7 +67,7 @@ class DataLoader(object):
                     pass
                 else:
                     t = convert_token(t)
-                    for sub_token in tokenizer.tokenize(t):
+                    for sub_token in self.tokenizer.tokenize(t):
                         tokens.append(sub_token)
             # tokens[ss:se+1] = ['[SUBJ-'+d['subj_type']+']'] * (se-ss+1)
             # tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
