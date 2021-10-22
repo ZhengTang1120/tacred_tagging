@@ -10,8 +10,7 @@ from utils import constant, torch_utils
 class BERTencoder(nn.Module):
     def __init__(self):
         super().__init__()
-        in_dim = 1024
-        self.model = BertModel.from_pretrained("SpanBERT/spanbert-large-cased")
+        self.model = BertModel.from_pretrained("./spanbert_hf/")
 
     def forward(self, inputs):
         words = inputs[0]
