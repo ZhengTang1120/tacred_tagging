@@ -110,10 +110,11 @@ class BERTtrainer(Trainer):
         self.classifier.eval()
         h = self.encoder(inputs)
         logits = self.classifier(h)
+        loss = self.criterion(logits, labels).item()
         probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         
         if unsort:
             _, predictions, probs = [list(t) for t in zip(*sorted(zip(orig_idx,\
                     predictions, probs)))]
-        return predictions
+        return predictions, loss

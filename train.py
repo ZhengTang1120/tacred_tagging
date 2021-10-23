@@ -31,7 +31,7 @@ parser.add_argument('--save_dir', type=str, default='./saved_models', help='Root
 parser.add_argument('--id', type=str, default='00', help='Model ID under which to save models.')
 parser.add_argument('--info', type=str, default='', help='Optional info for the experiment.')
 
-parser.add_argument('--seed', type=int, default=1234)
+parser.add_argument('--seed', type=int, default=42)
 parser.add_argument('--cuda', type=bool, default=torch.cuda.is_available())
 parser.add_argument('--cpu', action='store_true', help='Ignore CUDA.')
 
@@ -109,13 +109,13 @@ for epoch in range(1, opt['num_epoch']+1):
                     opt['num_epoch'], loss, duration, current_lr))
 
     # eval on dev
-    x = 0
     print("Evaluating on dev set...")
     predictions = []
     dev_loss = 0
     for _, batch in enumerate(dev_batch):
-        preds = trainer.predict(batch, id2label, tokenizer)
+        preds, dloss = trainer.predict(batch, id2label, tokenizer)
         predictions += preds
+        dev_loss += dloss
     predictions = [id2label[p] for p in predictions]
     train_loss = train_loss / train_batch.num_examples * opt['batch_size'] # avg loss per batch
     dev_loss = dev_loss / dev_batch.num_examples * opt['batch_size']
@@ -138,6 +138,7 @@ for epoch in range(1, opt['num_epoch']+1):
         os.remove(model_file)
 
     # lr schedule
+    print (dev_score, dev_score_history)
     if len(dev_score_history) > opt['decay_epoch'] and dev_score <= dev_score_history[-1]:
         current_lr *= opt['lr_decay']
         trainer.update_lr(current_lr)
