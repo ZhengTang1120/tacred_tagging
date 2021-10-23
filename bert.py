@@ -15,7 +15,8 @@ class BERTencoder(nn.Module):
     def forward(self, inputs):
         words = inputs[0]
         mask = inputs[1]
-        outputs = self.model(words, attention_mask=mask, output_attentions=True)
+        segment_ids = inputs[2]
+        outputs = self.model(words, attention_mask=mask, token_type_ids=segment_ids)
         
         return outputs.pooler_output
 
