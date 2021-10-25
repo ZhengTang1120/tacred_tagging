@@ -123,7 +123,7 @@ for epoch in range(1, opt['num_epoch']+1):
         predictions += preds
         dev_loss += dloss
     predictions = [id2label[p] for p in predictions]
-    train_loss = train_loss / train_batch.num_examples * opt['batch_size'] # avg loss per batch
+    train_loss = train_loss / train_num_example * opt['batch_size'] # avg loss per batch
     dev_loss = dev_loss / dev_batch.num_examples * opt['batch_size']
 
     dev_p, dev_r, dev_f1 = scorer.score(dev_batch.gold(), predictions)
