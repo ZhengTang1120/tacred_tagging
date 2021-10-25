@@ -124,7 +124,7 @@ class BERTtrainer(Trainer):
         h = self.encoder(inputs)
         logits = self.classifier(h)
         loss = self.criterion(logits, labels).item()
-        probs = F.softmax(logits, 1)
+        # probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         
         if unsort:
