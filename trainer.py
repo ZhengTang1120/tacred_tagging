@@ -11,8 +11,7 @@ import numpy as np
 from bert import BERTencoder, BERTclassifier
 from utils import constant, torch_utils
 
-from transformers import AdamW
-from transformers.optimization import get_linear_scheduler_with_warmup
+from transformers import AdamW, get_linear_scheduler_with_warmup
 
 class Trainer(object):
     def __init__(self, opt):
@@ -69,7 +68,7 @@ class BERTtrainer(Trainer):
         self.encoder = BERTencoder()
         self.classifier = BERTclassifier(opt)
         self.criterion = nn.CrossEntropyLoss()
-        
+
         param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())
         no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
         optimizer_grouped_parameters = [
