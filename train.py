@@ -75,6 +75,11 @@ file_logger = helper.FileLogger(model_save_dir + '/' + opt['log'], header="# epo
 # print model info
 helper.print_config(opt)
 
+global_step = 0
+format_str = '{}: step {}/{} (epoch {}/{}), loss = {:.6f} ({:.3f} sec/batch), lr: {:.6f}'
+max_steps = len(train_batch) * opt['num_epoch']
+opt['steps'] = max_steps
+
 # model
 if not opt['load']:
     trainer = BERTtrainer(opt)
@@ -90,11 +95,6 @@ else:
 id2label = dict([(v,k) for k,v in label2id.items()])
 dev_score_history = []
 current_lr = opt['lr']
-
-global_step = 0
-format_str = '{}: step {}/{} (epoch {}/{}), loss = {:.6f} ({:.3f} sec/batch), lr: {:.6f}'
-max_steps = len(train_batch) * opt['num_epoch']
-opt['steps'] = max_steps
 
 # start training
 for epoch in range(1, opt['num_epoch']+1):
