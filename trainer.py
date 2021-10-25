@@ -23,9 +23,6 @@ class Trainer(object):
     def predict(self, batch):
         raise NotImplementedError
 
-    def update_lr(self, new_lr):
-        torch_utils.change_lr(self.optimizer, new_lr)
-
     def load(self, filename):
         try:
             checkpoint = torch.load(filename)
