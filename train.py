@@ -139,12 +139,6 @@ for epoch in range(1, opt['num_epoch']+1):
     if epoch % opt['save_epoch'] != 0:
         os.remove(model_file)
 
-    # lr schedule
-    print (dev_score, dev_score_history)
-    if len(dev_score_history) > opt['decay_epoch'] and dev_score <= dev_score_history[-1]:
-        current_lr *= opt['lr_decay']
-        trainer.update_lr(current_lr)
-
     dev_score_history += [dev_score]
     print("")
 
