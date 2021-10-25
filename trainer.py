@@ -11,7 +11,7 @@ import numpy as np
 from bert import BERTencoder, BERTclassifier
 from utils import constant, torch_utils
 
-from transformers import AdamW, get_linear_scheduler_with_warmup
+from transformers import AdamW, get_linear_schedule_with_warmup
 
 class Trainer(object):
     def __init__(self, opt):
