@@ -60,7 +60,9 @@ elif args.cuda:
 
 tokenizer = BertTokenizer.from_pretrained('./spanbert_hf/', local_files_only=True)
 
-train_batch = list(DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer))
+train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer)
+train_num_example = train_batch.num_examples
+train_batch = list(train_batch)
 dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, tokenizer)
 
 model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
@@ -78,6 +80,7 @@ helper.print_config(opt)
 global_step = 0
 format_str = '{}: step {}/{} (epoch {}/{}), loss = {:.6f} ({:.3f} sec/batch), lr: {:.6f}'
 max_steps = len(train_batch) * opt['num_epoch']
+
 opt['steps'] = max_steps
 
 # model
