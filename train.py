@@ -60,8 +60,8 @@ elif args.cuda:
 
 tokenizer = BertTokenizer.from_pretrained('./spanbert_hf/', local_files_only=True)
 
-train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer, evaluation=False)
-dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, tokenizer,  evaluation=True)
+train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer)
+dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, tokenizer)
 
 model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
 model_save_dir = opt['save_dir'] + '/' + model_id
@@ -99,6 +99,7 @@ current_lr = opt['lr']
 # start training
 for epoch in range(1, opt['num_epoch']+1):
     train_loss = 0
+    random.shuffle(train_batch)
     for i, batch in enumerate(train_batch):
         start_time = time.time()
         global_step += 1

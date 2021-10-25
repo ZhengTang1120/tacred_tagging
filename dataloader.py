@@ -17,7 +17,7 @@ class DataLoader(object):
     """
     Load data from json files, preprocess and prepare batches.
     """
-    def __init__(self, filename, batch_size, opt, tokenizer, evaluation=False):
+    def __init__(self, filename, batch_size, opt, tokenizer):
         self.batch_size = batch_size
         self.opt = opt
         self.eval = evaluation
@@ -28,11 +28,7 @@ class DataLoader(object):
             data = json.load(infile)
         data = self.preprocess(data, opt)
 
-        # shuffle for training
-        if not evaluation:
-            indices = list(range(len(data)))
-            random.shuffle(indices)
-            data = [data[i] for i in indices]
+        
         self.id2label = dict([(v,k) for k,v in self.label2id.items()])
         self.labels = [self.id2label[d[-2]] for d in data]
         self.words = [d[-1] for d in data]
@@ -50,10 +46,8 @@ class DataLoader(object):
         processed = []
         processed_rule = []
         for c, d in enumerate(data):
-            tokens = list()#(d['token'])
-            words  = list()#(d['token'])
-            # if opt['lower']:
-            #     tokens = [t.lower() for t in tokens]
+            tokens = list()
+            words  = list()
             # anonymize tokens
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
@@ -71,18 +65,8 @@ class DataLoader(object):
                     t = convert_token(t)
                     for sub_token in self.tokenizer.tokenize(t):
                         words.append(sub_token)
-            # tokens[ss:se+1] = ['[SUBJ-'+d['subj_type']+']'] * (se-ss+1)
-            # tokens[os:oe+1] = ['[OBJ-'+d['obj_type']+']'] * (oe-os+1)
-            tokens = ['[CLS]'] + tokens
-            # words = ['[CLS]'] + words
+            words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
-            # l = len(tokens)
-            # for i in range(l):
-            #     if tokens[i].lower() == '-lrb-':
-            #         tokens[i] = '('
-            #     if tokens[i].lower() == '-rrb-':
-            #         tokens[i] = ')'
-            # tokens = self.tokenizer.convert_tokens_to_ids(tokens)
             tokens = [self.tokenizer.convert_tokens_to_ids(w) for w in words]
             if len(tokens) > 128:
                 tokens = tokens[:128]
@@ -109,7 +93,7 @@ class DataLoader(object):
         batch = list(zip(*batch))
         
 
-        # sort all fields by lens for easy RNN operations
+        # sort all fields by lens
         lens = [len(x) for x in batch[0]]
         batch, orig_idx = sort_all(batch, lens)
         # word dropout
@@ -120,7 +104,6 @@ class DataLoader(object):
         words = get_long_tensor(words, batch_size)
         mask = get_long_tensor(mask, batch_size)
         segment_ids = get_long_tensor(segment_ids, batch_size)
-        # words = self.tokenizer(batch[0], is_split_into_words=True, padding=True, truncation=True, return_tensors="pt")
 
         rels = torch.LongTensor(batch[-2])#
 

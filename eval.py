@@ -50,7 +50,7 @@ trainer.load(model_file)
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
-batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, evaluation=True)
+batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer)
 
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
