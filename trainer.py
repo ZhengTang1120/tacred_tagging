@@ -12,6 +12,7 @@ from bert import BERTencoder, BERTclassifier
 from utils import constant, torch_utils
 
 from transformers import AdamW
+from transformers.optimization import get_linear_scheduler_with_warmup
 
 class Trainer(object):
     def __init__(self, opt):
@@ -68,16 +69,31 @@ class BERTtrainer(Trainer):
         self.encoder = BERTencoder()
         self.classifier = BERTclassifier(opt)
         self.criterion = nn.CrossEntropyLoss()
-        self.parameters = [p for p in self.classifier.parameters() if p.requires_grad] + [p for p in self.encoder.parameters() if p.requires_grad]
+        
+        param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())
+        no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+        optimizer_grouped_parameters = [
+            {'params': [p for n, p in param_optimizer
+                        if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
+            {'params': [p for n, p in param_optimizer
+                        if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+        ]
+        # parameters = [p for p in self.classifier.parameters() if p.requires_grad] + [p for p in self.encoder.parameters() if p.requires_grad]
         if opt['cuda']:
             with torch.cuda.device(self.opt['device']):
                 self.encoder.cuda()
                 self.classifier.cuda()
                 self.criterion.cuda()
+
         self.optimizer = AdamW(
-            self.parameters,
+            optimizer_grouped_parameters,
             lr=opt['lr'],
             weight_decay=0.01
+        )
+
+        self.scheduler = get_linear_schedule_with_warmup(
+            self.optimizer, num_warmup_steps=opt['steps']*opt['warmup_prop'], 
+            num_training_steps=opt['steps']
         )
     
     def update(self, batch, epoch):
@@ -99,6 +115,7 @@ class BERTtrainer(Trainer):
             self.optimizer.step()
         else:
             loss_val = 0
+        self.scheduler.step()
         h = logits = inputs = labels = None
         return loss_val
 

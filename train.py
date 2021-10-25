@@ -42,6 +42,7 @@ parser.add_argument('--device', type=int, default=0, help='gpu device to use.')
 parser.add_argument('--pooling', choices=['max', 'avg', 'sum'], default='max', help='Pooling function type. Default max.')
 parser.add_argument('--decay_epoch', type=int, default=5, help='Decay learning rate after this epoch.')
 parser.add_argument('--lr_decay', type=float, default=0.9, help='Learning rate decay rate.')
+parser.add_argument('--warmup_prop', type=float, default=0.1, help='Proportion of training to perform linear learning rate warmup for.')
 
 args = parser.parse_args()
 
@@ -93,6 +94,7 @@ current_lr = opt['lr']
 global_step = 0
 format_str = '{}: step {}/{} (epoch {}/{}), loss = {:.6f} ({:.3f} sec/batch), lr: {:.6f}'
 max_steps = len(train_batch) * opt['num_epoch']
+opt['steps'] = max_steps
 
 # start training
 for epoch in range(1, opt['num_epoch']+1):
