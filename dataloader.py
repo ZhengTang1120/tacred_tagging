@@ -20,7 +20,6 @@ class DataLoader(object):
     def __init__(self, filename, batch_size, opt, tokenizer):
         self.batch_size = batch_size
         self.opt = opt
-        self.eval = evaluation
         self.label2id = constant.LABEL_TO_ID
         self.tokenizer = tokenizer
 
