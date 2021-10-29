@@ -83,8 +83,7 @@ class BERTtrainer(Trainer):
 
         self.optimizer = AdamW(
             optimizer_grouped_parameters,
-            lr=opt['lr'],
-            weight_decay=0.01
+            lr=opt['lr']
         )
 
         self.scheduler = get_linear_schedule_with_warmup(
