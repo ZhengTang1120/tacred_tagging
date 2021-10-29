@@ -11,7 +11,7 @@ import numpy as np
 from bert import BERTencoder, BERTclassifier
 from utils import constant, torch_utils
 
-from transformers import AdamW, get_linear_schedule_with_warmup
+from pytorch_pretrained_bert.optimization import BertAdam
 
 class Trainer(object):
     def __init__(self, opt):
@@ -81,16 +81,11 @@ class BERTtrainer(Trainer):
                 self.classifier.cuda()
                 self.criterion.cuda()
 
-        self.optimizer = AdamW(
-            optimizer_grouped_parameters,
-            lr=opt['lr']
-        )
+        self.optimizer = BertAdam(optimizer_grouped_parameters,
+             lr=opt['lr'],
+             warmup=opt['warmup_prop'],
+             t_total=opt['steps'])
 
-        self.scheduler = get_linear_schedule_with_warmup(
-            self.optimizer, num_warmup_steps=opt['steps']*opt['warmup_prop'], 
-            num_training_steps=opt['steps']
-        )
-    
     def update(self, batch, epoch):
         inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
 
@@ -110,7 +105,6 @@ class BERTtrainer(Trainer):
             self.optimizer.step()
         else:
             loss_val = 0
-        self.scheduler.step()
         h = logits = inputs = labels = None
         return loss_val
 
