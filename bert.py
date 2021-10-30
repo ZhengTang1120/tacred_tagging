@@ -12,7 +12,7 @@ from utils import constant, torch_utils
 class BERTencoder(nn.Module):
     def __init__(self):
         super().__init__()
-        self.model = BertModel.from_pretrained(args.model, cache_dir=str(PYTORCH_PRETRAINED_BERT_CACHE))
+        self.model = BertModel.from_pretrained("spanbert-large-cased", cache_dir=str(PYTORCH_PRETRAINED_BERT_CACHE))
 
     def forward(self, inputs):
         words = inputs[0]
