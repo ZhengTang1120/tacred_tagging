@@ -117,34 +117,34 @@ for epoch in range(1, opt['num_epoch']+1):
             print(format_str.format(datetime.now(), global_step, max_steps, epoch,\
                     opt['num_epoch'], loss, duration, current_lr))
 
-    if (i + 1) % eval_step == 0:
-        # eval on dev
-        print("Evaluating on dev set...")
-        predictions = []
-        dev_loss = 0
-        for _, batch in enumerate(dev_batch):
-            preds, dloss = trainer.predict(batch, id2label, tokenizer)
-            predictions += preds
-            dev_loss += dloss
-        predictions = [id2label[p] for p in predictions]
-        train_loss = train_loss / train_num_example * opt['batch_size'] # avg loss per batch
-        dev_loss = dev_loss / dev_batch.num_examples * opt['batch_size']
+        if (i + 1) % eval_step == 0:
+            # eval on dev
+            print("Evaluating on dev set...")
+            predictions = []
+            dev_loss = 0
+            for _, batch in enumerate(dev_batch):
+                preds, dloss = trainer.predict(batch, id2label, tokenizer)
+                predictions += preds
+                dev_loss += dloss
+            predictions = [id2label[p] for p in predictions]
+            train_loss = train_loss / train_num_example * opt['batch_size'] # avg loss per batch
+            dev_loss = dev_loss / dev_batch.num_examples * opt['batch_size']
 
-        dev_p, dev_r, dev_f1 = scorer.score(dev_batch.gold(), predictions)
-        print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
-            train_loss, dev_loss, dev_f1))
-        dev_score = dev_f1
-        file_logger.log("{}\t{:.6f}\t{:.6f}\t{:.4f}\t{:.4f}".format(epoch, train_loss, dev_loss, dev_score, max([dev_score] + dev_score_history)))
+            dev_p, dev_r, dev_f1 = scorer.score(dev_batch.gold(), predictions)
+            print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
+                train_loss, dev_loss, dev_f1))
+            dev_score = dev_f1
+            file_logger.log("{}\t{:.6f}\t{:.6f}\t{:.4f}\t{:.4f}".format(epoch, train_loss, dev_loss, dev_score, max([dev_score] + dev_score_history)))
 
-        # save
-        if epoch == 1 or dev_score > max(dev_score_history):
-            model_file = model_save_dir + '/best_model.pt'
-            trainer.save(model_file)
-            print("new best model saved.")
-            file_logger.log("new best model saved at epoch {}: {:.2f}\t{:.2f}\t{:.2f}"\
-                .format(epoch, dev_p*100, dev_r*100, dev_score*100))
+            # save
+            if epoch == 1 or dev_score > max(dev_score_history):
+                model_file = model_save_dir + '/best_model.pt'
+                trainer.save(model_file)
+                print("new best model saved.")
+                file_logger.log("new best model saved at epoch {}: {:.2f}\t{:.2f}\t{:.2f}"\
+                    .format(epoch, dev_p*100, dev_r*100, dev_score*100))
 
-        dev_score_history += [dev_score]
-        print("")
+            dev_score_history += [dev_score]
+            print("")
 
 print("Training ended with {} epochs.".format(epoch))
