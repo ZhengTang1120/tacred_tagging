@@ -97,6 +97,7 @@ class DataLoader(object):
         batch, orig_idx = sort_all(batch, lens)
         # word dropout
         words = batch[0]
+        print (words)
         mask = batch[1]
         segment_ids = batch[2]
         # convert to tensors
