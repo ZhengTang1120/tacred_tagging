@@ -35,7 +35,7 @@ class Trainer(object):
         self.opt = checkpoint['config']
         self.opt['device'] = device
 
-    def save(self, filename, epoch):
+    def save(self, filename):
         params = {
                 'classifier': self.classifier.state_dict(),
                 'encoder': self.encoder.state_dict(),

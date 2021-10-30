@@ -26,7 +26,6 @@ parser.add_argument('--num_epoch', type=int, default=100, help='Number of total 
 parser.add_argument('--batch_size', type=int, default=50, help='Training batch size.')
 parser.add_argument('--log_step', type=int, default=20, help='Print log every k steps.')
 parser.add_argument('--log', type=str, default='logs.txt', help='Write training log to file.')
-parser.add_argument('--save_epoch', type=int, default=10, help='Save model checkpoints every k epochs.')
 parser.add_argument('--save_dir', type=str, default='./saved_models', help='Root dir for saving models.')
 parser.add_argument('--id', type=str, default='00', help='Model ID under which to save models.')
 parser.add_argument('--info', type=str, default='', help='Optional info for the experiment.')
@@ -43,6 +42,8 @@ parser.add_argument('--pooling', choices=['max', 'avg', 'sum'], default='max', h
 parser.add_argument('--decay_epoch', type=int, default=5, help='Decay learning rate after this epoch.')
 parser.add_argument('--lr_decay', type=float, default=0.9, help='Learning rate decay rate.')
 parser.add_argument('--warmup_prop', type=float, default=0.1, help='Proportion of training to perform linear learning rate warmup for.')
+
+parser.add_argument("--eval_per_epoch", default=10, type=int, help="How many times it evaluates on dev set per epoch")
 
 args = parser.parse_args()
 
@@ -99,6 +100,8 @@ id2label = dict([(v,k) for k,v in label2id.items()])
 dev_score_history = []
 current_lr = opt['lr']
 
+eval_step = max(1, opt['num_epoch'] // args.eval_per_epoch)
+
 # start training
 for epoch in range(1, opt['num_epoch']+1):
     train_loss = 0
@@ -114,36 +117,34 @@ for epoch in range(1, opt['num_epoch']+1):
             print(format_str.format(datetime.now(), global_step, max_steps, epoch,\
                     opt['num_epoch'], loss, duration, current_lr))
 
-    # eval on dev
-    print("Evaluating on dev set...")
-    predictions = []
-    dev_loss = 0
-    for _, batch in enumerate(dev_batch):
-        preds, dloss = trainer.predict(batch, id2label, tokenizer)
-        predictions += preds
-        dev_loss += dloss
-    predictions = [id2label[p] for p in predictions]
-    train_loss = train_loss / train_num_example * opt['batch_size'] # avg loss per batch
-    dev_loss = dev_loss / dev_batch.num_examples * opt['batch_size']
+    if (i + 1) % eval_step == 0:
+        # eval on dev
+        print("Evaluating on dev set...")
+        predictions = []
+        dev_loss = 0
+        for _, batch in enumerate(dev_batch):
+            preds, dloss = trainer.predict(batch, id2label, tokenizer)
+            predictions += preds
+            dev_loss += dloss
+        predictions = [id2label[p] for p in predictions]
+        train_loss = train_loss / train_num_example * opt['batch_size'] # avg loss per batch
+        dev_loss = dev_loss / dev_batch.num_examples * opt['batch_size']
 
-    dev_p, dev_r, dev_f1 = scorer.score(dev_batch.gold(), predictions)
-    print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
-        train_loss, dev_loss, dev_f1))
-    dev_score = dev_f1
-    file_logger.log("{}\t{:.6f}\t{:.6f}\t{:.4f}\t{:.4f}".format(epoch, train_loss, dev_loss, dev_score, max([dev_score] + dev_score_history)))
+        dev_p, dev_r, dev_f1 = scorer.score(dev_batch.gold(), predictions)
+        print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
+            train_loss, dev_loss, dev_f1))
+        dev_score = dev_f1
+        file_logger.log("{}\t{:.6f}\t{:.6f}\t{:.4f}\t{:.4f}".format(epoch, train_loss, dev_loss, dev_score, max([dev_score] + dev_score_history)))
 
-    # save
-    model_file = model_save_dir + '/checkpoint_epoch_{}.pt'.format(epoch)
-    trainer.save(model_file, epoch)
-    if epoch == 1 or dev_score > max(dev_score_history):
-        copyfile(model_file, model_save_dir + '/best_model.pt')
-        print("new best model saved.")
-        file_logger.log("new best model saved at epoch {}: {:.2f}\t{:.2f}\t{:.2f}"\
-            .format(epoch, dev_p*100, dev_r*100, dev_score*100))
-    if epoch % opt['save_epoch'] != 0:
-        os.remove(model_file)
+        # save
+        if epoch == 1 or dev_score > max(dev_score_history):
+            model_file = model_save_dir + '/best_model.pt'
+            trainer.save(model_file)
+            print("new best model saved.")
+            file_logger.log("new best model saved at epoch {}: {:.2f}\t{:.2f}\t{:.2f}"\
+                .format(epoch, dev_p*100, dev_r*100, dev_score*100))
 
-    dev_score_history += [dev_score]
-    print("")
+        dev_score_history += [dev_score]
+        print("")
 
 print("Training ended with {} epochs.".format(epoch))
