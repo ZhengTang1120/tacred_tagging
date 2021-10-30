@@ -10,7 +10,7 @@ from pytorch_pretrained_bert.modeling import BertModel
 from utils import constant, torch_utils
 
 class BERTencoder(nn.Module):
-    def __init__(self, opt):
+    def __init__(self):
         super().__init__()
         self.model = BertModel.from_pretrained(args.model, cache_dir=str(PYTORCH_PRETRAINED_BERT_CACHE))
 
