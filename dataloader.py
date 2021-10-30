@@ -67,6 +67,7 @@ class DataLoader(object):
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tokens = [self.tokenizer.convert_tokens_to_ids(w) for w in words]
+            print (tokens)
             if len(tokens) > 128:
                 tokens = tokens[:128]
             mask = [1] * len(tokens)
