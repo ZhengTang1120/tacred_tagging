@@ -101,7 +101,7 @@ dev_score_history = []
 current_lr = opt['lr']
 
 eval_step = max(1, opt['num_epoch'] // args.eval_per_epoch)
-
+print (eval_step)
 # start training
 for epoch in range(1, opt['num_epoch']+1):
     train_loss = 0
