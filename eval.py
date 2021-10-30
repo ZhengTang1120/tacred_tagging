@@ -37,7 +37,7 @@ if args.cpu:
 elif args.cuda:
     torch.cuda.manual_seed(args.seed)
 
-tokenizer = BertTokenizer.from_pretrained('spanbert_hf/', local_files_only=True)
+tokenizer = BertTokenizer.from_pretrained("spanbert-large-cased", do_lower_case=False)
 
 # load opt
 model_file = args.model_dir + '/' + args.model
