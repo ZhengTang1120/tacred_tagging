@@ -53,9 +53,9 @@ class DataLoader(object):
 
             for i, t in enumerate(d['token']):
                 if i == ss:
-                    words.append("[unused%d]"%constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']'])
+                    words.append("[unused%d]"%constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1)
                 if i == os:
-                    words.append("[unused%d]"%constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']'])
+                    words.append("[unused%d]"%constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1)
                 if i>=ss and i<=se:
                     pass
                 elif i>=os and i<=oe:
@@ -67,7 +67,6 @@ class DataLoader(object):
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
-            print (tokens)
             if len(tokens) > 128:
                 tokens = tokens[:128]
             mask = [1] * len(tokens)
@@ -98,7 +97,6 @@ class DataLoader(object):
         batch, orig_idx = sort_all(batch, lens)
         # word dropout
         words = batch[0]
-        print (words)
         mask = batch[1]
         segment_ids = batch[2]
         # convert to tensors
