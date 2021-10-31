@@ -33,6 +33,9 @@ def main(args):
     logger.info(args)
     logger.info("device: {}".format(device))
 
+    if not os.path.exists(args.output_dir):
+        os.makedirs(args.output_dir)
+
     processor = DataProcessor()
 
     label_list = processor.get_labels(args.data_dir, logger)
