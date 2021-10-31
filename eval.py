@@ -70,6 +70,7 @@ if __name__ == "__main__":
                         help="Whether not to use CUDA when available")
     parser.add_argument('--seed', type=int, default=42,
                         help="random seed for initialization")
+    parser.add_argument("--eval_test", action="store_true", help="Whether to evaluate on final test set.")
     args = parser.parse_args()
 
     processor = DataProcessor()
@@ -89,7 +90,7 @@ if __name__ == "__main__":
 
     if args.eval_test:
         eval_examples = processor.get_test_examples(args.data_dir)
-    elif args.eval_dev:
+    else:
         eval_examples = processor.get_dev_examples(args.data_dir)
     eval_features = convert_examples_to_features(
         eval_examples, label2id, args.max_seq_length, tokenizer, special_tokens, logger)
