@@ -19,11 +19,11 @@ logger = logging.getLogger(__name__)
 def main(args):
     processor = DataProcessor()
 
-    label_list = processor.get_labels(args.data_dir, args.negative_label)
+    label_list = processor.get_labels(args.data_dir, NEGATIVE_LABEL)
     label2id = {label: i for i, label in enumerate(label_list)}
     id2label = {i: label for i, label in enumerate(label_list)}
     num_labels = len(label_list)
-    tokenizer = BertTokenizer.from_pretrained(args.model, do_lower_case=args.do_lower_case)
+    tokenizer = BertTokenizer.from_pretrained(args.model)
 
     special_tokens = {w : "[unused%d]" % (i + 1) for i, w in enumerate(ENTITY_TOKENS)}
 
