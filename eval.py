@@ -111,7 +111,7 @@ if __name__ == "__main__":
 
     model = BertForSequenceClassification.from_pretrained(args.output_dir, num_labels=num_labels)
     model.to(device)
-    preds, result = evaluate(model, device, eval_dataloader, eval_label_ids, num_labels)
+    preds, result = evaluate(model, device, eval_dataloader, eval_label_ids, id2label, True, logger)
     with open(os.path.join(args.output_dir, "predictions.txt"), "w") as f:
         for ex, pred in zip(eval_examples, preds):
             f.write("%s\t%s\n" % (ex.guid, id2label[pred]))
