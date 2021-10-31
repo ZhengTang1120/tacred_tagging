@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def main(args):
-    device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
+    device = torch.device("cuda:1" if torch.cuda.is_available() and not args.no_cuda else "cpu")
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
