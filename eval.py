@@ -71,6 +71,8 @@ if __name__ == "__main__":
     parser.add_argument('--seed', type=int, default=42,
                         help="random seed for initialization")
     parser.add_argument("--eval_test", action="store_true", help="Whether to evaluate on final test set.")
+    parser.add_argument("--eval_batch_size", default=8, type=int,
+                        help="Total batch size for eval.")
     args = parser.parse_args()
 
     processor = DataProcessor()
