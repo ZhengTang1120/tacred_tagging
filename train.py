@@ -129,7 +129,7 @@ def main(args):
                              epoch, step + 1, len(train_batches),
                              time.time() - start_time, tr_loss / nb_tr_steps))
                 save_model = False
-                preds, result = evaluate(model, device, eval_dataloader, eval_label_ids, id2label)
+                preds, result = evaluate(model, device, eval_dataloader, eval_label_ids, id2label, logger)
                 model.train()
                 result['global_step'] = global_step
                 result['epoch'] = epoch
