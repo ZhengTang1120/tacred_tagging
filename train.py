@@ -40,5 +40,9 @@ if __name__ == "__main__":
     parser.add_argument("--model", default=None, type=str, required=True)
     parser.add_argument("--data_dir", default=None, type=str, required=True,
                         help="The input data dir. Should contain the .json files (or other data files) for the task.")
+    parser.add_argument("--max_seq_length", default=128, type=int,
+                        help="The maximum total input sequence length after WordPiece tokenization. \n"
+                             "Sequences longer than this will be truncated, and sequences shorter \n"
+                             "than this will be padded.")
     args = parser.parse_args()
     main(args)
