@@ -3,6 +3,8 @@ import torch
 from torch.nn import CrossEntropyLoss
 import numpy as np
 
+from data import *
+
 def simple_accuracy(preds, labels):
     return (preds == labels).mean()
 
@@ -43,3 +45,61 @@ def evaluate(model, device, eval_dataloader, eval_label_ids, id2label, verbose=T
             logger.info("  %s = %s", key, str(result[key]))
 
     return preds, result
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--data_dir", default=None, type=str, required=True,
+                        help="The input data dir. Should contain the .json files (or other data files) for the task.")
+    parser.add_argument("--output_dir", default=None, type=str, required=True,
+                        help="The output directory where the model predictions and checkpoints will be written.")
+    parser.add_argument("--max_seq_length", default=128, type=int,
+                        help="The maximum total input sequence length after WordPiece tokenization. \n"
+                             "Sequences longer than this will be truncated, and sequences shorter \n"
+                             "than this will be padded.")
+    parser.add_argument("--no_cuda", action='store_true',
+                        help="Whether not to use CUDA when available")
+    parser.add_argument('--seed', type=int, default=42,
+                        help="random seed for initialization")
+    args = parser.parse_args()
+
+    processor = DataProcessor()
+
+    device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+
+    label_list = processor.get_labels(args.data_dir, logger)
+    label2id = {label: i for i, label in enumerate(label_list)}
+    id2label = {i: label for i, label in enumerate(label_list)}
+    num_labels = len(label_list)
+    tokenizer = BertTokenizer.from_pretrained(args.output_dir)
+
+    special_tokens = {w : "[unused%d]" % (i + 1) for i, w in enumerate(ENTITY_TOKENS)}
+
+    if args.eval_test:
+        eval_examples = processor.get_test_examples(args.data_dir)
+    elif args.eval_dev:
+        eval_examples = processor.get_dev_examples(args.data_dir)
+    eval_features = convert_examples_to_features(
+        eval_examples, label2id, args.max_seq_length, tokenizer, special_tokens, logger)
+    logger.info("***** Test *****")
+    logger.info("  Num examples = %d", len(eval_examples))
+    logger.info("  Batch size = %d", args.eval_batch_size)
+    all_input_ids = torch.tensor([f.input_ids for f in eval_features], dtype=torch.long)
+    all_input_mask = torch.tensor([f.input_mask for f in eval_features], dtype=torch.long)
+    all_segment_ids = torch.tensor([f.segment_ids for f in eval_features], dtype=torch.long)
+    all_label_ids = torch.tensor([f.label_id for f in eval_features], dtype=torch.long)
+    eval_data = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
+    eval_dataloader = DataLoader(eval_data, batch_size=args.eval_batch_size)
+    eval_label_ids = all_label_ids
+
+    model = BertForSequenceClassification.from_pretrained(args.output_dir, num_labels=num_labels)
+    model.to(device)
+    preds, result = evaluate(model, device, eval_dataloader, eval_label_ids, num_labels)
+    with open(os.path.join(args.output_dir, "predictions.txt"), "w") as f:
+        for ex, pred in zip(eval_examples, preds):
+            f.write("%s\t%s\n" % (ex.guid, id2label[pred]))
+    with open(os.path.join(args.output_dir, "test_results.txt"), "w") as f:
+        for key in sorted(result.keys()):
+            f.write("%s = %s\n" % (key, str(result[key])))
