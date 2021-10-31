@@ -2,6 +2,10 @@ from utils.scorer import *
 import torch
 from torch.nn import CrossEntropyLoss
 import numpy as np
+import random
+
+from pytorch_pretrained_bert.modeling import BertForSequenceClassification
+from pytorch_pretrained_bert.tokenization import BertTokenizer
 
 from data import *
 
