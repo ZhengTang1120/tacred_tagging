@@ -8,7 +8,8 @@ from data import *
 from utils.constant import *
 from eval import evaluate
 
-from bert import *
+from pytorch_pretrained_bert.file_utils import PYTORCH_PRETRAINED_BERT_CACHE, WEIGHTS_NAME, CONFIG_NAME
+from pytorch_pretrained_bert.modeling import BertForSequenceClassification
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.optimization import BertAdam
 
@@ -24,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 def main(args):
-    device = torch.device("cuda:1" if torch.cuda.is_available() and not args.no_cuda else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -82,8 +83,8 @@ def main(args):
     eval_step = max(1, len(train_batches) // args.eval_per_epoch)
     lr = args.learning_rate
 
-    model = Pipeline(num_labels)
-    
+    model = BertForSequenceClassification.from_pretrained(
+            args.model, cache_dir=str(PYTORCH_PRETRAINED_BERT_CACHE), num_labels=num_labels)
     model.to(device)
 
     param_optimizer = list(model.named_parameters())
