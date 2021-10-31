@@ -39,7 +39,7 @@ class Pipeline(nn.Module):
         self.classifier = Classifier(num_class)
 
     def forward(self, input_ids, segment_ids, input_mask, label_ids=None):
-        pooled_output = self.encoder(input_ids, segment_ids, input_mask, label_ids)
+        pooled_output = self.encoder(input_ids, segment_ids, input_mask)
         logits = self.classifier(pooled_output)
 
         if label_ids is not None:
