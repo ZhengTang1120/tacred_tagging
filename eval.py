@@ -10,6 +10,8 @@ from pytorch_pretrained_bert.tokenization import BertTokenizer
 
 from data import *
 
+from torch.utils.data import DataLoader, TensorDataset
+
 def simple_accuracy(preds, labels):
     return (preds == labels).mean()
 
