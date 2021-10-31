@@ -12,6 +12,9 @@ from pytorch_pretrained_bert.file_utils import PYTORCH_PRETRAINED_BERT_CACHE, WE
 from pytorch_pretrained_bert.modeling import BertForSequenceClassification
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.optimization import BertAdam
+
+import numpy as np
+import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
