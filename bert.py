@@ -45,7 +45,7 @@ class Pipeline(nn.Module):
 
         if label_ids is not None:
             loss_fct = nn.CrossEntropyLoss()
-            loss = loss_fct(logits.view(-1, self.num_class), labels.view(-1))
+            loss = loss_fct(logits.view(-1, self.num_class), label_ids.view(-1))
             return loss
         else:
             return logits
