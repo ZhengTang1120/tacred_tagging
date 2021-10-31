@@ -5,7 +5,7 @@ import numpy as np
 import random
 import logging
 
-from pytorch_pretrained_bert.modeling import BertForSequenceClassification
+from bert import *
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 
 from data import *
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     eval_dataloader = DataLoader(eval_data, batch_size=args.eval_batch_size)
     eval_label_ids = all_label_ids
 
-    model = BertForSequenceClassification.from_pretrained(args.output_dir, num_labels=num_labels)
+    model = Pipeline(num_labels)
     model.to(device)
     preds, result = evaluate(model, device, eval_dataloader, eval_label_ids, id2label, True, logger)
     with open(os.path.join(args.output_dir, "predictions.txt"), "w") as f:

@@ -8,8 +8,7 @@ from data import *
 from utils.constant import *
 from eval import evaluate
 
-from pytorch_pretrained_bert.file_utils import PYTORCH_PRETRAINED_BERT_CACHE, WEIGHTS_NAME, CONFIG_NAME
-from pytorch_pretrained_bert.modeling import BertForSequenceClassification
+from bert import *
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.optimization import BertAdam
 
@@ -83,8 +82,8 @@ def main(args):
     eval_step = max(1, len(train_batches) // args.eval_per_epoch)
     lr = args.learning_rate
 
-    model = BertForSequenceClassification.from_pretrained(
-            args.model, cache_dir=str(PYTORCH_PRETRAINED_BERT_CACHE), num_labels=num_labels)
+    model = Pipeline(num_labels)
+    
     model.to(device)
 
     param_optimizer = list(model.named_parameters())
