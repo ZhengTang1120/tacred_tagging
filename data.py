@@ -51,7 +51,7 @@ class DataProcessor(object):
         return self._create_examples(
             self._read_json(os.path.join(data_dir, "test.json")), "test")
 
-    def get_labels(self, data_dir, negative_label="no_relation"):
+    def get_labels(self, data_dir, negative_label="no_relation", logger):
         """See base class."""
         dataset = self._read_json(os.path.join(data_dir, "train.json"))
         count = Counter()
