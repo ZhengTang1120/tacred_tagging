@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 def main(args):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -177,5 +177,9 @@ if __name__ == "__main__":
                              "E.g., 0.1 = 10%% of training.")
     parser.add_argument("--output_dir", default="saved_models_spanbert", type=str, required=True,
                         help="The output directory where the model predictions and checkpoints will be written.")
+    parser.add_argument("--no_cuda", action='store_true',
+                        help="Whether not to use CUDA when available")
+    parser.add_argument('--seed', type=int, default=42,
+                        help="random seed for initialization")
     args = parser.parse_args()
     main(args)
