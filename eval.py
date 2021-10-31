@@ -26,7 +26,7 @@ def evaluate(model, device, eval_dataloader, eval_label_ids, id2label, verbose=T
         segment_ids = segment_ids.to(device)
         label_ids = label_ids.to(device)
         with torch.no_grad():
-            logits = model(input_ids, segment_ids, input_mask, labels=None)
+            logits = model(input_ids, segment_ids, input_mask)
         loss_fct = CrossEntropyLoss()
         tmp_eval_loss = loss_fct(logits.view(-1, len(id2label)), label_ids.view(-1))
         eval_loss += tmp_eval_loss.mean().item()
