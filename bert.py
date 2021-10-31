@@ -4,15 +4,14 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
 
-from pytorch_pretrained_bert.file_utils import PYTORCH_PRETRAINED_BERT_CACHE, WEIGHTS_NAME, CONFIG_NAME
-from pytorch_pretrained_bert.modeling import BertModel
+from transformers import BertModel
 
 from utils import constant, torch_utils
 
 class BERTencoder(nn.Module):
     def __init__(self):
         super().__init__()
-        self.model = BertModel.from_pretrained("spanbert-large-cased", cache_dir=str(PYTORCH_PRETRAINED_BERT_CACHE))
+        self.model = BertModel.from_pretrained("SpanBERT/spanbert-large-cased")
 
     def forward(self, inputs):
         words = inputs[0]

@@ -15,7 +15,7 @@ from dataloader import DataLoader
 from trainer import BERTtrainer
 from utils import torch_utils, scorer, constant, helper
 
-from pytorch_pretrained_bert.tokenization import BertTokenizer
+from transformers import BertTokenizer
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', type=str, default='dataset/tacred')
@@ -59,7 +59,7 @@ if args.cpu:
 elif args.cuda:
     torch.cuda.manual_seed(args.seed)
 
-tokenizer = BertTokenizer.from_pretrained("spanbert-large-cased", do_lower_case=False)
+tokenizer = BertTokenizer.from_pretrained('SpanBERT/spanbert-large-cased')
 
 train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer)
 train_num_example = train_batch.num_examples
