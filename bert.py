@@ -37,6 +37,7 @@ class Pipeline(nn.Module):
         super().__init__()
         self.encoder = BERTencoder()
         self.classifier = Classifier(num_class)
+        self.num_class = num_class
 
     def forward(self, input_ids, segment_ids, input_mask, label_ids=None):
         pooled_output = self.encoder(input_ids, segment_ids, input_mask)
@@ -44,7 +45,7 @@ class Pipeline(nn.Module):
 
         if label_ids is not None:
             loss_fct = nn.CrossEntropyLoss()
-            loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
+            loss = loss_fct(logits.view(-1, self.num_class), labels.view(-1))
             return loss
         else:
             return logits
