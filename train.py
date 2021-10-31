@@ -31,8 +31,8 @@ def main(args):
     eval_features = convert_examples_to_features(
             eval_examples, label2id, args.max_seq_length, tokenizer, special_tokens, logger)
     train_examples = processor.get_train_examples(args.data_dir)
-        train_features = convert_examples_to_features(
-                train_examples, label2id, args.max_seq_length, tokenizer, special_tokens, logger)
+    train_features = convert_examples_to_features(
+            train_examples, label2id, args.max_seq_length, tokenizer, special_tokens, logger)
 
 
 if __name__ == "__main__":
