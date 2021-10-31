@@ -131,7 +131,7 @@ def main(args):
                 result['global_step'] = global_step
                 result['epoch'] = epoch
                 result['learning_rate'] = lr
-                result['batch_size'] = args.train_batch_size
+                result['batch_size'] = args.batch_size
                 logger.info("First 20 predictions:")
                 for pred, label in zip(preds[:20], eval_label_ids.numpy()[:20]):
                     sign = u'\u2713' if pred == label else u'\u2718'
