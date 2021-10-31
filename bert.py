@@ -34,6 +34,7 @@ class Classifier(nn.Module):
 
 class Pipeline(nn.Module):
     def __init__(self, num_class):
+        super().__init__()
         self.encoder = BERTencoder()
         self.classifier = Classifier(num_class)
 
