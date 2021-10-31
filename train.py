@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 def main(args):
     processor = DataProcessor()
 
-    label_list = processor.get_labels(args.data_dir, NEGATIVE_LABEL, logger)
+    label_list = processor.get_labels(args.data_dir, logger)
     label2id = {label: i for i, label in enumerate(label_list)}
     id2label = {i: label for i, label in enumerate(label_list)}
     num_labels = len(label_list)

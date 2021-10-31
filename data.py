@@ -1,6 +1,7 @@
 import json
 import os
 from collections import Counter
+from utils.constant import *
 
 CLS = "[CLS]"
 SEP = "[SEP]"
@@ -51,7 +52,7 @@ class DataProcessor(object):
         return self._create_examples(
             self._read_json(os.path.join(data_dir, "test.json")), "test")
 
-    def get_labels(self, data_dir, negative_label="no_relation", logger):
+    def get_labels(self, data_dir, logger):
         """See base class."""
         dataset = self._read_json(os.path.join(data_dir, "train.json"))
         count = Counter()
@@ -59,7 +60,7 @@ class DataProcessor(object):
             count[example['relation']] += 1
         logger.info("%d labels" % len(count))
         # Make sure the negative label is alwyas 0
-        labels = [negative_label]
+        labels = [NEGATIVE_LABEL]
         for label, count in count.most_common():
             logger.info("%s: %.2f%%" % (label, count * 100.0 / len(dataset)))
             if label not in labels:
