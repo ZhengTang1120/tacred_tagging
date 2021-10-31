@@ -51,6 +51,11 @@ def evaluate(model, device, eval_dataloader, eval_label_ids, id2label, verbose=T
     return preds, result
 
 if __name__ == "__main__":
+    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_dir", default=None, type=str, required=True,
                         help="The input data dir. Should contain the .json files (or other data files) for the task.")
