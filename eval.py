@@ -1,6 +1,7 @@
 from utils.scorer import *
 import torch
 from torch.nn import CrossEntropyLoss
+import numpy as np
 
 def evaluate(model, device, eval_dataloader, eval_label_ids, id2label, verbose=True):
     model.eval()
