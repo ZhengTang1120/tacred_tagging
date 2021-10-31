@@ -27,7 +27,7 @@ def evaluate(model, device, eval_dataloader, eval_label_ids, id2label, verbose=T
 
     eval_loss = eval_loss / nb_eval_steps
 
-    eval_labels = [id2label[i] for i in eval_label_ids]
+    eval_labels = [id2label[i] for i in eval_label_ids.numpy()]
     preds = [id2label[i] for i in np.argmax(preds[0], axis=1)]
     
     prec, recall, f1 = score(eval_labels, preds, verbose=True)
