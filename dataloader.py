@@ -29,7 +29,7 @@ class DataLoader(object):
         data = sorted(data, key=lambda f: len(f[0]))
         
         self.id2label = dict([(v,k) for k,v in self.label2id.items()])
-        self.labels = [self.id2label[d[-2]] for d in data]
+        self.labels = [self.id2label[d[-1]] for d in data]
         self.words = [d[-1] for d in data]
         self.num_examples = len(data)
         
@@ -93,10 +93,6 @@ class DataLoader(object):
         batch_size = len(batch)
         batch = list(zip(*batch))
         
-
-        # sort all fields by lens
-        lens = [len(x) for x in batch[0]]
-        batch, orig_idx = sort_all(batch, lens)
         # word dropout
         words = batch[0]
         mask = batch[1]
@@ -108,7 +104,7 @@ class DataLoader(object):
 
         rels = torch.LongTensor(batch[-2])#
 
-        return (words, mask, segment_ids, rels, orig_idx)
+        return (words, mask, segment_ids, rels)
 
     def __iter__(self):
         for i in range(self.__len__()):
@@ -121,12 +117,6 @@ def get_long_tensor(tokens_list, batch_size):
     for i, s in enumerate(tokens_list):
         tokens[i,:len(s)] = torch.LongTensor(s)
     return tokens
-
-def sort_all(batch, lens):
-    """ Sort all fields by descending order of lens, and return the original indices. """
-    unsorted_all = [lens] + [range(len(lens))] + list(batch)
-    sorted_all = [list(t) for t in zip(*sorted(zip(*unsorted_all), reverse=True))]
-    return sorted_all[2:], sorted_all[1]
 
 def convert_token(token):
     """ Convert PTB tokens to normal tokens """

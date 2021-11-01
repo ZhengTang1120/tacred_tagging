@@ -53,10 +53,10 @@ def unpack_batch(batch, cuda, device):
     if cuda:
         with torch.cuda.device(device):
             inputs = [batch[i].to('cuda') for i in range(3)]
-            labels = Variable(batch[-2].cuda())
+            labels = Variable(batch[-1].cuda())
     else:
         inputs = [Variable(batch[i]) for i in range(3)]
-        labels = Variable(batch[-2])
+        labels = Variable(batch[-1])
     return inputs, labels
 
 class BERTtrainer(Trainer):
@@ -104,7 +104,7 @@ class BERTtrainer(Trainer):
         h = logits = inputs = labels = None
         return loss_val
 
-    def predict(self, batch, id2label, tokenizer, unsort=True):
+    def predict(self, batch, id2label, tokenizer):
         inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
         orig_idx = batch[-1]
         # forward
@@ -117,7 +117,4 @@ class BERTtrainer(Trainer):
         # probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         
-        if unsort:
-            _, predictions, probs = [list(t) for t in zip(*sorted(zip(orig_idx,\
-                    predictions, probs)))]
         return predictions, loss
