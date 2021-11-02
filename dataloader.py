@@ -73,9 +73,9 @@ class DataProcessor(object):
             tokens += padding
             mask += padding
             segment_ids += padding
-            assert len(tokens) == max_seq_length
-            assert len(mask) == max_seq_length
-            assert len(segment_ids) == max_seq_length
+            assert len(tokens) == 128
+            assert len(mask) == 128
+            assert len(segment_ids) == 128
             processed += [(tokens, mask, segment_ids, relation, words)]
         return processed
 
