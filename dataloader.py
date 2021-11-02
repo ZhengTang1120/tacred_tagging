@@ -86,6 +86,10 @@ class DataProcessor(object):
     def __len__(self):
         return len(self.data)
 
+    def __iter__(self):
+        for d in self.data:
+            yield d
+
 def convert_token(token):
     """ Convert PTB tokens to normal tokens """
     if (token.lower() == '-lrb-'):
