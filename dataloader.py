@@ -27,6 +27,7 @@ class DataProcessor(object):
         data = self.preprocess(data, opt)
         if not eval:
             data = sorted(data, key=lambda f: len(f[0]))
+        self.data = data
         
         self.id2label = dict([(v,k) for k,v in self.label2id.items()])
         self.labels = [self.id2label[d[-2]] for d in data]
