@@ -75,10 +75,10 @@ train_batches = [batch for batch in train_dataloader]
 
 dev_data = DataProcessor(opt['data_dir'] + '/dev.json', opt, tokenizer, True)
 dev_num_example = dev_data.num_examples
-all_input_ids = torch.tensor([f[0] for f in dev_data_0], dtype=torch.long)
-all_input_mask = torch.tensor([f[1] for f in dev_data_0], dtype=torch.long)
-all_segment_ids = torch.tensor([f[2] for f in dev_data_0], dtype=torch.long)
-all_label_ids = torch.tensor([f[-2] for f in dev_data_0], dtype=torch.long)
+all_input_ids = torch.tensor([f[0] for f in dev_data], dtype=torch.long)
+all_input_mask = torch.tensor([f[1] for f in dev_data], dtype=torch.long)
+all_segment_ids = torch.tensor([f[2] for f in dev_data], dtype=torch.long)
+all_label_ids = torch.tensor([f[-2] for f in dev_data], dtype=torch.long)
 dev_data = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
 dev_dataloader = DataLoader(dev_data, batch_size=opt['batch_size'])
 dev_batches = [batch for batch in dev_dataloader]
