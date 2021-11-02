@@ -75,6 +75,7 @@ train_batches = [batch for batch in train_dataloader]
 
 dev_data = DataProcessor(opt['data_dir'] + '/dev.json', opt, tokenizer, True)
 dev_num_example = dev_data.num_examples
+dev_gold = dev_data.gold()
 all_input_ids = torch.tensor([f[0] for f in dev_data], dtype=torch.long)
 all_input_mask = torch.tensor([f[1] for f in dev_data], dtype=torch.long)
 all_segment_ids = torch.tensor([f[2] for f in dev_data], dtype=torch.long)
@@ -147,7 +148,7 @@ for epoch in range(1, opt['num_epoch']+1):
             train_loss = train_loss / train_num_example * opt['batch_size'] # avg loss per batch
             dev_loss = dev_loss / dev_num_example * opt['batch_size']
 
-            dev_p, dev_r, dev_f1 = scorer.score(dev_data.gold(), predictions)
+            dev_p, dev_r, dev_f1 = scorer.score(dev_gold, predictions)
             print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
                 train_loss, dev_loss, dev_f1))
             dev_score = dev_f1
