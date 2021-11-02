@@ -13,7 +13,7 @@ from collections import defaultdict
 from statistics import mean
 
 
-class DataLoader(object):
+class DataProcessor(object):
     """
     Load data from json files, preprocess and prepare batches.
     """

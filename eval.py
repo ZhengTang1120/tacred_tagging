@@ -6,7 +6,7 @@ import argparse
 from tqdm import tqdm
 import torch
 
-from dataloader import DataLoader
+from dataloader import DataProcessor
 from trainer import BERTtrainer
 from utils import torch_utils, scorer, constant, helper
 
@@ -15,6 +15,8 @@ from nltk.translate.bleu_score import corpus_bleu, sentence_bleu
 from transformers import BertTokenizer
 
 import json
+
+from torch.utils.data import DataLoader, TensorDataset
 
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')

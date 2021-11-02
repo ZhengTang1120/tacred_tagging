@@ -11,7 +11,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.autograd import Variable
 
-from dataloader import DataLoader
+from dataloader import DataProcessor
 from trainer import BERTtrainer
 from utils import torch_utils, scorer, constant, helper
 
@@ -63,7 +63,7 @@ elif args.cuda:
 
 tokenizer = BertTokenizer.from_pretrained('SpanBERT/spanbert-large-cased')
 
-train_data = DataLoader(opt['data_dir'] + '/train.json', opt, tokenizer)
+train_data = DataProcessor(opt['data_dir'] + '/train.json', opt, tokenizer)
 train_num_example = train_data.num_examples
 all_input_ids = torch.tensor([f[0] for f in train_data], dtype=torch.long)
 all_input_mask = torch.tensor([f[1] for f in train_data], dtype=torch.long)
@@ -73,7 +73,7 @@ train_data = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_l
 train_dataloader = DataLoader(train_data, batch_size=opt['batch_size'])
 train_batches = [batch for batch in train_dataloader]
 
-dev_data = DataLoader(opt['data_dir'] + '/dev.json', opt, tokenizer, True)
+dev_data = DataProcessor(opt['data_dir'] + '/dev.json', opt, tokenizer, True)
 all_input_ids = torch.tensor([f[0] for f in dev_data], dtype=torch.long)
 all_input_mask = torch.tensor([f[1] for f in dev_data], dtype=torch.long)
 all_segment_ids = torch.tensor([f[2] for f in dev_data], dtype=torch.long)
