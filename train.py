@@ -74,10 +74,11 @@ train_dataloader = DataLoader(train_data, batch_size=opt['batch_size'])
 train_batches = [batch for batch in train_dataloader]
 
 dev_data = DataProcessor(opt['data_dir'] + '/dev.json', opt, tokenizer, True)
-all_input_ids = torch.tensor([f[0] for f in dev_data], dtype=torch.long)
-all_input_mask = torch.tensor([f[1] for f in dev_data], dtype=torch.long)
-all_segment_ids = torch.tensor([f[2] for f in dev_data], dtype=torch.long)
-all_label_ids = torch.tensor([f[-2] for f in dev_data], dtype=torch.long)
+dev_num_example = dev_data.num_examples
+all_input_ids = torch.tensor([f[0] for f in dev_data_0], dtype=torch.long)
+all_input_mask = torch.tensor([f[1] for f in dev_data_0], dtype=torch.long)
+all_segment_ids = torch.tensor([f[2] for f in dev_data_0], dtype=torch.long)
+all_label_ids = torch.tensor([f[-2] for f in dev_data_0], dtype=torch.long)
 dev_data = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
 dev_dataloader = DataLoader(dev_data, batch_size=opt['batch_size'])
 dev_batches = [batch for batch in dev_dataloader]
@@ -144,7 +145,7 @@ for epoch in range(1, opt['num_epoch']+1):
                 dev_loss += dloss
             predictions = [id2label[p] for p in predictions]
             train_loss = train_loss / train_num_example * opt['batch_size'] # avg loss per batch
-            dev_loss = dev_loss / dev_data.num_examples * opt['batch_size']
+            dev_loss = dev_loss / dev_num_examples * opt['batch_size']
 
             dev_p, dev_r, dev_f1 = scorer.score(dev_data.gold(), predictions)
             print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
