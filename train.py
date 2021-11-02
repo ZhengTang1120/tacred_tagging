@@ -17,6 +17,8 @@ from utils import torch_utils, scorer, constant, helper
 
 from transformers import BertTokenizer
 
+from torch.utils.data import DataLoader, TensorDataset
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', type=str, default='dataset/tacred')
 parser.set_defaults(lower=False)
@@ -61,10 +63,24 @@ elif args.cuda:
 
 tokenizer = BertTokenizer.from_pretrained('SpanBERT/spanbert-large-cased')
 
-train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer)
-train_num_example = train_batch.num_examples
-train_batch = list(train_batch)
-dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, tokenizer)
+train_data = DataLoader(opt['data_dir'] + '/train.json', opt, tokenizer)
+train_num_example = train_data.num_examples
+all_input_ids = torch.tensor([f[0] for f in train_data], dtype=torch.long)
+all_input_mask = torch.tensor([f[1] for f in train_data], dtype=torch.long)
+all_segment_ids = torch.tensor([f[2] for f in train_data], dtype=torch.long)
+all_label_ids = torch.tensor([f[-2] for f in train_data], dtype=torch.long)
+train_data = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
+train_dataloader = DataLoader(train_data, batch_size=opt['batch_size'])
+train_batches = [batch for batch in train_dataloader]
+
+dev_data = DataLoader(opt['data_dir'] + '/dev.json', opt, tokenizer, True)
+all_input_ids = torch.tensor([f[0] for f in dev_data], dtype=torch.long)
+all_input_mask = torch.tensor([f[1] for f in dev_data], dtype=torch.long)
+all_segment_ids = torch.tensor([f[2] for f in dev_data], dtype=torch.long)
+all_label_ids = torch.tensor([f[-2] for f in dev_data], dtype=torch.long)
+dev_data = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
+dev_dataloader = DataLoader(dev_data, batch_size=opt['batch_size'])
+dev_batches = [batch for batch in dev_dataloader]
 
 model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
 model_save_dir = opt['save_dir'] + '/' + model_id
@@ -80,7 +96,7 @@ helper.print_config(opt)
 
 global_step = 0
 format_str = '{}: step {}/{} (epoch {}/{}), loss = {:.6f} ({:.3f} sec/batch), lr: {:.6f}'
-max_steps = len(train_batch) * opt['num_epoch']
+max_steps = len(train_batches) * opt['num_epoch']
 
 opt['steps'] = max_steps
 
@@ -100,13 +116,13 @@ id2label = dict([(v,k) for k,v in label2id.items()])
 dev_score_history = []
 current_lr = opt['lr']
 
-eval_step = max(1, len(train_batch) // args.eval_per_epoch)
+eval_step = max(1, len(train_batches) // args.eval_per_epoch)
 
 # start training
 for epoch in range(1, opt['num_epoch']+1):
     train_loss = 0
-    random.shuffle(train_batch)
-    for i, batch in enumerate(train_batch):
+    random.shuffle(train_batches)
+    for i, batch in enumerate(train_batches):
         start_time = time.time()
         global_step += 1
         loss = trainer.update(batch, epoch)
@@ -122,15 +138,15 @@ for epoch in range(1, opt['num_epoch']+1):
             print("Evaluating on dev set...")
             predictions = []
             dev_loss = 0
-            for _, batch in enumerate(dev_batch):
+            for _, batch in enumerate(dev_batches):
                 preds, dloss = trainer.predict(batch, id2label, tokenizer)
                 predictions += preds
                 dev_loss += dloss
             predictions = [id2label[p] for p in predictions]
             train_loss = train_loss / train_num_example * opt['batch_size'] # avg loss per batch
-            dev_loss = dev_loss / dev_batch.num_examples * opt['batch_size']
+            dev_loss = dev_loss / dev_batches.num_examples * opt['batch_size']
 
-            dev_p, dev_r, dev_f1 = scorer.score(dev_batch.gold(), predictions)
+            dev_p, dev_r, dev_f1 = scorer.score(dev_data.gold(), predictions)
             print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
                 train_loss, dev_loss, dev_f1))
             dev_score = dev_f1

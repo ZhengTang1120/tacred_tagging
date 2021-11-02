@@ -17,8 +17,7 @@ class DataLoader(object):
     """
     Load data from json files, preprocess and prepare batches.
     """
-    def __init__(self, filename, batch_size, opt, tokenizer):
-        self.batch_size = batch_size
+    def __init__(self, filename, opt, tokenizer, eval=False):
         self.opt = opt
         self.label2id = constant.LABEL_TO_ID
         self.tokenizer = tokenizer
@@ -26,18 +25,14 @@ class DataLoader(object):
         with open(filename) as infile:
             data = json.load(infile)
         data = self.preprocess(data, opt)
-        data = sorted(data, key=lambda f: len(f[0]))
+        if not eval:
+            data = sorted(data, key=lambda f: len(f[0]))
         
         self.id2label = dict([(v,k) for k,v in self.label2id.items()])
         self.labels = [self.id2label[d[-2]] for d in data]
         self.words = [d[-1] for d in data]
         self.num_examples = len(data)
         
-        # chunk into batches
-        data = [data[i:i+batch_size] for i in range(0, len(data), batch_size)]
-        self.data = data
-        print("{} batches created for {}".format(len(self.data), filename))
-
     def preprocess(self, data, opt):
 
 
@@ -68,11 +63,19 @@ class DataLoader(object):
                         words.append(sub_token)
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
+
             tokens = self.tokenizer.convert_tokens_to_ids(words)
             if len(tokens) > 128:
                 tokens = tokens[:128]
-            mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
+            mask = [1] * len(tokens)
+            padding = [0] * (128 - len(tokens))
+            tokens += padding
+            mask += padding
+            segment_ids += padding
+            assert len(tokens) == max_seq_length
+            assert len(mask) == max_seq_length
+            assert len(segment_ids) == max_seq_length
             processed += [(tokens, mask, segment_ids, relation, words)]
         return processed
 
@@ -82,41 +85,6 @@ class DataLoader(object):
 
     def __len__(self):
         return len(self.data)
-
-    def __getitem__(self, key):
-        """ Get a batch with index. """
-        if not isinstance(key, int):
-            raise TypeError
-        if key < 0 or key >= len(self.data):
-            raise IndexError
-        batch = self.data[key]
-        batch_size = len(batch)
-        batch = list(zip(*batch))
-        
-        # word dropout
-        words = batch[0]
-        mask = batch[1]
-        segment_ids = batch[2]
-        # convert to tensors
-        words = get_long_tensor(words, batch_size)
-        mask = get_long_tensor(mask, batch_size)
-        segment_ids = get_long_tensor(segment_ids, batch_size)
-
-        rels = torch.LongTensor(batch[-2])#
-
-        return (words, mask, segment_ids, rels)
-
-    def __iter__(self):
-        for i in range(self.__len__()):
-            yield self.__getitem__(i)
-
-def get_long_tensor(tokens_list, batch_size):
-    """ Convert list of list of tokens to a padded LongTensor. """
-    token_len = max([len(x) for x in tokens_list])
-    tokens = torch.LongTensor(batch_size, token_len).fill_(constant.PAD_ID)
-    for i, s in enumerate(tokens_list):
-        tokens[i,:len(s)] = torch.LongTensor(s)
-    return tokens
 
 def convert_token(token):
     """ Convert PTB tokens to normal tokens """
