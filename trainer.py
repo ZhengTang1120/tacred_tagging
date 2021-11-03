@@ -92,7 +92,6 @@ class BERTtrainer(Trainer):
         # step forward
         self.encoder.train()
         self.classifier.train()
-        self.optimizer.zero_grad()
 
         h = self.encoder(inputs)
         logits = self.classifier(h)
@@ -101,12 +100,12 @@ class BERTtrainer(Trainer):
         # backward
         loss.backward()
         self.optimizer.step()
+        self.optimizer.zero_grad()
         h = logits = inputs = labels = None
         return loss_val
 
     def predict(self, batch, id2label, tokenizer):
         inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
-        orig_idx = batch[-1]
         # forward
         self.encoder.eval()
         self.classifier.eval()

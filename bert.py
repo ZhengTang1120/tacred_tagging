@@ -17,7 +17,10 @@ class BERTencoder(nn.Module):
         words = inputs[0]
         mask = inputs[1]
         segment_ids = inputs[2]
-        outputs = self.model(words, attention_mask=mask, token_type_ids=segment_ids)
+        seq_length = words.size(1)
+        position_ids = torch.arange(seq_length, dtype=torch.long, device=words.device)
+        position_ids = position_ids.unsqueeze(0).expand_as(words)
+        outputs = self.model(words, attention_mask=mask, token_type_ids=segment_ids, position_ids=position_ids)
         
         return outputs.pooler_output
 
