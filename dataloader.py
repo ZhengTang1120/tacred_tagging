@@ -53,20 +53,21 @@ class DataLoader(object):
             os, oe = d['obj_start'], d['obj_end']
 
             for i, t in enumerate(d['token']):
-                if i == ss:
-                    words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
-                if i == os:
-                    words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
+                # if i == ss:
+                #     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
+                # if i == os:
+                #     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                 if i>=ss and i<=se:
-                    pass
-                    # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
+                    # pass
+                    words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
                 elif i>=os and i<=oe:
-                    pass
-                    # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
+                    # pass
+                    words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                 else:
-                    t = convert_token(t)
-                    for sub_token in self.tokenizer.tokenize(t):
-                        words.append(sub_token)
+                    words.append(t)
+                    # t = convert_token(t)
+                    # for sub_token in self.tokenizer.tokenize(t):
+                    #     words.append(sub_token)
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
