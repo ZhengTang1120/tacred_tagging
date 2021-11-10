@@ -98,10 +98,10 @@ class DataLoader(object):
             segment_ids = [0] * len(tokens)
             processed += [(tokens, mask, segment_ids, tagging_mask, relation, words)]
             if sum(tagging_mask)!=0:
-                print (words)
                 print (d['token'])
-                print (tagged)
-                print (tagging_mask)
+                print (words)
+                print ([w for i,w in enumerate(d['token']) if i in tagged])
+                print ([w for i, w in enumerate(words) if tagging_mask[i]==1])
         return processed
 
     def gold(self):
