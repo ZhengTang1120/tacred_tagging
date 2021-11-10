@@ -96,7 +96,7 @@ class DataLoader(object):
                 tagging_mask = tagging_mask[:128]
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
-            processed += [(tokens, mask, segment_ids, tagging_mask, relation, words)]
+            processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, words)]
             # if sum(tagging_mask)!=0:
             #     print (d['token'])
             #     print (words)
@@ -134,7 +134,7 @@ class DataLoader(object):
 
         rels = torch.LongTensor(batch[-2])#
 
-        return (words, mask, segment_ids, tagging_mask, rels)
+        return (words, mask, segment_ids, tagging_mask, batch[4], rels)
 
     def __iter__(self):
         for i in range(self.__len__()):

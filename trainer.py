@@ -58,7 +58,7 @@ def unpack_batch(batch, cuda, device):
     else:
         inputs = [Variable(batch[i]) for i in range(4)]
         labels = Variable(batch[-1])
-    return inputs, labels
+    return inputs, labels, batch[4]
 
 class BERTtrainer(Trainer):
     def __init__(self, opt):
@@ -92,7 +92,7 @@ class BERTtrainer(Trainer):
              t_total=opt['steps'])
 
     def update(self, batch, epoch):
-        inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
 
         # step forward
         self.encoder.train()
@@ -103,7 +103,7 @@ class BERTtrainer(Trainer):
         tagging_output = self.tagger(h)
         loss = self.criterion2(b_out, (~(labels.eq(0))).to(torch.float32).unsqueeze(1))
         if epoch <= 5:
-            for i, f in enumerate(inputs[3]):
+            for i, f in enumerate(has_tag):
                 if f:
                     loss += self.criterion2(tagging_output[i], rules[i].unsqueeze(1).to(torch.float32))
                     logits = self.classifier(h[i], inputs[0][i].unsqueeze(0), inputs[3][i].unsqueeze(0))
@@ -130,7 +130,7 @@ class BERTtrainer(Trainer):
         return loss_val
 
     def predict(self, batch, id2label, tokenizer):
-        inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels, _ = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
         # forward
         self.encoder.eval()
         self.classifier.eval()
