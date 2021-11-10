@@ -57,6 +57,7 @@ class DataLoader(object):
             words  = list()
             if not self.do_eval:
                 _, tagged = self.tagging[c].split('\t')
+                tagged = eval(tagged)
             else:
                 tagged = []
             tagging_mask = list()
