@@ -50,7 +50,7 @@ trainer.load(model_file)
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
-batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, True)
+batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, True, opt['data_dir'] + '/tagging_{}.json'.format(args.dataset))
 
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
@@ -62,7 +62,7 @@ x = 0
 exact_match = 0
 other = 0
 for c, b in enumerate(batch):
-    preds,_ = trainer.predict(b, id2label, tokenizer)
+    preds,tags,_ = trainer.predict(b, id2label, tokenizer)
     predictions += preds
     batch_size = len(preds)
 output = list()

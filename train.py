@@ -61,10 +61,10 @@ elif args.cuda:
 
 tokenizer = BertTokenizer.from_pretrained('SpanBERT/spanbert-large-cased')
 
-train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer)
+train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer, False, opt['data_dir'] + '/tagging_train.json')
 train_num_example = train_batch.num_examples
 train_batch = list(train_batch)
-dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, tokenizer, True)
+dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, tokenizer)
 
 model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
 model_save_dir = opt['save_dir'] + '/' + model_id
@@ -123,7 +123,7 @@ for epoch in range(1, opt['num_epoch']+1):
             predictions = []
             dev_loss = 0
             for _, batch in enumerate(dev_batch):
-                preds, dloss = trainer.predict(batch, id2label, tokenizer)
+                preds, tags, dloss = trainer.predict(batch, id2label, tokenizer)
                 predictions += preds
                 dev_loss += dloss
             predictions = [id2label[p] for p in predictions]

@@ -17,7 +17,7 @@ class DataLoader(object):
     """
     Load data from json files, preprocess and prepare batches.
     """
-    def __init__(self, filename, batch_size, opt, tokenizer, do_eval = False):
+    def __init__(self, filename, batch_size, opt, tokenizer, do_eval = True, tagging = None):
         self.batch_size = batch_size
         self.opt = opt
         self.label2id = constant.LABEL_TO_ID
@@ -26,8 +26,12 @@ class DataLoader(object):
         with open(filename) as infile:
             data = json.load(infile)
         data = self.preprocess(data, opt)
+
         if not do_eval:
             data = sorted(data, key=lambda f: len(f[0]))
+            assert tagging is not None
+            with open(tagging) as f:
+                self.tagging = f.readlines()
         
         self.id2label = dict([(v,k) for k,v in self.label2id.items()])
         self.labels = [self.id2label[d[-2]] for d in data]
@@ -48,15 +52,19 @@ class DataLoader(object):
         for c, d in enumerate(data):
             tokens = list()
             words  = list()
-            # anonymize tokens
+            _, tagged = self.tagging[c].split('\t')
+            tagging_mask = list()
+
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
-
+            
             for i, t in enumerate(d['token']):
                 if i == ss:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
+                    tagging_mask.append(0)
                 if i == os:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
+                    tagging_mask.append(0)
                 if i>ss and i<=se:
                     pass
                     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
@@ -67,14 +75,20 @@ class DataLoader(object):
                     t = convert_token(t)
                     for sub_token in self.tokenizer.tokenize(t):
                         words.append(sub_token)
+                        if i in tagged:
+                            tagging_mask.append(1)
+                        else:
+                            tagging_mask.append(0)
+
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
             if len(tokens) > 128:
                 tokens = tokens[:128]
+                tagging_mask = tagging_mask[:128]
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
-            processed += [(tokens, mask, segment_ids, relation, words)]
+            processed += [(tokens, mask, segment_ids, tagging_mask, relation, words)]
         return processed
 
     def gold(self):
@@ -98,14 +112,16 @@ class DataLoader(object):
         words = batch[0]
         mask = batch[1]
         segment_ids = batch[2]
+        tagging_mask = batch[3]
         # convert to tensors
         words = get_long_tensor(words, batch_size)
         mask = get_long_tensor(mask, batch_size)
         segment_ids = get_long_tensor(segment_ids, batch_size)
+        tagging_mask = get_long_tensor(tagging_mask, batch_size)
 
         rels = torch.LongTensor(batch[-2])#
 
-        return (words, mask, segment_ids, rels)
+        return (words, mask, segment_ids, tagging_mask, rels)
 
     def __iter__(self):
         for i in range(self.__len__()):
