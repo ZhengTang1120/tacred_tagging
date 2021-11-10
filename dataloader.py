@@ -23,6 +23,7 @@ class DataLoader(object):
         self.label2id = constant.LABEL_TO_ID
         self.tokenizer = tokenizer
         self.do_eval = do_eval
+        print (do_eval)
 
         with open(filename) as infile:
             data = json.load(infile)
