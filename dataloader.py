@@ -52,7 +52,10 @@ class DataLoader(object):
         for c, d in enumerate(data):
             tokens = list()
             words  = list()
-            _, tagged = self.tagging[c].split('\t')
+            if self.tagging:
+                _, tagged = self.tagging[c].split('\t')
+            else:
+                tagged = []
             tagging_mask = list()
 
             ss, se = d['subj_start'], d['subj_end']
