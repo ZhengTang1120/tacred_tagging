@@ -29,6 +29,7 @@ class DataLoader(object):
         data = self.preprocess(data, opt)
 
         if not do_eval:
+            print ("??????")
             data = sorted(data, key=lambda f: len(f[0]))
             assert tagging is not None
             with open(tagging) as f:
