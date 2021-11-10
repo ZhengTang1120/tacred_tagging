@@ -98,6 +98,8 @@ class DataLoader(object):
             processed += [(tokens, mask, segment_ids, tagging_mask, relation, words)]
             if sum(tagging_mask)!=0:
                 print (words)
+                print (d['token'])
+                print (tagged)
                 print (tagging_mask)
         return processed
 
