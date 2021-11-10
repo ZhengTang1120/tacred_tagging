@@ -61,7 +61,7 @@ elif args.cuda:
 
 tokenizer = BertTokenizer.from_pretrained('SpanBERT/spanbert-large-cased')
 
-train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer, False, opt['data_dir'] + '/tagging_train.json')
+train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer, False, opt['data_dir'] + '/tagging_train.txt')
 train_num_example = train_batch.num_examples
 train_batch = list(train_batch)
 dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, tokenizer)
