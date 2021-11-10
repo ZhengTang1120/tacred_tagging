@@ -141,7 +141,7 @@ class BERTtrainer(Trainer):
             tagging_mask = torch.round(tagging_output).squeeze(2).eq(0)
             tagging_max = np.argmax(tagging_output.squeeze(2).data.cpu().numpy(), axis=1)
             tagging = torch.round(tagging_output).squeeze(2)
-            probs = self.classifier(h, inputs[0], tagging_mask)
+            probs = self.classifier(h, inputs[0], tagging_mask) * torch.round(b_out)
         loss = self.criterion2(b_out, (~(labels.eq(0))).to(torch.float32).unsqueeze(1)) + self.criterion(probs, labels).item()
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         tags = []
