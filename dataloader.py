@@ -22,6 +22,7 @@ class DataLoader(object):
         self.opt = opt
         self.label2id = constant.LABEL_TO_ID
         self.tokenizer = tokenizer
+        self.do_eval = do_eval
 
         with open(filename) as infile:
             data = json.load(infile)
@@ -52,7 +53,7 @@ class DataLoader(object):
         for c, d in enumerate(data):
             tokens = list()
             words  = list()
-            if self.tagging:
+            if not self.do_eval:
                 _, tagged = self.tagging[c].split('\t')
             else:
                 tagged = []
