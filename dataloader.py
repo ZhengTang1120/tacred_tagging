@@ -23,18 +23,18 @@ class DataLoader(object):
         self.label2id = constant.LABEL_TO_ID
         self.tokenizer = tokenizer
         self.do_eval = do_eval
-        print (do_eval)
+
+        if not do_eval:
+            assert tagging is not None
+            with open(tagging) as f:
+                self.tagging = f.readlines()
 
         with open(filename) as infile:
             data = json.load(infile)
         data = self.preprocess(data, opt)
 
         if not do_eval:
-            print ("??????")
             data = sorted(data, key=lambda f: len(f[0]))
-            assert tagging is not None
-            with open(tagging) as f:
-                self.tagging = f.readlines()
         
         self.id2label = dict([(v,k) for k,v in self.label2id.items()])
         self.labels = [self.id2label[d[-2]] for d in data]
