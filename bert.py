@@ -40,11 +40,11 @@ class BERTclassifier(nn.Module):
     def forward(self, h, words, tags):
         pool_type = self.opt['pooling']
         h = self.dropout(h)
-        out_mask = tags.unsqueeze(2).eq(0) + words.unsqueeze(2).eq(0) + words.unsqueeze(2).ge(20)
+        out_mask = torch.logical_and(tags.unsqueeze(2).eq(0), words.unsqueeze(2).eq(0), words.unsqueeze(2).ge(20))
         print (tags)
         print (words)
         print (out_mask)
-        cls_out = pool(h, out_mask.eq(0), type=pool_type)
+        cls_out = pool(h, out_mask, type=pool_type)
         logits = self.classifier(cls_out)
         return logits
 
