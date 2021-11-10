@@ -82,6 +82,7 @@ class BERTtrainer(Trainer):
             with torch.cuda.device(self.opt['device']):
                 self.encoder.cuda()
                 self.classifier.cuda()
+                self.tagger.cuda()
                 self.criterion.cuda()
                 self.criterion2.cuda()
 
