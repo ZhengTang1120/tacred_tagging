@@ -74,7 +74,8 @@ class DataLoader(object):
                 tokens = tokens[:128]
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
-            processed += [(tokens, mask, segment_ids, relation, words)]
+            if (len([aa for aa in tokens if aa>0 and aa<20]) == 2):
+                processed += [(tokens, mask, segment_ids, relation, words)]
         return processed
 
     def gold(self):
