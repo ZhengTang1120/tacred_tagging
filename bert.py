@@ -42,12 +42,14 @@ class BERTclassifier(nn.Module):
         h = self.dropout(h)
         out_mask = tags.unsqueeze(2).eq(1) + torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(20))
         torch.set_printoptions(profile="full")
-        print (tags)
-        print (words)
-        print (out_mask)
+        print ('tag: ', tags)
+        print ('word: ', words)
+        print ('maks: ', out_mask)
         torch.set_printoptions(profile="default")
         cls_out = pool(h, out_mask.eq(0), type=pool_type)
+        print ('cls: ',cls_out)
         logits = self.classifier(cls_out)
+        print ('logits: ', logits)
         return logits
 
 class Tagger(nn.Module):
