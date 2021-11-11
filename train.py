@@ -56,6 +56,7 @@ np.random.seed(args.seed)
 random.seed(args.seed)
 if args.cpu:
     args.cuda = False
+    args.device = None
 elif args.cuda:
     torch.cuda.manual_seed(args.seed)
 
