@@ -42,14 +42,14 @@ class BERTclassifier(nn.Module):
         h = self.dropout(h)
         out_mask = tags.unsqueeze(2).eq(1) + torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(20))
         torch.set_printoptions(profile="full")
-        print ('tag: ', tags[-1])
-        print ('word: ', words[-1])
-        print ('maks: ', out_mask[-1])
+        # print ('tag: ', tags[-1])
+        # print ('word: ', words[-1])
+        # print ('maks: ', out_mask[-1])
         torch.set_printoptions(profile="default")
         cls_out = pool(h, out_mask.eq(0), type=pool_type)
-        print ('cls: ',cls_out)
+        # print ('cls: ',cls_out)
         logits = self.classifier(cls_out)
-        print ('logits: ', logits)
+        # print ('logits: ', logits)
         return logits
 
 class Tagger(nn.Module):
@@ -96,7 +96,7 @@ def pool(h, mask, type='max'):
         return torch.max(h, 1)[0]
     elif type == 'avg':
         h = h.masked_fill(mask, 0)
-        print ('size: ', (mask.size(1) - mask.float().sum(1)))
+        # print ('size: ', (mask.size(1) - mask.float().sum(1)))
         return h.sum(1) / (mask.size(1) - mask.float().sum(1))
     else:
         h = h.masked_fill(mask, 0)

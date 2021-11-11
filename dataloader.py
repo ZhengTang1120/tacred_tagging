@@ -96,17 +96,13 @@ class DataLoader(object):
                 tagging_mask = tagging_mask[:128]
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
-            if (len([aa for aa in tokens if aa>0 and aa<20]) < 2):
-                if relation != 0:
-                    missed += 1
-            processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, words)]
+            if (len([aa for aa in tokens if aa>0 and aa<20]) == 2):
+                processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, words)]
             # if sum(tagging_mask)!=0:
             #     print (d['token'])
             #     print (words)
             #     print ([w for i,w in enumerate(d['token']) if i in tagged])
             #     print ([w for i, w in enumerate(words) if tagging_mask[i]==1])
-        print (missed)
-        exit()
         return processed
 
     def gold(self):
