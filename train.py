@@ -110,7 +110,8 @@ for epoch in range(1, opt['num_epoch']+1):
         start_time = time.time()
         global_step += 1
         loss = trainer.update(batch, epoch)
-        torch.cuda.empty_cache()
+        if args.cuda:
+            torch.cuda.empty_cache()
         train_loss += loss
         if global_step % opt['log_step'] == 0:
             duration = time.time() - start_time

@@ -77,8 +77,11 @@ class Tagger(nn.Module):
             else:
                 for ct in cand_tags:
                     ct.append(0)
-        with torch.cuda.device(device):
-            return torch.BoolTensor(cand_tags).cuda(), len(cand_tags)
+        if opt['cuda']:
+            with torch.cuda.device(device):
+                return torch.BoolTensor(cand_tags).cuda(), len(cand_tags)
+        else:
+            return torch.BoolTensor(cand_tags), len(cand_tags)
 
 def pool(h, mask, type='max'):
     if type == 'max':
