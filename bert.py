@@ -77,8 +77,7 @@ class Tagger(nn.Module):
             else:
                 for ct in cand_tags:
                     ct.append(0)
-        print (device)
-        if device:
+        if device is not None:
             with torch.cuda.device(device):
                 return torch.BoolTensor(cand_tags).cuda(), len(cand_tags)
         else:
