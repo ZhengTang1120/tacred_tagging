@@ -22,6 +22,7 @@ class DataLoader(object):
         self.opt = opt
         self.label2id = constant.LABEL_TO_ID
         self.tokenizer = tokenizer
+        self.do_eval = do_eval
 
         with open(filename) as infile:
             data = json.load(infile)
@@ -74,7 +75,9 @@ class DataLoader(object):
                 tokens = tokens[:128]
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
-            if (len([aa for aa in tokens if aa>0 and aa<20]) == 2):
+            if self.do_eval:
+                processed += [(tokens, mask, segment_ids, relation, words)]
+            elif (len([aa for aa in tokens if aa>0 and aa<20]) == 2):
                 processed += [(tokens, mask, segment_ids, relation, words)]
         return processed
 
