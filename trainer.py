@@ -119,7 +119,11 @@ class BERTtrainer(Trainer):
                     tag_cands, n = self.tagger.generate_cand_tags(tagging_output[i], self.opt['device'])
                     if n != -1:
                         logits = self.classifier(h[i], tag_cands, torch.cat(n*[inputs[3][i].unsqueeze(0)], dim=0))
+                        print (logits)
                         best = np.argmax(logits.data.cpu().numpy(), axis=0).tolist()[labels[i]]
+                        print (best)
+                        print (logits[best].unsqueeze(0), labels.unsqueeze(1)[i])
+                        print (self.criterion(logits[best].unsqueeze(0), labels.unsqueeze(1)[i]))
                         loss += self.criterion(logits[best].unsqueeze(0), labels.unsqueeze(1)[i])
 
         print ('loss: ', loss)
