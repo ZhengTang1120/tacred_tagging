@@ -31,6 +31,7 @@ parser.add_argument('--id', type=str, default='00', help='Model ID under which t
 parser.add_argument('--info', type=str, default='', help='Optional info for the experiment.')
 
 parser.add_argument('--seed', type=int, default=42)
+parser.add_argument('--max_length', type=int, default=128)
 parser.add_argument('--cuda', type=bool, default=torch.cuda.is_available())
 parser.add_argument('--cpu', action='store_true', help='Ignore CUDA.')
 

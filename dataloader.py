@@ -91,9 +91,9 @@ class DataLoader(object):
             relation = self.label2id[d['relation']]
             tagging_mask = [0]+tagging_mask+[0]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
-            if len(tokens) > 128:
-                tokens = tokens[:128]
-                tagging_mask = tagging_mask[:128]
+            if len(tokens) > self.opt['max_length']:
+                tokens = tokens[:self.opt['max_length']]
+                tagging_mask = tagging_mask[:self.opt['max_length']]
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
             if self.do_eval:
