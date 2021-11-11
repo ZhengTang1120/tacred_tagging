@@ -14,6 +14,7 @@ class BERTencoder(nn.Module):
         in_dim = 1024
         self.model = BertModel.from_pretrained("SpanBERT/spanbert-large-cased")
         self.classifier = nn.Linear(in_dim, 1)
+        self.dropout = nn.Dropout(constant.DROPOUT_PROB)
 
     def forward(self, inputs):
         words = inputs[0]
@@ -25,7 +26,8 @@ class BERTencoder(nn.Module):
         outputs = self.model(words, attention_mask=mask, token_type_ids=segment_ids, position_ids=position_ids)
         
         h = outputs.last_hidden_state
-        out = torch.sigmoid(self.classifier(outputs.pooler_output))
+        out = self.dropout(outputs.pooler_output)
+        out = torch.sigmoid(self.classifier(out))
 
         return h, out
 
@@ -39,7 +41,6 @@ class BERTclassifier(nn.Module):
 
     def forward(self, h, words, tags):
         pool_type = self.opt['pooling']
-        h = self.dropout(h)
         out_mask = tags.unsqueeze(2).eq(1) + torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(20))
         torch.set_printoptions(profile="full")
         # print ('tag: ', tags[-1])
@@ -48,6 +49,7 @@ class BERTclassifier(nn.Module):
         torch.set_printoptions(profile="default")
         cls_out = pool(h, out_mask.eq(0), type=pool_type)
         # print ('cls: ',cls_out)
+        cls_out = self.dropout(cls_out)
         logits = self.classifier(cls_out)
         # print ('logits: ', logits)
         return logits
