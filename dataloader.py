@@ -99,6 +99,7 @@ class DataLoader(object):
             if (len([aa for aa in tokens if aa>0 and aa<20]) == 0):
                 print (d['token'])
                 print (words)
+                print (tokens)
             processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, words)]
             # if sum(tagging_mask)!=0:
             #     print (d['token'])
