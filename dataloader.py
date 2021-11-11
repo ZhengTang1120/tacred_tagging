@@ -48,7 +48,7 @@ class DataLoader(object):
 
     def preprocess(self, data, opt):
 
-
+        missed = 0
         """ Preprocess the data and convert to ids. """
         processed = []
         processed_rule = []
@@ -96,7 +96,8 @@ class DataLoader(object):
                 tagging_mask = tagging_mask[:128]
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
-            if (len([aa for aa in tokens if aa>0 and aa<20]) == 0):
+            if (len([aa for aa in tokens if aa>0 and aa<20]) < 2):
+                missed += 1
                 print (d['token'])
                 print (words)
                 print (tokens)
@@ -106,6 +107,8 @@ class DataLoader(object):
             #     print (words)
             #     print ([w for i,w in enumerate(d['token']) if i in tagged])
             #     print ([w for i, w in enumerate(words) if tagging_mask[i]==1])
+        print (missed)
+        exit()
         return processed
 
     def gold(self):
