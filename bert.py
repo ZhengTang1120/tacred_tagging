@@ -25,6 +25,7 @@ class BERTencoder(nn.Module):
         outputs = self.model(words, attention_mask=mask, token_type_ids=segment_ids, position_ids=position_ids)
         
         h = outputs.last_hidden_state
+        print (outputs)
         out = torch.sigmoid(self.classifier(outputs.pooler_output))
 
         return h, out
@@ -88,7 +89,6 @@ def pool(h, mask, type='max'):
         h = h.masked_fill(mask, -constant.INFINITY_NUMBER)
         return torch.max(h, 1)[0]
     elif type == 'avg':
-        print (h.size(), mask.size())
         h = h.masked_fill(mask, 0)
         return h.sum(1) / (mask.size(1) - mask.float().sum(1))
     else:
