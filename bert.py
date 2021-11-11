@@ -85,6 +85,7 @@ def pool(h, mask, type='max'):
         h = h.masked_fill(mask, -constant.INFINITY_NUMBER)
         return torch.max(h, 1)[0]
     elif type == 'avg':
+        print (h.size(), mask.size())
         h = h.masked_fill(mask, 0)
         return h.sum(1) / (mask.size(1) - mask.float().sum(1))
     else:
