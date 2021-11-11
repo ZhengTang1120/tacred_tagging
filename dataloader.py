@@ -97,8 +97,8 @@ class DataLoader(object):
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
             if (len([aa for aa in tokens if aa>0 and aa<20]) < 2):
-                missed += 1
-                print (d['relation'])
+                if relation != 0:
+                    missed += 1
             processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, words)]
             # if sum(tagging_mask)!=0:
             #     print (d['token'])
