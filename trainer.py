@@ -122,7 +122,7 @@ class BERTtrainer(Trainer):
                         best = np.argmax(logits.data.cpu().numpy(), axis=0).tolist()[labels[i]]
                         loss += self.criterion(logits[best].unsqueeze(0), labels.unsqueeze(1)[i])
 
-        print ('loss: ', loss)
+        # print ('loss: ', loss)
         loss_val = loss.item()
         # backward
         loss.backward()
