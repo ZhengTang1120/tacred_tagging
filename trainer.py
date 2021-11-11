@@ -111,7 +111,7 @@ class BERTtrainer(Trainer):
         else:
             print (labels.size())
             for i, f in enumerate(has_tag):
-                print (i)
+                print (i, labels[i])
                 if f:
                     loss += self.criterion2(tagging_output[i], inputs[3][i].unsqueeze(1).to(torch.float32))
                     logits = self.classifier(h[i], inputs[0][i].unsqueeze(0), inputs[3][i].unsqueeze(0))
