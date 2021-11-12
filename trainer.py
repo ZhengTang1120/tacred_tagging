@@ -86,10 +86,15 @@ class BERTtrainer(Trainer):
                 self.criterion.cuda()
                 self.criterion2.cuda()
 
+        self.optimizer_burnin = BertAdam(optimizer_grouped_parameters,
+             lr=opt['lr'],
+             warmup=opt['warmup_prop'],
+             t_total=opt['burnin'] * opt['num_epoch'])
+
         self.optimizer = BertAdam(optimizer_grouped_parameters,
              lr=opt['lr'],
              warmup=opt['warmup_prop'],
-             t_total=opt['steps'])
+             t_total=(opt['train_batch'] - opt['burnin']) * opt['num_epoch'])
 
     def update(self, batch, epoch):
         inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
@@ -126,8 +131,12 @@ class BERTtrainer(Trainer):
         loss_val = loss.item()
         # backward
         loss.backward()
-        self.optimizer.step()
-        self.optimizer.zero_grad()
+        if epoch <= self.opt['burnin']:
+            self.optimizer_burnin.step()
+            self.optimizer_burnin.zero_grad()
+        else:
+            self.optimizer.step()
+            self.optimizer.zero_grad()
         h = b_out = logits = inputs = labels = None
         return loss_val
 

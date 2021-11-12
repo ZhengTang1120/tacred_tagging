@@ -83,9 +83,8 @@ helper.print_config(opt)
 
 global_step = 0
 format_str = '{}: step {}/{} (epoch {}/{}), loss = {:.6f} ({:.3f} sec/batch), lr: {:.6f}'
-max_steps = len(train_batch) * opt['num_epoch']
 
-opt['steps'] = max_steps
+opt['train_batch'] = len(train_batch)
 
 # model
 if not opt['load']:
