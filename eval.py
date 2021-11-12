@@ -46,7 +46,7 @@ opt = torch_utils.load_config(model_file)
 opt['device'] = args.device
 trainer = BERTtrainer(opt)
 trainer.load(model_file)
-opt['max_length'] = 128
+
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
