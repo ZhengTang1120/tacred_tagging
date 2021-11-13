@@ -80,9 +80,9 @@ class DataLoader(object):
                     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                 else:
                     t = convert_token(t)
-                    for sub_token in self.tokenizer.tokenize(t):
+                    for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                         words.append(sub_token)
-                        if i in tagged:
+                        if i in tagged and j == len(self.tokenizer.tokenize(t))-1:
                             tagging_mask.append(1)
                         else:
                             tagging_mask.append(0)
@@ -101,11 +101,12 @@ class DataLoader(object):
             elif (len([aa for aa in tokens if aa>0 and aa<20]) == 2) or relation == 0:
                 processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, words)]
                 
-            # if sum(tagging_mask)!=0:
-            #     print (d['token'])
-            #     print (words)
-            #     print ([w for i,w in enumerate(d['token']) if i in tagged])
-            #     print ([w for i, w in enumerate(words) if tagging_mask[i]==1])
+            if sum(tagging_mask)!=0:
+                print (d['token'])
+                print (words)
+                print ([w for i,w in enumerate(d['token']) if i in tagged])
+                print ([w for i, w in enumerate(words) if tagging_mask[i]==1])
+            exit()
         return processed
 
     def gold(self):
