@@ -131,11 +131,11 @@ class BERTtrainer(Trainer):
         loss_val = loss.item()
         # backward
         loss.backward()
-        if epoch <= self.opt['burnin']:
+        if epoch == self.opt['burnin']:
+            self.optimizer_burnin = None
+        if self.optimizer_burnin:
             self.optimizer_burnin.step()
             self.optimizer_burnin.zero_grad()
-            if epoch == self.opt['burnin']:
-                self.optimizer_burnin = None
         else:
             self.optimizer.step()
             self.optimizer.zero_grad()
