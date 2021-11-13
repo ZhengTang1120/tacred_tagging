@@ -136,9 +136,9 @@ class BERTtrainer(Trainer):
                             if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
             ]
             self.optimizer = BertAdam(optimizer_grouped_parameters,
-                 lr=opt['lr'],
-                 warmup=opt['warmup_prop'],
-                 t_total= opt['train_batch'] * (opt['num_epoch'] - opt['burnin']))
+                 lr=self.opt['lr'],
+                 warmup=self.opt['warmup_prop'],
+                 t_total= self.opt['train_batch'] * (self.opt['num_epoch'] - self.opt['burnin']))
 
         self.optimizer.step()
         self.optimizer.zero_grad()
