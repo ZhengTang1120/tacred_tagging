@@ -101,11 +101,11 @@ class DataLoader(object):
             elif (len([aa for aa in tokens if aa>0 and aa<20]) == 2) or relation == 0:
                 processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, words)]
                 
-            if sum(tagging_mask)!=0:
-                print (d['token'])
-                print (words)
-                print ([w for i,w in enumerate(d['token']) if i in tagged])
-                print ([w for i, w in enumerate(words) if tagging_mask[i]==1])
+            # if sum(tagging_mask)!=0:
+            #     print (d['token'])
+            #     print (words)
+            #     print ([w for i,w in enumerate(d['token']) if i in tagged])
+            #     print ([w for i, w in enumerate(words) if tagging_mask[i]==1])
         return processed
 
     def gold(self):
