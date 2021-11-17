@@ -75,7 +75,7 @@ class DataLoader(object):
                     tagging_mask.append(0)
                 if i == os:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
-                    origin.append((colored(" ".join(d['token'][os:oe+1]), "orange"), [len(words)]))
+                    origin.append((colored(" ".join(d['token'][os:oe+1]), "yellow"), [len(words)]))
                     tagging_mask.append(0)
                 if i>ss and i<=se:
                     pass
