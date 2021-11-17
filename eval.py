@@ -73,7 +73,7 @@ output = list()
 for i, p in enumerate(predictions):
         predictions[i] = id2label[p]
         print (predictions[i])
-        print (" ".join([t if j not in tags[i] else colored(t, 'red') for j, t in enumerate(batch.words[i])]))
+        print (" ".join([t if tags[i][j] == 0 else colored(t, 'red') for j, t in enumerate(batch.words[i])]))
 
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
