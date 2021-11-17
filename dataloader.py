@@ -92,7 +92,6 @@ class DataLoader(object):
                             tagging_mask.append(0)
             origin = [('[CLS]', 0)] + origin
             words = ['[CLS]'] + words + ['[SEP]']
-            print (origin)
             relation = self.label2id[d['relation']]
             tagging_mask = [0]+tagging_mask+[0]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
