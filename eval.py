@@ -16,6 +16,8 @@ from transformers import BertTokenizer
 
 import json
 
+from termcolor import colored
+
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
 parser.add_argument('--model', type=str, default='best_model.pt', help='Name of the model file.')
@@ -61,16 +63,15 @@ predictions = []
 x = 0
 exact_match = 0
 other = 0
-print (batch.words[0])
 for c, b in enumerate(batch):
     preds,tags,_ = trainer.predict(b, id2label, tokenizer)
-    print (tokenizer.convert_ids_to_tokens(b[0][0], True))
-    exit()
     predictions += preds
     batch_size = len(preds)
 output = list()
 for i, p in enumerate(predictions):
         predictions[i] = id2label[p]
+        print (predictions[i])
+        print (" ".join([t if j not in tags[i] else colored(t, 'red') for j, t in enumerate(batch.words[i])]))
 
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
