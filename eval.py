@@ -18,6 +18,12 @@ import json
 
 from termcolor import colored
 
+def check(tags, ids):
+    for i in ids:
+        if tags[i] == 1:
+            return True
+    return False
+
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
 parser.add_argument('--model', type=str, default='best_model.pt', help='Name of the model file.')
@@ -74,7 +80,7 @@ for i, p in enumerate(predictions):
         predictions[i] = id2label[p]
         if p!=0:
             print (predictions[i])
-            print (" ".join([t if j>=len(tags[i]) or tags[i][j] == 0 else colored(t, 'red') for j, t in enumerate(batch.words[i])]))
+            print (" ".join([w if check(tags[i], ids) else colored(w, 'red') for w, ids in enumerate(batch.words[i])]))
 
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
