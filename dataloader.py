@@ -12,6 +12,8 @@ from utils import constant, helper
 from collections import defaultdict
 from statistics import mean
 
+from termcolor import colored
+
 
 class DataLoader(object):
     """
@@ -69,11 +71,11 @@ class DataLoader(object):
             for i, t in enumerate(d['token']):
                 if i == ss:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
-                    origin.append((" ".join(d['token'][ss:se+1]), [len(words)]))
+                    origin.append((colored(" ".join(d['token'][ss:se+1]), "blue"), [len(words)]))
                     tagging_mask.append(0)
                 if i == os:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
-                    origin.append((" ".join(d['token'][os:oe+1]), [len(words)]))
+                    origin.append((colored(" ".join(d['token'][os:oe+1]), "orange"), [len(words)]))
                     tagging_mask.append(0)
                 if i>ss and i<=se:
                     pass
