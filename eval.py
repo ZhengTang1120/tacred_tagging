@@ -63,9 +63,11 @@ predictions = []
 x = 0
 exact_match = 0
 other = 0
+tags = []
 for c, b in enumerate(batch):
-    preds,tags,_ = trainer.predict(b, id2label, tokenizer)
+    preds,t,_ = trainer.predict(b, id2label, tokenizer)
     predictions += preds
+    tags += t
     batch_size = len(preds)
 output = list()
 for i, p in enumerate(predictions):
