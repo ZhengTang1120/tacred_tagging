@@ -19,6 +19,7 @@ import json
 from termcolor import colored
 
 def check(tags, ids):
+    print (ids, tags)
     for i in ids:
         if tags[i] == 1:
             return True
@@ -80,7 +81,7 @@ for i, p in enumerate(predictions):
         predictions[i] = id2label[p]
         if p!=0:
             print (predictions[i])
-            print (" ".join([w if check(tags[i], ids) else colored(w, 'red') for w, ids in enumerate(batch.words[i])]))
+            print (" ".join([t[0] if check(tags[i], t[1]) else colored(t[0], 'red') for t in enumerate(batch.words[i])]))
 
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
