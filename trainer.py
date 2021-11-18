@@ -126,7 +126,7 @@ class BERTtrainer(Trainer):
         loss_val = loss.item()
         # backward
         loss.backward()
-        if epoch == self.opt['burnin']:
+        if epoch == self.opt['burnin'] + 1:
             param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())+list(self.tagger.named_parameters())
             no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
             optimizer_grouped_parameters = [
