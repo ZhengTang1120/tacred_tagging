@@ -72,10 +72,10 @@ class DataLoader(object):
                 if i == os:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                     tagging_mask.append(0)
-                if i>ss and i<=se:
+                if i>=ss and i<=se:
                     pass
                     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
-                elif i>os and i<=oe:
+                elif i>=os and i<=oe:
                     pass
                     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                 else:
