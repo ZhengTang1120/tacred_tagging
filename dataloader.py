@@ -68,10 +68,6 @@ class DataLoader(object):
                 t = convert_token(t)
                 for sub_token in self.tokenizer.tokenize(t):
                     words.append(sub_token)
-                if i == se:
-                    words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
-                if i == oe:
-                    words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
