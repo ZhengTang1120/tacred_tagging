@@ -12,8 +12,6 @@ from utils import constant, helper
 from collections import defaultdict
 from statistics import mean
 
-from termcolor import colored
-
 
 class DataLoader(object):
     """
@@ -57,7 +55,6 @@ class DataLoader(object):
         for c, d in enumerate(data):
             tokens = list()
             words  = list()
-            origin = list()
             if not self.do_eval:
                 _, tagged = self.tagging[c].split('\t')
                 tagged = eval(tagged)
@@ -71,11 +68,9 @@ class DataLoader(object):
             for i, t in enumerate(d['token']):
                 if i == ss:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
-                    origin.append((colored(" ".join(d['token'][ss:se+1]), "blue"), [len(words)]))
                     tagging_mask.append(0)
                 if i == os:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
-                    origin.append((colored(" ".join(d['token'][os:oe+1]), "yellow"), [len(words)]))
                     tagging_mask.append(0)
                 if i>ss and i<=se:
                     pass
@@ -85,14 +80,13 @@ class DataLoader(object):
                     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                 else:
                     t = convert_token(t)
-                    origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
                     for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                         words.append(sub_token)
                         if i in tagged and j == len(self.tokenizer.tokenize(t))-1:
                             tagging_mask.append(1)
                         else:
                             tagging_mask.append(0)
-            
+
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tagging_mask = [0]+tagging_mask+[0]
@@ -103,9 +97,9 @@ class DataLoader(object):
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
             if self.do_eval:
-                processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, origin)]
+                processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, words)]
             elif (len([aa for aa in tokens if aa>0 and aa<20]) == 2) or relation == 0:
-                processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, origin)]
+                processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, words)]
                 
             # if sum(tagging_mask)!=0:
             #     print (d['token'])
