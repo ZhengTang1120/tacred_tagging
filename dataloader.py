@@ -103,6 +103,7 @@ class DataLoader(object):
             if len(tokens) > self.opt['max_length']:
                 tokens = tokens[:self.opt['max_length']]
                 tagging_mask = tagging_mask[:self.opt['max_length']]
+                entity_mask = entity_mask[:self.opt['max_length']]
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
             if self.do_eval:
