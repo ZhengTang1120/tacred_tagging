@@ -39,9 +39,9 @@ class BERTclassifier(nn.Module):
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
         self.opt = opt
 
-    def forward(self, h, words, tags):
+    def forward(self, h, entities, tags):
         pool_type = self.opt['pooling']
-        out_mask = tags.unsqueeze(2).eq(1) + torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(20))
+        out_mask = tags.unsqueeze(2).eq(1) + entities.unsqueeze(2).eq(1)#torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(20))
         # torch.set_printoptions(profile="full")
         # print ('tag: ', tags[-1])
         # print ('word: ', words[-1])

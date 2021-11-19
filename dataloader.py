@@ -64,6 +64,8 @@ class DataLoader(object):
 
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
+
+            entity_mask = list()
             
             for i, t in enumerate(d['token']):
                 if i == ss:
@@ -82,10 +84,14 @@ class DataLoader(object):
                 t = convert_token(t)
                 for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                     words.append(sub_token)
-                    if i in tagged and j == len(self.tokenizer.tokenize(t))-1:
+                    if i in tagged:
                         tagging_mask.append(1)
                     else:
                         tagging_mask.append(0)
+                    if (i>=ss and i<=se) or (i>=os and i<=oe):
+                        entity_mask.append(1)
+                    else:
+                        entity_mask.append(0)
 
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
@@ -97,9 +103,9 @@ class DataLoader(object):
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
             if self.do_eval:
-                processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, words)]
+                processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, entity_mask, relation, words)]
             elif (len([aa for aa in tokens if aa>0 and aa<20]) == 2) or relation == 0:
-                processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, words)]
+                processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, entity_mask, relation, words)]
                 
             # if sum(tagging_mask)!=0:
             #     print (d['token'])
@@ -130,15 +136,17 @@ class DataLoader(object):
         mask = batch[1]
         segment_ids = batch[2]
         tagging_mask = batch[3]
+        entity_mask = batch[5]
         # convert to tensors
         words = get_long_tensor(words, batch_size)
         mask = get_long_tensor(mask, batch_size)
         segment_ids = get_long_tensor(segment_ids, batch_size)
         tagging_mask = get_long_tensor(tagging_mask, batch_size)
+        entity_mask = get_long_tensor(entity_mask, batch_size)
 
         rels = torch.LongTensor(batch[-2])#
 
-        return (words, mask, segment_ids, tagging_mask, batch[4], rels)
+        return (words, mask, segment_ids, tagging_mask, entity_mask, batch[4], rels)
 
     def __iter__(self):
         for i in range(self.__len__()):
