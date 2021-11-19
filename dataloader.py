@@ -71,9 +71,11 @@ class DataLoader(object):
                 if i == ss:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
                     tagging_mask.append(0)
+                    entity_mask.append(1)
                 if i == os:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                     tagging_mask.append(0)
+                    entity_mask.append(1)
                 # if i>=ss and i<=se:
                 #     pass
                 #     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
@@ -96,6 +98,7 @@ class DataLoader(object):
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tagging_mask = [0]+tagging_mask+[0]
+            entity_mask = [0]+entity_mask+[0]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
             if len(tokens) > self.opt['max_length']:
                 tokens = tokens[:self.opt['max_length']]
