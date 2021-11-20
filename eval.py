@@ -16,6 +16,12 @@ from transformers import BertTokenizer
 
 import json
 
+def check(tags, ids):
+    for i in ids:
+        if tags[i] == 1:
+            return True
+    return False
+
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
 parser.add_argument('--model', type=str, default='best_model.pt', help='Name of the model file.')
@@ -57,17 +63,21 @@ label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
 
 predictions = []
-
+tags = []
 x = 0
 exact_match = 0
 other = 0
 for c, b in enumerate(batch):
-    preds,tags,_ = trainer.predict(b, id2label, tokenizer)
+    preds,t,_ = trainer.predict(b, id2label, tokenizer)
     predictions += preds
+    tags += t
     batch_size = len(preds)
 output = list()
 for i, p in enumerate(predictions):
-        predictions[i] = id2label[p]
+    predictions[i] = id2label[p]
+    print (predictions[i])
+    print (" ".join([t[0] if check(tags[i], t[1]) else colored(t[0], 'red') for t in batch.words[i]]))
+
 
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
