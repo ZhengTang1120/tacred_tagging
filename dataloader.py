@@ -69,20 +69,13 @@ class DataLoader(object):
             
             for i, t in enumerate(d['token']):
                 if i == ss:
-                    words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
+                    words.append("[unused%d]"%1)
                     tagging_mask.append(0)
-                    entity_mask.append(1)
+                    entity_mask.append(0)
                 if i == os:
-                    words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
+                    words.append("[unused%d]"%3)
                     tagging_mask.append(0)
-                    entity_mask.append(1)
-                # if i>=ss and i<=se:
-                #     pass
-                #     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
-                # elif i>=os and i<=oe:
-                #     pass
-                #     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
-                # else:
+                    entity_mask.append(0)
                 t = convert_token(t)
                 for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                     words.append(sub_token)
@@ -94,6 +87,14 @@ class DataLoader(object):
                         entity_mask.append(1)
                     else:
                         entity_mask.append(0)
+                if i == se:
+                    words.append("[unused%d]"%2)
+                    tagging_mask.append(0)
+                    entity_mask.append(0)
+                if i == oe:
+                    words.append("[unused%d]"%4)
+                    tagging_mask.append(0)
+                    entity_mask.append(0)
 
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
