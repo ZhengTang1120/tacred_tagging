@@ -67,7 +67,8 @@ class DataLoader(object):
 
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
-            
+            subj = []
+            obj = []
             for i, t in enumerate(d['token']):
                 if i == ss:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
@@ -77,14 +78,16 @@ class DataLoader(object):
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                     origin.append((colored(" ".join(d['token'][os:oe+1]), "yellow"), [len(words)]))
                     tagging_mask.append(0)
-                if i>ss and i<=se:
-                    pass
+                t = convert_token(t)
+                if i>=ss and i<=se:
+                    for sub_token in self.tokenizer.tokenize(t):
+                        subj.append(sub_token)
                     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
-                elif i>os and i<=oe:
-                    pass
+                elif i>=os and i<=oe:
+                    for sub_token in self.tokenizer.tokenize(t):
+                        obj.append(sub_token)
                     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                 else:
-                    t = convert_token(t)
                     origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
                     for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                         words.append(sub_token)
@@ -92,7 +95,7 @@ class DataLoader(object):
                             tagging_mask.append(1)
                         else:
                             tagging_mask.append(0)
-            print (d['token'])
+            words += ['[SEP]'] + subj + ['[SEP]'] + obj
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tagging_mask = [0]+tagging_mask+[0]
