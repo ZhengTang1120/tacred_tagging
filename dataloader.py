@@ -66,8 +66,6 @@ class DataLoader(object):
 
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
-            entity_length[se-ss]+=1
-            entity_length[oe-os]+=1
             subj = []
             obj = []
             for i, t in enumerate(d['token']):
