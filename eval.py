@@ -20,6 +20,7 @@ from termcolor import colored
 
 def check(tags, ids):
     for i in ids:
+        print (i, tags)
         if i<len(tags) and tags[i] == 1:
             return True
     return False
