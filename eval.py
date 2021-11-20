@@ -18,7 +18,7 @@ import json
 
 def check(tags, ids):
     for i in ids:
-        if tags[i] == 1:
+        if i<=128 and tags[i] == 1:
             return True
     return False
 
