@@ -82,11 +82,9 @@ class DataLoader(object):
                 if i>=ss and i<=se:
                     for sub_token in self.tokenizer.tokenize(t):
                         subj.append(sub_token)
-                    # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
                 elif i>=os and i<=oe:
                     for sub_token in self.tokenizer.tokenize(t):
                         obj.append(sub_token)
-                    # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                 else:
                     origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
                     for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
@@ -95,8 +93,7 @@ class DataLoader(object):
                             tagging_mask.append(1)
                         else:
                             tagging_mask.append(0)
-            words += ['[SEP]'] + subj + ['[SEP]'] + obj
-            tagging_mask += [0]*(len(subj)+len(obj)+2)
+            
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tagging_mask = [0]+tagging_mask+[0]
