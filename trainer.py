@@ -86,15 +86,10 @@ class BERTtrainer(Trainer):
                 self.criterion.cuda()
                 self.criterion2.cuda()
 
-        self.optimizer_burnin = BertAdam(optimizer_grouped_parameters,
-             lr=opt['lr'],
-             warmup=opt['warmup_prop'],
-             t_total= opt['train_batch'] * opt['burnin'])
-
         self.optimizer = BertAdam(optimizer_grouped_parameters,
              lr=opt['lr'],
              warmup=opt['warmup_prop'],
-             t_total= opt['train_batch'] * (opt['num_epoch'] - opt['burnin']))
+             t_total= opt['train_batch'] * opt['burnin'])
 
     def update(self, batch, epoch):
         inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
@@ -131,14 +126,22 @@ class BERTtrainer(Trainer):
         loss_val = loss.item()
         # backward
         loss.backward()
-        if epoch == self.opt['burnin']:
-            self.optimizer_burnin = None
-        if self.optimizer_burnin:
-            self.optimizer_burnin.step()
-            self.optimizer_burnin.zero_grad()
-        else:
-            self.optimizer.step()
-            self.optimizer.zero_grad()
+        if epoch == self.opt['burnin'] + 1:
+            param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())+list(self.tagger.named_parameters())
+            no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+            optimizer_grouped_parameters = [
+                {'params': [p for n, p in param_optimizer
+                            if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
+                {'params': [p for n, p in param_optimizer
+                            if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+            ]
+            self.optimizer = BertAdam(optimizer_grouped_parameters,
+                 lr=self.opt['lr'],
+                 warmup=self.opt['warmup_prop'],
+                 t_total= self.opt['train_batch'] * (self.opt['num_epoch'] - self.opt['burnin']))
+
+        self.optimizer.step()
+        self.optimizer.zero_grad()
         h = b_out = logits = inputs = labels = None
         return loss_val
 
