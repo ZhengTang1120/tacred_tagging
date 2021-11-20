@@ -16,6 +16,8 @@ from transformers import BertTokenizer
 
 import json
 
+from termcolor import colored
+
 def check(tags, ids):
     for i in ids:
         if i<len(tags) and tags[i] == 1:
