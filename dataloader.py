@@ -53,7 +53,7 @@ class DataLoader(object):
         missed = 0
         """ Preprocess the data and convert to ids. """
         processed = []
-        processed_rule = []
+        entity_length = defaultdict(int)
         for c, d in enumerate(data):
             tokens = list()
             words  = list()
@@ -67,6 +67,8 @@ class DataLoader(object):
 
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
+            entity_length[se-ss]+=1
+            entity_length[oe-os]+=1
             subj = []
             obj = []
             for i, t in enumerate(d['token']):
@@ -113,6 +115,7 @@ class DataLoader(object):
             #     print (words)
             #     print ([w for i,w in enumerate(d['token']) if i in tagged])
             #     print ([w for i, w in enumerate(words) if tagging_mask[i]==1])
+        print (entity_length)
         return processed
 
     def gold(self):
