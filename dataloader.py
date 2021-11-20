@@ -67,36 +67,35 @@ class DataLoader(object):
 
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
-            subj = []
-            obj = []
+            
             for i, t in enumerate(d['token']):
                 if i == ss:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
-                    origin.append((colored(" ".join(d['token'][ss:se+1]), "blue"), [len(words)]))
                     tagging_mask.append(0)
+                    origin.append((colored(" ".join(d['token'][ss:se+1]), "blue"), [len(words)]))
                 if i == os:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
-                    origin.append((colored(" ".join(d['token'][os:oe+1]), "yellow"), [len(words)]))
                     tagging_mask.append(0)
-                t = convert_token(t)
-                if i>=ss and i<=se:
-                    for sub_token in self.tokenizer.tokenize(t):
-                        subj.append(sub_token)
+                    origin.append((colored(" ".join(d['token'][os:oe+1]), "yellow"), [len(words)]))
+                if i>ss and i<=se:
+                    pass
                     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
-                elif i>=os and i<=oe:
-                    for sub_token in self.tokenizer.tokenize(t):
-                        obj.append(sub_token)
+                elif i>os and i<=oe:
+                    pass
                     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                 else:
-                    origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
+                    t = convert_token(t)
+                    if i!=ss and i!=os:
+                        origin.append((t, range(len(words), len(words)+len(self.tokenizer.tokenize(t)))))
                     for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                         words.append(sub_token)
                         if i in tagged and j == len(self.tokenizer.tokenize(t))-1:
                             tagging_mask.append(1)
                         else:
                             tagging_mask.append(0)
-            words += ['[SEP]'] + subj + ['[SEP]'] + obj
+
             words = ['[CLS]'] + words + ['[SEP]']
+            origin = [('[CLS]', [0])] + origin + [('[SEP]', [len(origin)+1])]
             relation = self.label2id[d['relation']]
             tagging_mask = [0]+tagging_mask+[0]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
