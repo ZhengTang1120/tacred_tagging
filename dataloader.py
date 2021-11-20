@@ -78,14 +78,16 @@ class DataLoader(object):
                     # origin.append((colored(" ".join(d['token'][os:oe+1]), "yellow"), [len(words)]))
                     tagging_mask.append(0)
                 t = convert_token(t)
-                # if i>=ss and i<=se:
-                #     for sub_token in self.tokenizer.tokenize(t):
-                #         subj.append(sub_token)
-                # elif i>=os and i<=oe:
-                #     for sub_token in self.tokenizer.tokenize(t):
-                #         obj.append(sub_token)
-                # else:
-                origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
+                if i>=ss and i<=se:
+                    # for sub_token in self.tokenizer.tokenize(t):
+                    #     subj.append(sub_token)
+                    origin.append((colored(t, 'blue'), range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
+                elif i>=os and i<=oe:
+                    # for sub_token in self.tokenizer.tokenize(t):
+                    #     obj.append(sub_token)
+                    origin.append((colored(t, 'yellow'), range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
+                else:
+                    origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
                 for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                     words.append(sub_token)
                     if i in tagged and j == len(self.tokenizer.tokenize(t))-1:
