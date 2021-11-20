@@ -85,7 +85,7 @@ class DataLoader(object):
                     for sub_token in self.tokenizer.tokenize(t):
                         obj.append(sub_token)
                 else:
-                    origin.append((t, range(len(words), len(words)+len(self.tokenizer.tokenize(t)))))
+                    origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
                     for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                         words.append(sub_token)
                         if i in tagged and j == len(self.tokenizer.tokenize(t))-1:
