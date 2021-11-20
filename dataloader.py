@@ -96,6 +96,7 @@ class DataLoader(object):
                         else:
                             tagging_mask.append(0)
             words += ['[SEP]'] + subj + ['[SEP]'] + obj
+            tagging_mask += [0]*(len(subj)+len(obj)+2)
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tagging_mask = [0]+tagging_mask+[0]
