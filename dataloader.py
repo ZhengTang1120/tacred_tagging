@@ -12,6 +12,8 @@ from utils import constant, helper
 from collections import defaultdict
 from statistics import mean
 
+from termcolor import colored
+
 
 class DataLoader(object):
     """
@@ -69,31 +71,29 @@ class DataLoader(object):
             for i, t in enumerate(d['token']):
                 if i == ss:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
+                    origin.append((colored(" ".join(d['token'][ss:se+1]), "blue"), [len(words)]))
                     tagging_mask.append(0)
-                    origin.append((" ".join(d['token'][ss:se+1]), [len(words)]))
                 if i == os:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
+                    origin.append((colored(" ".join(d['token'][os:oe+1]), "yellow"), [len(words)]))
                     tagging_mask.append(0)
-                    origin.append((" ".join(d['token'][os:oe+1]), [len(words)]))
-                if i>=ss and i<=se:
+                if i>ss and i<=se:
                     pass
                     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
-                elif i>=os and i<=oe:
+                elif i>os and i<=oe:
                     pass
                     # words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                 else:
                     t = convert_token(t)
-                    if i!=ss and i!=os:
-                        origin.append((t, range(len(words), len(words)+len(self.tokenizer.tokenize(t)))))
+                    origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
                     for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                         words.append(sub_token)
                         if i in tagged and j == len(self.tokenizer.tokenize(t))-1:
                             tagging_mask.append(1)
                         else:
                             tagging_mask.append(0)
-
+            print (d['token'])
             words = ['[CLS]'] + words + ['[SEP]']
-            origin = [('[CLS]', [0])] + origin + [('[SEP]', [len(origin)+1])]
             relation = self.label2id[d['relation']]
             tagging_mask = [0]+tagging_mask+[0]
             tokens = self.tokenizer.convert_tokens_to_ids(words)

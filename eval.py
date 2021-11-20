@@ -65,10 +65,11 @@ label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
 
 predictions = []
-tags = []
+
 x = 0
 exact_match = 0
 other = 0
+tags = []
 for c, b in enumerate(batch):
     preds,t,_ = trainer.predict(b, id2label, tokenizer)
     predictions += preds
@@ -76,11 +77,11 @@ for c, b in enumerate(batch):
     batch_size = len(preds)
 output = list()
 for i, p in enumerate(predictions):
-    predictions[i] = id2label[p]
-    if p!=0:
-        print (predictions[i])
-        print (" ".join([t[0] if not check(tags[i], t[1]) else colored(t[0], 'red') for t in batch.words[i]]))
-
+        predictions[i] = id2label[p]
+        if p!=0:
+            print (predictions[i])
+            print (batch.words[i])
+            print (" ".join([t[0] if not check(tags[i], t[1]) else colored(t[0], 'red') for t in batch.words[i]]))
 
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
