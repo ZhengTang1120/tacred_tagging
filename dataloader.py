@@ -55,16 +55,12 @@ class DataLoader(object):
 
             for i, t in enumerate(d['token']):
                 if i == ss:
-                    words.append("[unused%d]"%1)
+                    words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
                 if i == os:
-                    words.append("[unused%d]"%3)
+                    words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                 t = convert_token(t)
                 for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                     words.append(sub_token)
-                if i == se:
-                    words.append("[unused%d]"%2)
-                if i == oe:
-                    words.append("[unused%d]"%4)
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
