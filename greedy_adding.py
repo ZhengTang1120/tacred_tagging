@@ -101,6 +101,7 @@ data = preprocess(data_file, tokenizer)
 
 for c, words in enumerate(data):
     if predictions[c] != 0:
+        print (len(words))
         l = None
         rationale = list()
         while l!=predictions[c]:
@@ -119,6 +120,7 @@ for c, words in enumerate(data):
             print ([x.size() for x in inputs])
             b, l = trainer.predict_cand(inputs, predictions[c])
             rationale.append(b)
+            print (rationale)
         print (id2label[predictions[c]])
         print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
 
