@@ -108,7 +108,7 @@ for c, words in enumerate(data):
             if i not in rationale:
                 cand_r = rationale+[i]
                 cand_r.sort()
-                ids = tokenizer.convert_tokens_to_ids(['CLS']+[words[j] for j in cand_r]+['SEP'])
+                ids = tokenizer.convert_tokens_to_ids(['[CLS]']+[words[j] for j in cand_r]+['[SEP]'])
                 mask = [1] * len(ids)
                 segment_ids = [0] * len(ids)
                 candidates.append((ids, mask, segment_ids))
