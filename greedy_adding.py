@@ -112,7 +112,7 @@ for c, words in enumerate(data):
                 segment_ids = [0] * len(ids)
                 candidates.append((ids, mask, segment_ids))
         inputs = torch.LongTensor(candidates)
-        b, l = trainer.predict_cand(inputs)
+        b, l = trainer.predict_cand(inputs, predictions[c])
         rationale.append(b)
     if predictions[c] != 0:
         print (id2label[predictions[c]])
