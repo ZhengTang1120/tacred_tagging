@@ -111,7 +111,7 @@ for c, words in enumerate(data):
                 mask = [1] * len(ids)
                 segment_ids = [0] * len(ids)
                 candidates.append((ids, mask, segment_ids))
-        candidates = list(zip(*candidates))
+        candidates = list(zip(*[candidates]))
         with torch.cuda.device(args.device):
             inputs = [torch.LongTensor(c[i]).cuda() for c in candidates]
         b, l = trainer.predict_cand(inputs, predictions[c])
