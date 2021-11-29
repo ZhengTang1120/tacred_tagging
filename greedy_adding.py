@@ -106,8 +106,10 @@ for c, words in enumerate(data):
         rationale = list()
         while l!=predictions[c]:
             candidates = list()
+            cr = list()
             for i in range(len(words)):
                 if i not in rationale:
+                    cr.append(i)
                     cand_r = rationale+[i]
                     cand_r.sort()
                     ids = tokenizer.convert_tokens_to_ids(['[CLS]']+[words[j] for j in cand_r]+['[SEP]'])
@@ -119,7 +121,7 @@ for c, words in enumerate(data):
                 inputs = [torch.LongTensor(c).cuda() for c in candidates]
             print ([x.size() for x in inputs])
             b, l = trainer.predict_cand(inputs, predictions[c])
-            rationale.append(b)
+            rationale.append(cr[b])
             print (rationale)
         print (id2label[predictions[c]])
         print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
