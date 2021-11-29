@@ -79,11 +79,13 @@ class DataLoader(object):
                     tagging_mask.append(0)
                 t = convert_token(t)
                 if i>=ss and i<=se:
-                    for sub_token in self.tokenizer.tokenize(t):
-                        subj.append(sub_token)
+                    # for sub_token in self.tokenizer.tokenize(t):
+                    #     subj.append(sub_token)
+                    pass
                 elif i>=os and i<=oe:
-                    for sub_token in self.tokenizer.tokenize(t):
-                        obj.append(sub_token)
+                    # for sub_token in self.tokenizer.tokenize(t):
+                    #     obj.append(sub_token)
+                    pass
                 else:
                     origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
                     for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
