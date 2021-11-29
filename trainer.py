@@ -117,3 +117,14 @@ class BERTtrainer(Trainer):
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         
         return predictions, loss
+
+    def predict_cand(self, inputs, r):
+        self.encoder.eval()
+        self.classifier.eval()
+        with torch.no_grad():
+            h = self.encoder(inputs)
+            probs = self.classifier(h)
+        predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
+
+        best = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
+        return best, predictions[best]
