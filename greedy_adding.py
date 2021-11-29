@@ -111,7 +111,7 @@ for c, words in enumerate(data):
                 mask = [1] * len(ids)
                 segment_ids = [0] * len(ids)
                 candidates.append((ids, mask, segment_ids))
-        with torch.cuda.device(device):
+        with torch.cuda.device(args.device):
             inputs = torch.LongTensor(candidates).cuda()
         b, l = trainer.predict_cand(inputs, predictions[c])
         rationale.append(b)
