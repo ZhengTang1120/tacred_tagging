@@ -48,6 +48,7 @@ def preprocess(filename, tokenizer):
                 t = convert_token(t)
                 for j, sub_token in enumerate(tokenizer.tokenize(t)):
                     words.append(sub_token)
+        words = words[:128]
         processed.append(words)
     return processed
 
