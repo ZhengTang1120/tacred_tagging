@@ -146,7 +146,7 @@ class BERTtrainer(Trainer):
         return loss_val
 
     def predict(self, batch, id2label, tokenizer):
-        inputs, labels, _ = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
         # forward
         self.encoder.eval()
         self.classifier.eval()
@@ -160,6 +160,9 @@ class BERTtrainer(Trainer):
             logits = self.classifier(h, inputs[0], tagging_mask)
             probs = F.softmax(logits, 1) * torch.round(b_out)
         loss = self.criterion2(b_out, (~(labels.eq(0))).to(torch.float32).unsqueeze(1)) + self.criterion(logits, labels).item()
+        for i, f in enumerate(has_tag):
+            if f:
+                loss += self.criterion2(tagging_output[i], inputs[3][i].unsqueeze(1).to(torch.float32))
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         tags = []
         for i, p in enumerate(predictions):
