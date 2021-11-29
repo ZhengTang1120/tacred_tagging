@@ -100,27 +100,25 @@ for c, b in enumerate(batch):
 data = preprocess(data_file, tokenizer)
 
 for c, words in enumerate(data):
-    l = None
-    rationale = list()
-    while l!=predictions[c]:
-        candidates = list()
-        for i in range(len(words)):
-            if i not in rationale:
-                cand_r = rationale+[i]
-                cand_r.sort()
-                print (cand_r)
-                ids = tokenizer.convert_tokens_to_ids(['[CLS]']+[words[j] for j in cand_r]+['[SEP]'])
-                mask = [1] * len(ids)
-                segment_ids = [0] * len(ids)
-                candidates.append((ids, mask, segment_ids))
-        candidates = list(zip(*candidates))
-        print (candidates)
-        with torch.cuda.device(args.device):
-            inputs = [torch.LongTensor(c).cuda() for c in candidates]
-        print ([x.size() for x in inputs])
-        b, l = trainer.predict_cand(inputs, predictions[c])
-        rationale.append(b)
     if predictions[c] != 0:
+        l = None
+        rationale = list()
+        while l!=predictions[c]:
+            candidates = list()
+            for i in range(len(words)):
+                if i not in rationale:
+                    cand_r = rationale+[i]
+                    cand_r.sort()
+                    ids = tokenizer.convert_tokens_to_ids(['[CLS]']+[words[j] for j in cand_r]+['[SEP]'])
+                    mask = [1] * len(ids)
+                    segment_ids = [0] * len(ids)
+                    candidates.append((ids, mask, segment_ids))
+            candidates = list(zip(*candidates))
+            with torch.cuda.device(args.device):
+                inputs = [torch.LongTensor(c).cuda() for c in candidates]
+            print ([x.size() for x in inputs])
+            b, l = trainer.predict_cand(inputs, predictions[c])
+            rationale.append(b)
         print (id2label[predictions[c]])
         print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
 
