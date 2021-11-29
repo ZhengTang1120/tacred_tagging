@@ -24,7 +24,7 @@ def convert_token(token):
         return '}'
     return token
 
-def preprocess(filename):
+def preprocess(filename, tokenizer):
     with open(filename) as infile:
         data = json.load(infile)
     processed = list()
@@ -46,7 +46,7 @@ def preprocess(filename):
                 pass
             else:
                 t = convert_token(t)
-                for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
+                for j, sub_token in enumerate(tokenizer.tokenize(t)):
                     words.append(sub_token)
         processed.append(words)
     return processed
@@ -96,7 +96,7 @@ for c, b in enumerate(batch):
     predictions += preds
     batch_size = len(preds)
 
-data = preprocess(data_file)
+data = preprocess(data_file, tokenizer)
 
 for c, words in enumerate(data):
     l = None
