@@ -114,6 +114,7 @@ for c, words in enumerate(data):
         candidates = list(zip(*candidates))
         with torch.cuda.device(args.device):
             inputs = [torch.LongTensor(c).cuda() for c in candidates]
+        print ([x.size() for x in inputs])
         b, l = trainer.predict_cand(inputs, predictions[c])
         rationale.append(b)
     if predictions[c] != 0:
