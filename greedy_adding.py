@@ -5,7 +5,7 @@ from trainer import BERTtrainer
 from dataloader import DataLoader
 from utils import torch_utils, scorer, constant, helper
 import json
-
+from transformers import BertTokenizer
 from termcolor import colored
 
 def preprocess(filename):
