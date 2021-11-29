@@ -101,7 +101,6 @@ data = preprocess(data_file, tokenizer)
 
 for c, words in enumerate(data):
     if predictions[c] != 0:
-        print (len(words))
         l = None
         rationale = list()
         while l!=predictions[c]:
