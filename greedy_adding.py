@@ -8,6 +8,22 @@ import json
 from transformers import BertTokenizer
 from termcolor import colored
 
+def convert_token(token):
+    """ Convert PTB tokens to normal tokens """
+    if (token.lower() == '-lrb-'):
+            return '('
+    elif (token.lower() == '-rrb-'):
+        return ')'
+    elif (token.lower() == '-lsb-'):
+        return '['
+    elif (token.lower() == '-rsb-'):
+        return ']'
+    elif (token.lower() == '-lcb-'):
+        return '{'
+    elif (token.lower() == '-rcb-'):
+        return '}'
+    return token
+
 def preprocess(filename):
     with open(filename) as infile:
         data = json.load(infile)
