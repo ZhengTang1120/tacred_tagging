@@ -128,3 +128,25 @@ class BERTtrainer(Trainer):
 
         best = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
         return best, predictions[best]
+
+    def update_cand(self, inputs, r):
+
+        # step forward
+        self.encoder.train()
+        self.classifier.train()
+
+        h = self.encoder(inputs)
+        logits = self.classifier(h)
+
+        best = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
+
+        loss = self.criterion(logits[best].unsqueeze(0), r)
+        loss_val = loss.item()
+        # backward
+        loss.backward()
+        self.optimizer.step()
+        self.optimizer.zero_grad()
+        h = logits = inputs = labels = None
+        return loss_val
+
+
