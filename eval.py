@@ -18,6 +18,8 @@ import json
 
 from termcolor import colored
 
+import math
+
 def check(tags, ids):
     for i in ids:
         if i<len(tags) and tags[i] == 1:
@@ -58,7 +60,11 @@ trainer.load(model_file)
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
-batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, True, opt['data_dir'] + '/tagging_{}.json'.format(args.dataset))
+batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, True)
+
+
+with open(opt['data_dir'] + '/tagging_{}.json'.format(args.dataset)) as f:
+    tagging = f.readlines()
 
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
@@ -76,15 +82,31 @@ for c, b in enumerate(batch):
     tags += t
     batch_size = len(preds)
 output = list()
+tagging_scores = []
 for i, p in enumerate(predictions):
-        predictions[i] = id2label[p]
-        if p!=0:
-            print (predictions[i])
-            print (" ".join([t[0] if not check(tags[i], t[1]) else colored(t[0], 'red') for t in batch.words[i]]))
+    _, tagged = tagging[i].split('\t')
+    tagged = eval(tagged)
+    predictions[i] = id2label[p]
+    if p!=0:
+        print (predictions[i])
+        print (" ".join([t[0] if not check(tags[i], t[1]) else colored(t[0], 'red') for t in batch.words[i]]))
+        if len(tagged)>0:
+            correct = 0
+            pred = 0
+            for j, t in enumerate(batch.words[i]):
+                if check(tags[i], t[1]):
+                    pred += 1
+                    if j in tagged:
+                        correct += 1
+            r = correct / pred
+            p = correct / len(tagged)
+            f1 = 2.0 * p * r / (p + r)
+            tagging_scores.append((r, p, f1))
 
+tr, tp, tf = zip(*tagging_scores)
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
 p, r, f1, ba = scorer.score(batch.gold(), predictions, verbose=True)
 print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
-
+print("{} set tagging  result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,math.mean(tr),math.mean(tp),math.mean(tf)))
 print("Evaluation ended.")

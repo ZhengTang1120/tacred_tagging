@@ -71,20 +71,18 @@ class DataLoader(object):
             for i, t in enumerate(d['token']):
                 if i == ss:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
-                    origin.append((colored(" ".join(d['token'][ss:se+1]), "blue"), [len(words)]))
                     tagging_mask.append(0)
                 if i == os:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
-                    origin.append((colored(" ".join(d['token'][os:oe+1]), "yellow"), [len(words)]))
                     tagging_mask.append(0)
                 if i>=ss and i<=se:
                     # for sub_token in self.tokenizer.tokenize(t):
                     #     subj.append(sub_token)
-                    pass
+                    origin.append((colored(t, "blue"), [len(words)]))
                 elif i>=os and i<=oe:
                     # for sub_token in self.tokenizer.tokenize(t):
                     #     obj.append(sub_token)
-                    pass
+                    origin.append((colored(t, "yellow"), [len(words)]))
                 else:
                     t = convert_token(t)
                     origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
