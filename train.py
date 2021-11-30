@@ -134,9 +134,9 @@ for epoch in range(1, opt['num_epoch']+1):
             train_loss = train_loss / train_num_example * opt['batch_size'] # avg loss per batch
             dev_loss = dev_loss / dev_batch.num_examples * opt['batch_size']
 
-            dev_p, dev_r, dev_f1 = scorer.score(dev_batch.gold(), predictions)
-            print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
-                train_loss, dev_loss, dev_f1))
+            dev_p, dev_r, dev_f1, bi_acc = scorer.score(dev_batch.gold(), predictions)
+            print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}, binary_accuracy = {:.4f}".format(epoch,\
+                train_loss, dev_loss, dev_f1, bi_acc))
             if epoch<=args.burnin:
                 dev_score = -dev_loss
             else:

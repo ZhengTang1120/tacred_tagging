@@ -84,7 +84,7 @@ for i, p in enumerate(predictions):
 
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
-p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
+p, r, f1, ba = scorer.score(batch.gold(), predictions, verbose=True)
 print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
 
 print("Evaluation ended.")
