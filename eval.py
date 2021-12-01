@@ -101,6 +101,7 @@ for i, p in enumerate(predictions):
             if pred > 0:
                 r = correct / pred
             else:
+                print (tags[i])
                 r = 0
             if len(tagged) > 0:
                 p = correct / len(tagged)
