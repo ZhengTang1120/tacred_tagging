@@ -143,6 +143,7 @@ for c, d in enumerate(data):
                 rationale.append(cr[b])
             else:
                 rationale = [ss, os]
+                break
         print (id2label[predictions[c]])
         rationale.remove(ss)
         rationale.remove(os)
