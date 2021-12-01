@@ -98,8 +98,14 @@ for i, p in enumerate(predictions):
                     pred += 1
                     if j in tagged:
                         correct += 1
-            r = correct / pred
-            p = correct / len(tagged)
+            if pred > 0:
+                r = correct / pred
+            else:
+                r = 0
+            if len(tagged) > 0:
+                p = correct / len(tagged)
+            else:
+                p = 0
             try:
                 f1 = 2.0 * p * r / (p + r)
             except ZeroDivisionError:
