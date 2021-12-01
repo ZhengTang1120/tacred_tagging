@@ -63,7 +63,7 @@ print("Loading data from {} with batch size {}...".format(data_file, opt['batch_
 batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, True)
 
 
-with open(opt['data_dir'] + '/tagging_{}.json'.format(args.dataset)) as f:
+with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     tagging = f.readlines()
 
 helper.print_config(opt)
