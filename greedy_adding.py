@@ -118,7 +118,7 @@ for c, d in enumerate(data):
                     cand_r.sort()
                     tokens = []
                     for j in cand_r:
-                        if i == se or i == oe:
+                        if i == ss or i == os:
                             tokens.append(words[j])
                         else:
                             tokens += tokenizer.tokenize(words[j])
