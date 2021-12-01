@@ -18,7 +18,7 @@ import json
 
 from termcolor import colored
 
-import math
+import statistics
 
 def check(tags, ids):
     for i in ids:
@@ -118,5 +118,5 @@ tr, tp, tf = zip(*tagging_scores)
 #     f.write(json.dumps(output))
 p, r, f1, ba = scorer.score(batch.gold(), predictions, verbose=True)
 print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
-print("{} set tagging  result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,math.mean(tr),math.mean(tp),math.mean(tf)))
+print("{} set tagging  result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
 print("Evaluation ended.")
