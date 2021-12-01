@@ -101,7 +101,8 @@ for c, b in enumerate(batch):
 
 data = preprocess(data_file, tokenizer)
 tagging_scores = list()
-for c, words, ss, se, os, oe in enumerate(data):
+for c, d in enumerate(data):
+    words, ss, se, os, oe = d
     _, tagged = tagging[c].split('\t')
     tagged = eval(tagged)
     if predictions[c] != 0:
