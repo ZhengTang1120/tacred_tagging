@@ -135,18 +135,17 @@ for c, d in enumerate(data):
                     mask = [1] * len(ids)
                     segment_ids = [0] * len(ids)
                     candidates.append((ids, mask, segment_ids))
-            candidates = list(zip(*candidates))
-            with torch.cuda.device(args.device):
-                inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
-            try:
+            if len(candidates)!=0:
+                candidates = list(zip(*candidates))
+                with torch.cuda.device(args.device):
+                    inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
                 b, l = trainer.predict_cand(inputs, predictions[c])
-            except:
-                print (words, ss, se, os, oe)
-                print (rationale)
-                print (inputs)
-                print (candidates)
-            rationale.append(cr[b])
+                rationale.append(cr[b])
+            else:
+                rationale = [ss, os]
         print (id2label[predictions[c]])
+        rationale.remove(ss)
+        rationale.remove(os)
         print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
         if len(tagged)>0:
             correct = 0
