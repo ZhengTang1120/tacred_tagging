@@ -49,14 +49,14 @@ def preprocess(filename, tokenizer):
             if i == ss or i == os:
                 sub_token_len += 1
             if i>=ss and i<=se:
-                words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
+                words.append(colored(t, 'blue'))
             elif i>=os and i<=oe:
-                words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
+                words.append(colored(t, 'yellow'))
             else:
                 t = convert_token(t)
                 words.append(t)
                 sub_token_len += len(tokenizer.tokenize(t))
-        processed.append((words, ss, se, os, oe))
+        processed.append((words, ss, se, os, oe, d['subbj_type'], d['obj_type']))
     return processed
 
 parser = argparse.ArgumentParser()
@@ -110,7 +110,7 @@ for c, b in enumerate(batch):
 data = preprocess(data_file, tokenizer)
 tagging_scores = list()
 for c, d in enumerate(data):
-    words, ss, se, os, oe = d
+    words, ss, se, os, oe, subj, obj = d
     _, tagged = tagging[c].split('\t')
     tagged = eval(tagged)
     if predictions[c] != 0:
@@ -127,17 +127,14 @@ for c, d in enumerate(data):
                     tokens = []
                     for j in cand_r:
                         if j == ss or j == os:
-                            tokens.append(words[j])
+                            tokens.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+obj+']']+1))
                         else:
                             tokens += tokenizer.tokenize(words[j])
-                    print (tokens)
                     ids = tokenizer.convert_tokens_to_ids(['[CLS]']+tokens+['[SEP]'])
-                    print (ids)
                     mask = [1] * len(ids)
                     segment_ids = [0] * len(ids)
                     candidates.append((ids, mask, segment_ids))
             candidates = list(zip(*candidates))
-            print (candidates)
             with torch.cuda.device(args.device):
                 inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
             b, l = trainer.predict_cand(inputs, predictions[c])
@@ -152,9 +149,19 @@ for c, d in enumerate(data):
                     pred += 1
                     if j in tagged:
                         correct += 1
-            r = correct / pred
-            p = correct / len(tagged)
-            f1 = 2.0 * p * r / (p + r)
+            if pred > 0:
+                r = correct / pred
+            else:
+                print (tags[i])
+                r = 0
+            if len(tagged) > 0:
+                p = correct / len(tagged)
+            else:
+                p = 0
+            try:
+                f1 = 2.0 * p * r / (p + r)
+            except ZeroDivisionError:
+                f1 = 0
             tagging_scores.append((r, p, f1))
 
 tr, tp, tf = zip(*tagging_scores)
