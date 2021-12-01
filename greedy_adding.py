@@ -8,6 +8,14 @@ import json
 from transformers import BertTokenizer
 from termcolor import colored
 
+def get_long_tensor(tokens_list, batch_size):
+    """ Convert list of list of tokens to a padded LongTensor. """
+    token_len = max([len(x) for x in tokens_list])
+    tokens = torch.LongTensor(batch_size, token_len).fill_(constant.PAD_ID)
+    for i, s in enumerate(tokens_list):
+        tokens[i,:len(s)] = torch.LongTensor(s)
+    return tokens
+
 def convert_token(token):
     """ Convert PTB tokens to normal tokens """
     if (token.lower() == '-lrb-'):
@@ -131,7 +139,7 @@ for c, d in enumerate(data):
             candidates = list(zip(*candidates))
             print (candidates)
             with torch.cuda.device(args.device):
-                inputs = [torch.LongTensor(c).cuda() for c in candidates]
+                inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
             b, l = trainer.predict_cand(inputs, predictions[c])
             rationale.append(cr[b])
         print (id2label[predictions[c]])
