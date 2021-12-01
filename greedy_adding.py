@@ -122,7 +122,9 @@ for c, d in enumerate(data):
                             tokens.append(words[j])
                         else:
                             tokens += tokenizer.tokenize(words[j])
+                    print (tokens)
                     ids = tokenizer.convert_tokens_to_ids(['[CLS]']+tokens+['[SEP]'])
+                    print (ids)
                     mask = [1] * len(ids)
                     segment_ids = [0] * len(ids)
                     candidates.append((ids, mask, segment_ids))
