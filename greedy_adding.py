@@ -8,6 +8,8 @@ import json
 from transformers import BertTokenizer
 from termcolor import colored
 
+import statistics
+
 def get_long_tensor(tokens_list, batch_size):
     """ Convert list of list of tokens to a padded LongTensor. """
     token_len = max([len(x) for x in tokens_list])
@@ -172,7 +174,7 @@ for c, d in enumerate(data):
 
 tr, tp, tf = zip(*tagging_scores)
 
-print("{} set rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,math.mean(tr),math.mean(tp),math.mean(tf)))
+print("{} set rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
 
 
 
