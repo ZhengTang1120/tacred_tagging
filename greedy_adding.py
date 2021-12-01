@@ -137,7 +137,11 @@ for c, d in enumerate(data):
             candidates = list(zip(*candidates))
             with torch.cuda.device(args.device):
                 inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
-            b, l = trainer.predict_cand(inputs, predictions[c])
+            try:
+                b, l = trainer.predict_cand(inputs, predictions[c])
+            except:
+                print (inputs)
+                print (candidates)
             rationale.append(cr[b])
         print (id2label[predictions[c]])
         print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
