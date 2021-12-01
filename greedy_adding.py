@@ -152,7 +152,6 @@ for c, d in enumerate(data):
             if pred > 0:
                 r = correct / pred
             else:
-                print (tags[i])
                 r = 0
             if len(tagged) > 0:
                 p = correct / len(tagged)
