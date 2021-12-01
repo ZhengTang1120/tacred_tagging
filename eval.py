@@ -100,7 +100,10 @@ for i, p in enumerate(predictions):
                         correct += 1
             r = correct / pred
             p = correct / len(tagged)
-            f1 = 2.0 * p * r / (p + r)
+            try:
+                f1 = 2.0 * p * r / (p + r)
+            except ZeroDivisionError:
+                f1 = 0
             tagging_scores.append((r, p, f1))
 
 tr, tp, tf = zip(*tagging_scores)
