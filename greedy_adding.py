@@ -119,6 +119,7 @@ for c, d in enumerate(data):
         while l!=predictions[c]:
             candidates = list()
             cr = list()
+
             for i in range(len(words)):
                 if i not in rationale and i not in range(ss, se+1) and i not in range(os, oe+1):
                     cr.append(i)
@@ -140,6 +141,8 @@ for c, d in enumerate(data):
             try:
                 b, l = trainer.predict_cand(inputs, predictions[c])
             except:
+                print (words, ss, se, os, oe)
+                print (rationale)
                 print (inputs)
                 print (candidates)
             rationale.append(cr[b])
