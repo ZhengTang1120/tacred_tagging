@@ -13,6 +13,10 @@ from utils import constant, torch_utils
 
 from pytorch_pretrained_bert.optimization import BertAdam
 
+def get_lr(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group['lr']
+
 class Trainer(object):
     def __init__(self, opt):
         raise NotImplementedError
@@ -145,7 +149,7 @@ class BERTtrainer(Trainer):
         self.optimizer.step()
         self.optimizer.zero_grad()
         h = b_out = logits = inputs = labels = None
-        return loss_val
+        return loss_val, get_lr(self.optimizer)
 
     def predict(self, batch, id2label, tokenizer):
         inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])

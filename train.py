@@ -112,7 +112,7 @@ for epoch in range(1, opt['num_epoch']+1):
     for i, batch in enumerate(train_batch):
         start_time = time.time()
         global_step += 1
-        loss = trainer.update(batch, epoch)
+        loss, current_lr = trainer.update(batch, epoch)
         if args.cuda:
             torch.cuda.empty_cache()
         train_loss += loss
