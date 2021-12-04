@@ -44,10 +44,16 @@ def warmup_linear(x, warmup=0.002):
         return x/warmup
     return max((x-1.)/(warmup-1.), 0)
 
+def cooldown_linear(x, warmup=0.002):
+    if x < warmup:
+        return 1.0
+    return max((x-1.)/(warmup-1.), 0)
+
 SCHEDULES = {
     'warmup_cosine':   warmup_cosine,
     'warmup_constant': warmup_constant,
     'warmup_linear':   warmup_linear,
+    'cooldown_linear': cooldown_linear,
 }
 
 
