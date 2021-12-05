@@ -45,7 +45,6 @@ def warmup_linear(x, warmup=0.002):
     return max((x-1.)/(warmup-1.), 0)
 
 def cooldown_linear(x, warmup=0.002):
-    print ('xxx', x)
     if x < warmup:
         return 1.0
     print ('???', x)
@@ -165,6 +164,7 @@ class BertAdam(Optimizer):
                 if group['t_total'] != -1:
                     schedule_fct = SCHEDULES[group['schedule']]
                     progress = state['step']/group['t_total']
+                    print (progress, schedule_fct(progress, group['warmup']))
                     lr_scheduled = group['lr'] * schedule_fct(progress, group['warmup'])
                     # warning for exceeding t_total (only active with warmup_linear
                     if group['schedule'] == "warmup_linear" and progress > 1. and not warned_for_t_total:
