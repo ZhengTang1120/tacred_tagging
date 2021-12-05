@@ -122,12 +122,12 @@ class BERTtrainer(Trainer):
 
         if epoch <= self.opt['burnin']:
             for g in self.optimizer.param_groups:
-                g['lr'] = self.opt['lr'] * warmup_linear(self.global_step/(self.opt['train_batch'] * self.opt['burnin']), self.opt['warmup'])
+                g['lr'] = self.opt['lr'] * warmup_linear(self.global_step/(self.opt['train_batch'] * self.opt['burnin']), self.opt['warmup_prop'])
         else:
             if epoch == self.opt['burnin']:
                 self.global_step = 0
             for g in self.optimizer.param_groups:
-                g['lr'] = self.opt['lr'] * cooldown_linear(self.global_step/(self.opt['train_batch'] * (self.opt['num_epoch'] - self.opt['burnin'])), self.opt['warmup'])
+                g['lr'] = self.opt['lr'] * cooldown_linear(self.global_step/(self.opt['train_batch'] * (self.opt['num_epoch'] - self.opt['burnin'])), self.opt['warmup_prop'])
             
 
         inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
