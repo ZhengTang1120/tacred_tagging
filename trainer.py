@@ -122,7 +122,7 @@ class BERTtrainer(Trainer):
 
         if epoch <= self.opt['burnin']:
             for g in self.optimizer.param_groups:
-                g['lr'] = self.opt['lr'] * warmup_linear(self.global_step/(opt['train_batch'] * opt['burnin']), self.opt['warmup'])
+                g['lr'] = self.opt['lr'] * warmup_linear(self.global_step/(self.opt['train_batch'] * self.opt['burnin']), self.opt['warmup'])
         else:
             if epoch == self.opt['burnin']:
                 self.global_step = 0
