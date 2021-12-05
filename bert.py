@@ -17,7 +17,7 @@ class BERTencoder(nn.Module):
         words = inputs[0]
         mask = inputs[1]
         segment_ids = inputs[2]
-        _, pooled_output = self.bert(words, segment_ids, mask, output_all_encoded_layers=False)
+        _, pooled_output = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
         return pooled_output
 
 class BERTclassifier(nn.Module):
