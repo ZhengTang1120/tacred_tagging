@@ -35,6 +35,7 @@ def warmup_constant(x, warmup=0.002):
         Learning rate is 1. afterwards. """
     if x < warmup:
         return x/warmup
+    print ('???', x)
     return 1.0
 
 def warmup_linear(x, warmup=0.002):
