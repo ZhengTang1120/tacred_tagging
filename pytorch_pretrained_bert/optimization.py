@@ -47,6 +47,7 @@ def warmup_linear(x, warmup=0.002):
 def cooldown_linear(x, warmup=0.002):
     if x < warmup:
         return 1.0
+    print ('???', max((x-1.)/(warmup-1.), 0))
     return max((x-1.)/(warmup-1.), 0)
 
 SCHEDULES = {
