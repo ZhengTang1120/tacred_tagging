@@ -35,8 +35,8 @@ class DataLoader(object):
             data = json.load(infile)
         data = self.preprocess(data, opt)
 
-        # if not do_eval:
-        #     data = sorted(data, key=lambda f: len(f[0]))
+        if not do_eval:
+            data = sorted(data, key=lambda f: len(f[0]))
         
         self.id2label = dict([(v,k) for k,v in self.label2id.items()])
         self.labels = [self.id2label[d[-2]] for d in data]
