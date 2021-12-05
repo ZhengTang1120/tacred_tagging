@@ -4,25 +4,21 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
 
-from transformers import BertModel
+from pytorch_pretrained_bert.modeling import BertModel
 
 from utils import constant, torch_utils
 
 class BERTencoder(nn.Module):
     def __init__(self):
         super().__init__()
-        self.model = BertModel.from_pretrained("SpanBERT/spanbert-large-cased")
+        self.model = BertModel.from_pretrained("spanbert-large-cased")
 
     def forward(self, inputs):
         words = inputs[0]
         mask = inputs[1]
         segment_ids = inputs[2]
-        seq_length = words.size(1)
-        position_ids = torch.arange(seq_length, dtype=torch.long, device=words.device)
-        position_ids = position_ids.unsqueeze(0).expand_as(words)
-        outputs = self.model(words, attention_mask=mask, token_type_ids=segment_ids, position_ids=position_ids)
-        
-        return outputs.pooler_output
+        _, pooled_output = self.bert(words, segment_ids, mask, output_all_encoded_layers=False)
+        return pooled_output
 
 class BERTclassifier(nn.Module):
     def __init__(self, opt):
