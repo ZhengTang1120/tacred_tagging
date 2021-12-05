@@ -47,7 +47,6 @@ def warmup_linear(x, warmup=0.002):
 def cooldown_linear(x, warmup=0.002):
     if x < warmup:
         return 1.0
-    print ('???', x)
     return max((x-1.)/(warmup-1.), 0)
 
 SCHEDULES = {
@@ -98,7 +97,6 @@ class BertAdam(Optimizer):
             for p in group['params']:
                 state = self.state[p]
                 if len(state) == 0:
-                    print (self.state)
                     return [0]
                 if group['t_total'] != -1:
                     schedule_fct = SCHEDULES[group['schedule']]

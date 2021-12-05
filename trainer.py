@@ -143,14 +143,13 @@ class BERTtrainer(Trainer):
                  t_total= self.opt['train_batch'] * (self.opt['num_epoch'] - self.opt['burnin']),
                  schedule='cooldown_linear')
             self.finish_burnin = True
-            
-        print (self.optimizer.get_lr())
+
         # backward
         loss.backward()
         self.optimizer.step()
         self.optimizer.zero_grad()
         h = b_out = logits = inputs = labels = None
-        return loss_val
+        return loss_val, self.optimizer.get_lr()[0]
 
     def predict(self, batch, id2label, tokenizer):
         inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
