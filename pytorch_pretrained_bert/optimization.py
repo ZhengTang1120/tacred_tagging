@@ -98,6 +98,7 @@ class BertAdam(Optimizer):
             for p in group['params']:
                 state = self.state[p]
                 if len(state) == 0:
+                    print (self.state)
                     return [0]
                 if group['t_total'] != -1:
                     schedule_fct = SCHEDULES[group['schedule']]
