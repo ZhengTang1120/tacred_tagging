@@ -152,7 +152,7 @@ class DataLoader(object):
 
 def get_long_tensor(tokens_list, batch_size):
     """ Convert list of list of tokens to a padded LongTensor. """
-    token_len = max([len(x) for x in tokens_list])
+    token_len = 128#max([len(x) for x in tokens_list])
     tokens = torch.LongTensor(batch_size, token_len).fill_(constant.PAD_ID)
     for i, s in enumerate(tokens_list):
         tokens[i,:len(s)] = torch.LongTensor(s)
