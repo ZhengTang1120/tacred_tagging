@@ -92,6 +92,8 @@ class BERTtrainer(Trainer):
              t_total= opt['train_batch'] * opt['burnin'],
              schedule='warmup_constant')
 
+        self.finish_burnin = False
+
     def update(self, batch, epoch):
         inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
 
@@ -126,7 +128,7 @@ class BERTtrainer(Trainer):
 
         # print ('loss: ', loss)
         loss_val = loss.item()
-        if epoch == self.opt['burnin'] + 1:
+        if epoch == self.opt['burnin'] + 1 and not self.finish_burnin:
             param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())+list(self.tagger.named_parameters())
             no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
             optimizer_grouped_parameters = [
@@ -140,6 +142,8 @@ class BERTtrainer(Trainer):
                  warmup=self.opt['warmup_prop'],
                  t_total= self.opt['train_batch'] * (self.opt['num_epoch'] - self.opt['burnin']),
                  schedule='cooldown_linear')
+            self.finish_burnin = True
+            
         print (self.optimizer.get_lr())
         # backward
         loss.backward()
