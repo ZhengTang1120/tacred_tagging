@@ -11,7 +11,7 @@ import numpy as np
 from bert import BERTencoder, BERTclassifier, Tagger
 from utils import constant, torch_utils
 
-from pytorch_pretrained_bert.optimization import BertAdam
+from transformers import AdamW
 
 class Trainer(object):
     def __init__(self, opt):
@@ -60,6 +60,35 @@ def unpack_batch(batch, cuda, device):
         labels = Variable(batch[-1])
     return inputs, labels, batch[4]
 
+def warmup_cosine(x, warmup=0.002):
+    if x < warmup:
+        return x/warmup
+    x_ = (x - warmup) / (1 - warmup)  # progress after warmup -
+    return 0.5 * (1. + math.cos(math.pi * x_))
+
+def warmup_constant(x, warmup=0.002):
+    """ Linearly increases learning rate over `warmup`*`t_total` (as provided to BertAdam) training steps.
+        Learning rate is 1. afterwards. """
+    if x < warmup:
+        return x/warmup
+    return 1.0
+
+def warmup_linear(x, warmup=0.002):
+    """ Specifies a triangular learning rate schedule where peak is reached at `warmup`*`t_total`-th (as provided to BertAdam) training step.
+        After `t_total`-th training step, learning rate is zero. """
+    if x < warmup:
+        return x/warmup
+    return max((x-1.)/(warmup-1.), 0)
+
+def cooldown_linear(x, warmup=0.002):
+    if x < warmup:
+        return 1.0
+    return max((x-1.)/(warmup-1.), 0)
+
+def get_lr(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group['lr']
+
 class BERTtrainer(Trainer):
     def __init__(self, opt):
         self.opt = opt
@@ -68,6 +97,7 @@ class BERTtrainer(Trainer):
         self.tagger = Tagger()
         self.criterion = nn.CrossEntropyLoss(ignore_index=0)
         self.criterion2 = nn.BCELoss()
+        self.global_step = 0
 
         param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())+list(self.tagger.named_parameters())
         no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
@@ -86,28 +116,19 @@ class BERTtrainer(Trainer):
                 self.criterion.cuda()
                 self.criterion2.cuda()
 
-        self.optimizer = BertAdam(optimizer_grouped_parameters,
-             lr=opt['lr'],
-             warmup=opt['warmup_prop'],
-             t_total= opt['train_batch'] * opt['burnin'],
-             schedule='warmup_constant')
+        self.optimizer = AdamW(optimizer_grouped_parameters)
 
     def update(self, batch, epoch):
-        if epoch == self.opt['burnin'] + 1:
-            self.optimizer = None
-            param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())+list(self.tagger.named_parameters())
-            no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-            optimizer_grouped_parameters = [
-                {'params': [p for n, p in param_optimizer
-                            if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
-                {'params': [p for n, p in param_optimizer
-                            if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
-            ]
-            self.optimizer = BertAdam(optimizer_grouped_parameters,
-                 lr=self.opt['lr'],
-                 warmup=self.opt['warmup_prop'],
-                 t_total= self.opt['train_batch'] * (self.opt['num_epoch'] - self.opt['burnin']),
-                 schedule='warmup_constant')
+
+        if epoch <= self.opt['burnin']:
+            for g in self.optimizer.param_groups:
+                g['lr'] = self.opt['lr'] * warmup_linear(self.global_step/(opt['train_batch'] * opt['burnin']), self.opt['warmup'])
+        else:
+            if epoch == self.opt['burnin']:
+                self.global_step = 0
+            for g in self.optimizer.param_groups:
+                g['lr'] = self.opt['lr'] * cooldown_linear(self.global_step/(self.opt['train_batch'] * (self.opt['num_epoch'] - self.opt['burnin'])), self.opt['warmup'])
+            
 
         inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
 
@@ -142,11 +163,12 @@ class BERTtrainer(Trainer):
 
         # print ('loss: ', loss)
         loss_val = loss.item()
-        print (self.optimizer.get_lr())
+        print (get_lr(self.optimizer))
         # backward
         loss.backward()
         self.optimizer.step()
         self.optimizer.zero_grad()
+        self.global_step += 1
         h = b_out = logits = inputs = labels = None
         return loss_val
 
