@@ -89,7 +89,7 @@ class BERTtrainer(Trainer):
         self.optimizer = BertAdam(optimizer_grouped_parameters,
              lr=opt['lr'],
              warmup=opt['warmup_prop'],
-             t_total= opt['train_batch'] * opt['burnin'])
+             t_total= opt['train_batch'] * opt['num_epoch'])
 
     def update(self, batch, epoch):
         inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
