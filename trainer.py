@@ -140,7 +140,7 @@ class BERTtrainer(Trainer):
                  warmup=self.opt['warmup_prop'],
                  t_total= self.opt['train_batch'] * (self.opt['num_epoch'] - self.opt['burnin']),
                  schedule='cooldown_linear')
-        print (self.optimizer.get_lr())
+        print (self.optimizer.get_lr()[0])
         # backward
         loss.backward()
         self.optimizer.step()
