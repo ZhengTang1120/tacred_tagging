@@ -89,8 +89,7 @@ class BERTtrainer(Trainer):
         self.optimizer = BertAdam(optimizer_grouped_parameters,
              lr=opt['lr'],
              warmup=opt['warmup_prop'],
-             t_total= opt['train_batch'] * opt['num_epoch'],
-             schedule='warmup_constant')
+             t_total= opt['train_batch'] * opt['num_epoch'])
 
         self.finish_burnin = False
 
