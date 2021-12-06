@@ -89,7 +89,8 @@ class BERTtrainer(Trainer):
         self.optimizer = BertAdam(optimizer_grouped_parameters,
              lr=opt['lr'],
              warmup=opt['warmup_prop'],
-             t_total= opt['train_batch'] * opt['num_epoch'])
+             t_total= opt['train_batch'] * opt['burnin'],
+             schedule='warmup_constant')
 
         self.finish_burnin = False
 
@@ -127,21 +128,21 @@ class BERTtrainer(Trainer):
 
         # print ('loss: ', loss)
         loss_val = loss.item()
-        # if epoch == self.opt['burnin'] + 1 and not self.finish_burnin:
-        #     param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())+list(self.tagger.named_parameters())
-        #     no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-        #     optimizer_grouped_parameters = [
-        #         {'params': [p for n, p in param_optimizer
-        #                     if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
-        #         {'params': [p for n, p in param_optimizer
-        #                     if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
-        #     ]
-        #     self.optimizer = BertAdam(optimizer_grouped_parameters,
-        #          lr=self.opt['lr'],
-        #          warmup=self.opt['warmup_prop'],
-        #          t_total= self.opt['train_batch'] * (self.opt['num_epoch'] - self.opt['burnin']),
-        #          schedule='cooldown_linear')
-        #     self.finish_burnin = True
+        if epoch == self.opt['burnin'] + 1 and not self.finish_burnin:
+            param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())+list(self.tagger.named_parameters())
+            no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+            optimizer_grouped_parameters = [
+                {'params': [p for n, p in param_optimizer
+                            if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
+                {'params': [p for n, p in param_optimizer
+                            if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+            ]
+            self.optimizer = BertAdam(optimizer_grouped_parameters,
+                 lr=self.opt['lr'],
+                 warmup=self.opt['warmup_prop'],
+                 t_total= self.opt['train_batch'] * (self.opt['num_epoch'] - self.opt['burnin']),
+                 schedule='cooldown_linear')
+            self.finish_burnin = True
 
         # backward
         loss.backward()
