@@ -15,7 +15,7 @@ from dataloader import DataLoader
 from trainer import BERTtrainer
 from utils import torch_utils, scorer, constant, helper
 
-from transformers import BertTokenizer
+from pytorch_pretrained_bert.tokenization import BertTokenizer
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', type=str, default='dataset/tacred')
@@ -59,7 +59,7 @@ if args.cpu:
 elif args.cuda:
     torch.cuda.manual_seed(args.seed)
 
-tokenizer = BertTokenizer.from_pretrained('SpanBERT/spanbert-large-cased')
+tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
 
 train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer)
 train_num_example = train_batch.num_examples
@@ -109,7 +109,7 @@ for epoch in range(1, opt['num_epoch']+1):
     for i, batch in enumerate(train_batch):
         start_time = time.time()
         global_step += 1
-        loss = trainer.update(batch, epoch)
+        loss, current_lr = trainer.update(batch, epoch)
         torch.cuda.empty_cache()
         train_loss += loss
         if global_step % opt['log_step'] == 0:

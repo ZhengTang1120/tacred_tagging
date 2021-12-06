@@ -102,7 +102,7 @@ class BERTtrainer(Trainer):
         self.optimizer.step()
         self.optimizer.zero_grad()
         h = logits = inputs = labels = None
-        return loss_val
+        return loss_val, self.optimizer.get_lr()
 
     def predict(self, batch, id2label, tokenizer):
         inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
