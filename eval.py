@@ -57,7 +57,7 @@ label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
 
 predictions = []
-
+pred_output = open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.txt')), 'w')
 x = 0
 exact_match = 0
 other = 0
@@ -67,7 +67,9 @@ for c, b in enumerate(batch):
     batch_size = len(preds)
 output = list()
 for i, p in enumerate(predictions):
-        predictions[i] = id2label[p]
+    predictions[i] = id2label[p]
+    pred_output.write(id2label[p],'\n')
+pred_output.close()
 
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
