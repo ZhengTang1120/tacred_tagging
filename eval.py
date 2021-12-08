@@ -83,14 +83,20 @@ for c, b in enumerate(batch):
     batch_size = len(preds)
 output = list()
 tagging_scores = []
+output = list()
+with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
+    f.write(json.dumps(output))
 for i, p in enumerate(predictions):
     _, tagged = tagging[i].split('\t')
     tagged = eval(tagged)
     predictions[i] = id2label[p]
+    output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'raw_words':batch.words[i], 'predicted_tags':[], 'gold_tags':[]})
     if p!=0:
         print (predictions[i])
         print (" ".join([t[0] if not check(tags[i], t[1]) else colored(t[0], 'red') for t in batch.words[i]]))
+        output[-1]["predicted_tags"] = [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])]
         if len(tagged)>0:
+            output[-1]['gold_tags'] = tagged
             correct = 0
             pred = 0
             for j, t in enumerate(batch.words[i]):
@@ -112,6 +118,9 @@ for i, p in enumerate(predictions):
             except ZeroDivisionError:
                 f1 = 0
             tagging_scores.append((r, p, f1))
+
+with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
+    f.write(json.dumps(output))
 
 tr, tp, tf = zip(*tagging_scores)
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
