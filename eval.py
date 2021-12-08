@@ -84,16 +84,14 @@ for c, b in enumerate(batch):
 output = list()
 tagging_scores = []
 output = list()
-with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
-    f.write(json.dumps(output))
+pred_output = open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.txt')), 'w')
 for i, p in enumerate(predictions):
     _, tagged = tagging[i].split('\t')
     tagged = eval(tagged)
     predictions[i] = id2label[p]
+    pred_output.write(id2label[p]+'\n')
     output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'raw_words':batch.words[i], 'predicted_tags':[], 'gold_tags':[]})
     if p!=0:
-        print (predictions[i])
-        print (" ".join([t[0] if not check(tags[i], t[1]) else colored(t[0], 'red') for t in batch.words[i]]))
         output[-1]["predicted_tags"] = [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])]
         if len(tagged)>0:
             output[-1]['gold_tags'] = tagged
@@ -118,7 +116,7 @@ for i, p in enumerate(predictions):
             except ZeroDivisionError:
                 f1 = 0
             tagging_scores.append((r, p, f1))
-
+pred_output.close()
 with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
     f.write(json.dumps(output))
 
