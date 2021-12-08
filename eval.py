@@ -90,7 +90,7 @@ for i, p in enumerate(predictions):
     tagged = eval(tagged)
     predictions[i] = id2label[p]
     pred_output.write(id2label[p]+'\n')
-    output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'raw_words':batch.words[i], 'predicted_tags':[], 'gold_tags':[]})
+    output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'predicted_tags':[], 'gold_tags':[]})
     if p!=0:
         output[-1]["predicted_tags"] = [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])]
         if len(tagged)>0:
