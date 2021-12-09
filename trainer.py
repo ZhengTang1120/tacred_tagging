@@ -53,12 +53,12 @@ class Trainer(object):
 def unpack_batch(batch, cuda, device):
     if cuda:
         with torch.cuda.device(device):
-            inputs = [batch[i].to('cuda') for i in range(4)]
+            inputs = [batch[i].to('cuda') for i in range(5)]
             labels = Variable(batch[-1].cuda())
     else:
-        inputs = [Variable(batch[i]) for i in range(4)]
+        inputs = [Variable(batch[i]) for i in range(5)]
         labels = Variable(batch[-1])
-    return inputs, labels, batch[4]
+    return inputs, labels, batch[-2]
 
 class BERTtrainer(Trainer):
     def __init__(self, opt):

@@ -15,13 +15,15 @@ class BERTencoder(nn.Module):
         self.model = BertModel.from_pretrained("spanbert-large-cased")
         self.classifier = nn.Linear(in_dim, 1)
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
+        self.pos_emb = nn.Embedding(7, 5, padding_idx=constant.PAD_ID)
 
     def forward(self, inputs):
         words = inputs[0]
         mask = inputs[1]
         segment_ids = inputs[2]
+        ent_pos = inputs[4]
         h, pooled_output = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
-        
+        h = torch.cat([h, self.pos_emb(ent_pos)], dim=2)
         out = torch.sigmoid(self.classifier(self.dropout(pooled_output)))
 
         return h, out
@@ -29,7 +31,7 @@ class BERTencoder(nn.Module):
 class BERTclassifier(nn.Module):
     def __init__(self, opt):
         super().__init__()
-        in_dim = 1024
+        in_dim = 1029
         self.classifier = nn.Linear(in_dim, opt['num_class'])
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
         self.opt = opt
@@ -52,7 +54,7 @@ class BERTclassifier(nn.Module):
 class Tagger(nn.Module):
     def __init__(self):
         super().__init__()
-        in_dim = 1024
+        in_dim = 1029
 
         self.tagger = nn.Linear(in_dim, 1)
         self.threshold1 = 0.8
