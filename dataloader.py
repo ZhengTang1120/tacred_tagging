@@ -87,20 +87,22 @@ class DataLoader(object):
                     #     obj.append(sub_token)
                     origin.append((colored(t, "yellow"), [len(words)]))
                 else:
-                    if i < min(os, ss):
-                        entity_positions.append(2)
-                    elif i > max(oe, se):
-                        entity_positions.append(3)
-                    else:
-                        entity_positions.append(4)
                     t = convert_token(t)
                     origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
                     for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                         words.append(sub_token)
+
                         if i in tagged and j == len(self.tokenizer.tokenize(t))-1:
                             tagging_mask.append(1)
                         else:
                             tagging_mask.append(0)
+
+                        if i < min(os, ss):
+                            entity_positions.append(2)
+                        elif i > max(oe, se):
+                            entity_positions.append(3)
+                        else:
+                            entity_positions.append(4)
             
             words = ['[CLS]'] + words + ['[SEP]']
             entity_positions = [5] + entity_positions + [6]
@@ -110,6 +112,7 @@ class DataLoader(object):
             if len(tokens) > self.opt['max_length']:
                 tokens = tokens[:self.opt['max_length']]
                 tagging_mask = tagging_mask[:self.opt['max_length']]
+                entity_positions = entity_positions[:self.opt['max_length']]
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
             if self.do_eval:
