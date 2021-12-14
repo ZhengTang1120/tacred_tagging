@@ -58,12 +58,12 @@ trainer = BERTtrainer(opt)
 trainer.load(model_file)
 
 # load data
-data_file = opt['data_dir'] + '/{}_{}.json'.format(args.dataset, opt['chunk'])
+data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
 batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, True)
 
 
-with open(opt['data_dir'] + '/tagging_{}_{}.txt'.format(args.dataset, opt['chunk'])) as f:
+with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     tagging = f.readlines()
 
 helper.print_config(opt)
