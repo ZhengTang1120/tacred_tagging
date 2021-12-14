@@ -45,8 +45,6 @@ parser.add_argument('--lr_decay', type=float, default=0.9, help='Learning rate d
 parser.add_argument('--warmup_prop', type=float, default=0.1, help='Proportion of training to perform linear learning rate warmup for.')
 parser.add_argument('--burnin', type=int, default=5)
 
-parser.add_argument('--chunk', type=int, default=0)
-
 parser.add_argument("--eval_per_epoch", default=10, type=int, help="How many times it evaluates on dev set per epoch")
 
 args = parser.parse_args()
@@ -66,7 +64,7 @@ elif args.cuda:
 
 tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
 
-train_batch = DataLoader(opt['data_dir'] + '/train_%d.json'%args.chunk, opt['batch_size'], opt, tokenizer, False, opt['data_dir'] + '/tagging_train_%d.txt'%args.chunk)
+train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer, False, opt['data_dir'] + '/tagging_train.txt')
 train_num_example = train_batch.num_examples
 train_batch = list(train_batch)
 dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, tokenizer)
