@@ -111,10 +111,12 @@ for c, b in enumerate(batch):
 
 data = preprocess(data_file, tokenizer)
 tagging_scores = list()
+output = list()
 for c, d in enumerate(data):
     words, ss, se, os, oe, subj, obj = d
     _, tagged = tagging[c].split('\t')
     tagged = eval(tagged)
+    output.append({'gold_label':batch.gold()[c], 'predicted_label':id2label[predictions[c]], 'predicted_tags':[], 'gold_tags':[]})
     if predictions[c] != 0:
         l = None
         rationale = [ss, os]
@@ -149,8 +151,10 @@ for c, d in enumerate(data):
         print (id2label[predictions[c]])
         rationale.remove(ss)
         rationale.remove(os)
+        output[-1]["predicted_tags"] = rationale
         print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
         if len(tagged)>0:
+            output[-1]['gold_tags'] = tagged
             correct = 0
             pred = 0
             for j, t in enumerate(words):
@@ -175,7 +179,8 @@ for c, d in enumerate(data):
 tr, tp, tf = zip(*tagging_scores)
 
 print("{} set rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
-
+with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
+    f.write(json.dumps(output))
 
 
 
