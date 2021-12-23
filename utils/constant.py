@@ -35,7 +35,7 @@ NEGATIVE_LABEL = 'no_relation'
 
 # ENTITY_TOKEN_TO_ID = {'[OBJ-CAUSE_OF_DEATH]': 3, '[OBJ-CITY]': 2, '[OBJ-DATE]': 17, '[OBJ-PERSON]': 14, '[OBJ-URL]': 9, '[OBJ-NATIONALITY]': 16, '[OBJ-ORGANIZATION]': 18, '[OBJ-MISC]': 11, '[OBJ-NUMBER]': 12, '[OBJ-CRIMINAL_CHARGE]': 7, '[SUBJ-ORGANIZATION]': 0, '[SUBJ-PERSON]': 1, '[OBJ-DURATION]': 4, '[OBJ-COUNTRY]': 8, '[OBJ-LOCATION]': 15, '[OBJ-RELIGION]': 10, '[OBJ-TITLE]': 6, '[OBJ-STATE_OR_PROVINCE]': 5, '[OBJ-IDEOLOGY]': 13}
 
-LABEL_TO_ID = {'Other':0, 'Cause-Effect(e1, e2)': 1, 'Instrument-Agency(e1, e2)': 2, 'Product-Producer(e1, e2)': 3, 'Content-Container(e1, e2)': 4, 'Entity-Origin(e1, e2)': 5, 'Entity-Destination(e1, e2)': 6, 'Component-Whole(e1, e2)': 7, 'Member-Collection(e1, e2)': 8, 'Message-Topic(e1, e2)': 9, 'Cause-Effect(e2, e1)': 10, 'Instrument-Agency(e2, e1)': 11, 'Product-Producer(e2, e1)': 12, 'Content-Container(e2, e1)': 13, 'Entity-Origin(e2, e1)': 14, 'Entity-Destination(e2, e1)': 15, 'Component-Whole(e2, e1)': 16, 'Member-Collection(e2, e1)': 17, 'Message-Topic(e2, e1)': 18}
+LABEL_TO_ID = {'Other':0, 'Cause-Effect(e1,e2)': 1, 'Instrument-Agency(e1,e2)': 2, 'Product-Producer(e1,e2)': 3, 'Content-Container(e1,e2)': 4, 'Entity-Origin(e1,e2)': 5, 'Entity-Destination(e1,e2)': 6, 'Component-Whole(e1,e2)': 7, 'Member-Collection(e1,e2)': 8, 'Message-Topic(e1,e2)': 9, 'Cause-Effect(e2,e1)': 10, 'Instrument-Agency(e2,e1)': 11, 'Product-Producer(e2,e1)': 12, 'Content-Container(e2,e1)': 13, 'Entity-Origin(e2,e1)': 14, 'Entity-Destination(e2,e1)': 15, 'Component-Whole(e2,e1)': 16, 'Member-Collection(e2,e1)': 17, 'Message-Topic(e2,e1)': 18}
 ENTITY_TOKEN_TO_ID = {'[OBJ-ENTITY]':0, '[SUBJ-ENTITY]':1}
 
 INFINITY_NUMBER = 1e12
