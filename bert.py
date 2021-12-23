@@ -17,7 +17,7 @@ class BERTencoder(nn.Module):
         words = inputs[0]
         mask = inputs[1]
         segment_ids = inputs[2]
-        print (words, mask, segment_ids)
+        print (words.device(), mask.device(), segment_ids.device())
         h, pooled_output, embeddings = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
         return pooled_output, embeddings
 
