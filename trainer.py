@@ -160,12 +160,17 @@ class BERTtrainer(Trainer):
         embs.retain_grad()
 
         logits = self.classifier(h)
+        probs = F.softmax(logits, 1)
+        predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
+        sc = []
+        for idx in predictions:
 
-        idx = logits.argmax()
-        score_max = logits[0, idx]
+            score_max = probs[0, idx]
 
-        score_max.backward()
+            score_max.backward()
 
-        saliency, _ = torch.max(embs.grad.data.abs(),dim=2)
-
-        return idx.data.cpu().tolist(), saliency
+            saliency, _ = torch.max(embs.grad.data.abs(),dim=2)
+            print (saliency)
+            sc += saliency
+        print (sc)
+        return idx.data.cpu().tolist(), sc
