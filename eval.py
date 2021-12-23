@@ -49,7 +49,7 @@ trainer.load(model_file)
 
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
-origin = json.load(data_file)
+origin = json.load(open(data_file))
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
 batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, True)
 
