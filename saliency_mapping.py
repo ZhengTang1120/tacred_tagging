@@ -67,8 +67,7 @@ scs = []
 sentences = []
 for c, b in enumerate(batch):
     preds,sc,words = trainer.predict_with_saliency(b)
-    print (words)
-    sentences.append(tokenizer.convert_ids_to_tokens(words))
+    sentences.append(tokenizer.convert_ids_to_tokens(words[0]))
     predictions += preds
     scs += sc
     batch_size = len(preds)
