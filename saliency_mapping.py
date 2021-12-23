@@ -76,6 +76,7 @@ for i, p in enumerate(predictions):
     predictions[i] = id2label[p]
     words = sentences[i]
     rationale = scs[i]
+    print (p, predictions[i])
     if p != 0:
         print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
 
