@@ -69,6 +69,7 @@ for c, b in enumerate(batch):
     preds,sc,words = trainer.predict_with_saliency(b)
     sentences.append(tokenizer.convert_ids_to_tokens(words))
     if preds[0] != 0:
+        print (id2label[preds[0]])
         print (" ".join([w if i not in sc[0] else colored(w, 'red') for i, w in enumerate(sentences[-1])]))
     predictions += preds
     scs += sc
