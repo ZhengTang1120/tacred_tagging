@@ -8,7 +8,7 @@ import argparse
 import sys
 from collections import Counter
 
-NO_RELATION = "no_relation"
+NO_RELATION = "Other"
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Score a prediction file using the gold labels.')
