@@ -49,6 +49,7 @@ trainer.load(model_file)
 
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
+origin = json.load(data_file)
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
 batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, True)
 
@@ -68,7 +69,8 @@ for c, b in enumerate(batch):
 output = list()
 for i, p in enumerate(predictions):
     predictions[i] = id2label[p]
-    pred_output.write(id2label[p]+'\n')
+
+    pred_output.write(origin[i]["id"] + "\t" + id2label[p]+'\n')
 pred_output.close()
 
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
