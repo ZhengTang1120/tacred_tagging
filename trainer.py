@@ -167,5 +167,4 @@ class BERTtrainer(Trainer):
         score_max.backward()
 
         saliency, _ = torch.max(embs.grad.data.abs(),dim=2)
-        print (saliency)
-        return predictions.data.cpu().tolist(), saliency
+        return predictions, saliency.data.cpu().tolist()
