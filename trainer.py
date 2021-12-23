@@ -149,7 +149,8 @@ class BERTtrainer(Trainer):
         h = logits = inputs = labels = None
         return loss_val
 
-    def predict_with_saliency(self, inputs):
+    def predict_with_saliency(self, batch):
+        inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
         self.encoder.train()
         self.classifier.train()
 
