@@ -93,7 +93,7 @@ class BERTtrainer(Trainer):
         self.encoder.train()
         self.classifier.train()
 
-        h = self.encoder(inputs)
+        h,_ = self.encoder(inputs)
         logits = self.classifier(h)
         loss = self.criterion(logits, labels)
         loss_val = loss.item()
@@ -110,7 +110,7 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
         with torch.no_grad():
-            h = self.encoder(inputs)
+            h,_ = self.encoder(inputs)
             probs = self.classifier(h)
         loss = self.criterion(probs, labels).item()
         # probs = F.softmax(logits, 1)
@@ -122,7 +122,7 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
         with torch.no_grad():
-            h = self.encoder(inputs)
+            h,_ = self.encoder(inputs)
             probs = self.classifier(h)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
 
@@ -135,7 +135,7 @@ class BERTtrainer(Trainer):
         self.encoder.train()
         self.classifier.train()
 
-        h = self.encoder(inputs)
+        h, _ = self.encoder(inputs)
         logits = self.classifier(h)
 
         best = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
@@ -149,4 +149,22 @@ class BERTtrainer(Trainer):
         h = logits = inputs = labels = None
         return loss_val
 
+    def predict_with_saliency(self, inputs):
+        self.encoder.train()
+        self.classifier.train()
 
+        self.classifier.dropout.eval()
+
+        h, embs = self.encoder(inputs)
+        embs.retain_grad()
+
+        logits = self.classifier(h)
+
+        idx = logits.argmax()
+        score_max = logits[0, idx]
+
+        score_max.backward()
+
+        saliency, _ = torch.max(embs.grad.data.abs(),dim=2)
+
+        return idx.data.cpu().tolist(), saliency
