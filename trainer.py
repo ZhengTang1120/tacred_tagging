@@ -162,10 +162,10 @@ class BERTtrainer(Trainer):
         logits = self.classifier(h)
         probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
-        score_max = probs[0, idx]
+        score_max = probs[0, predictions]
 
         score_max.backward()
 
         saliency, _ = torch.max(embs.grad.data.abs(),dim=2)
         print (saliency)
-        return idx.data.cpu().tolist(), saliency
+        return predictions.data.cpu().tolist(), saliency
