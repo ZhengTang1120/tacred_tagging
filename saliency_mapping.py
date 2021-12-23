@@ -16,6 +16,8 @@ from pytorch_pretrained_bert.tokenization import BertTokenizer
 
 import json
 
+from termcolor import colored
+
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
 parser.add_argument('--model', type=str, default='best_model.pt', help='Name of the model file.')
@@ -62,14 +64,20 @@ x = 0
 exact_match = 0
 other = 0
 scs = []
+sentences = []
 for c, b in enumerate(batch):
-    preds,sc = trainer.predict_with_saliency(b)
+    preds,sc,words = trainer.predict_with_saliency(b)
+    sentences.append(tokenizer.convert_ids_to_tokens(words))
     predictions += preds
     scs += sc
     batch_size = len(preds)
 output = list()
 for i, p in enumerate(predictions):
     predictions[i] = id2label[p]
+    words = sentences[i]
+    rationale = scs[i]
+    if p != 0:
+        print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
 
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))

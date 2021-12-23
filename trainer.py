@@ -168,6 +168,4 @@ class BERTtrainer(Trainer):
 
         saliency, _ = torch.max(embs.grad.data.abs(),dim=2)
         top3 = saliency.data.cpu().numpy()[0].argsort()[-3:].tolist()
-        print (saliency)
-        print (top3)
-        return predictions, [top3]
+        return predictions, [top3], inputs[0]
