@@ -68,6 +68,7 @@ sentences = []
 for c, b in enumerate(batch):
     preds,sc,words = trainer.predict_with_saliency(b)
     sentences.append(tokenizer.convert_ids_to_tokens(words))
+    print (preds)
     predictions += preds
     scs += sc
     batch_size = len(preds)
@@ -76,7 +77,6 @@ for i, p in enumerate(predictions):
     predictions[i] = id2label[p]
     words = sentences[i]
     rationale = scs[i]
-    print (p, predictions[i])
     if p != 0:
         print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
 
