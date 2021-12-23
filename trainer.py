@@ -149,8 +149,8 @@ class BERTtrainer(Trainer):
         h = logits = inputs = labels = None
         return loss_val
 
-    def predict_with_saliency(self, batch):
-        inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+    def predict_with_saliency(self, batch0):
+        inputs, labels = unpack_batch(batch0, self.opt['cuda'], self.opt['device'])
         self.encoder.train()
         self.classifier.train()
 
@@ -162,15 +162,10 @@ class BERTtrainer(Trainer):
         logits = self.classifier(h)
         probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
-        sc = []
-        for idx in predictions:
+        score_max = probs[0, idx]
 
-            score_max = probs[0, idx]
+        score_max.backward()
 
-            score_max.backward()
-
-            saliency, _ = torch.max(embs.grad.data.abs(),dim=2)
-            print (saliency)
-            sc += saliency
-        print (sc)
-        return idx.data.cpu().tolist(), sc
+        saliency, _ = torch.max(embs.grad.data.abs(),dim=2)
+        print (saliency)
+        return idx.data.cpu().tolist(), saliency
