@@ -173,4 +173,4 @@ class BERTtrainer(Trainer):
         
         saliency = saliency.masked_fill(mask, 0)
         # top3 = saliency.data.cpu().numpy()[0].argsort()[-3:].tolist()
-        return predictions, saliency
+        return predictions, saliency.data.cpu().numpy()[0][1:-1]

@@ -6,7 +6,7 @@ import argparse
 from tqdm import tqdm
 import torch
 
-from dataloader import DataLoader
+from dataloader import DataLoader, convert_token
 from trainer import BERTtrainer
 from utils import torch_utils, scorer, constant, helper
 
@@ -73,11 +73,25 @@ for c, b in enumerate(batch):
     preds,sc = trainer.predict_with_saliency(b)
     if preds[0] != 0:
         print (id2label[preds[0]])
+        saliency = []
+        token = []
         i = 0
         for t in words:
-            
-
-        # print (" ".join([w if i not in sc[0] else colored(w, 'red') for i, w in enumerate(sentences[-1])]))
+            if i == ss or i == os:
+                i += 1
+            if i>=ss and i<=se:
+                assert sc[i-1] == 0
+                saliency.append(sc[i-1])
+            elif i>=os and i<=oe:
+                assert sc[i-1] == 0
+                saliency.append(sc[i-1])
+            else:
+                t = convert_token(t)
+                sub_len = len(tokenizer.tokenize(t))
+                saliency.append(sc[i: i+sub_len].mean())
+                i += sub_len
+        top3 = np.array(saliency).argsort()[-3:].tolist()
+        print (" ".join([w if i not in top3 else colored(w, 'red') for i, w in enumerate(words)]))
     predictions += preds
     scs += sc
     batch_size = len(preds)
