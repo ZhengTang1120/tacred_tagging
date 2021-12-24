@@ -151,10 +151,8 @@ class BERTtrainer(Trainer):
 
     def predict_with_saliency(self, batch0):
         inputs, labels = unpack_batch(batch0, self.opt['cuda'], self.opt['device'])
-        self.encoder.train()
-        self.classifier.train()
-
-        self.classifier.dropout.eval()
+        self.encoder.eval()
+        self.classifier.eval()
 
         h, embs = self.encoder(inputs)
         embs.retain_grad()
@@ -163,7 +161,11 @@ class BERTtrainer(Trainer):
         probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         score_max = probs[0, predictions]
+        
+        self.encoder.train()
+        self.classifier.train()
 
+        self.classifier.dropout.eval()
         score_max.backward()
 
         saliency, _ = torch.max(embs.grad.data.abs(),dim=2)
