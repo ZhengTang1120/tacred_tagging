@@ -105,6 +105,7 @@ for c, b in enumerate(batch):
         tokens = [w if i not in top3 else colored(w, 'red') for i, w in enumerate(tokens)]
         if len(tagged)>0:
             output[-1]['gold_tags'] = tagged
+            print (saliency)
             print (output[-1]['gold_label'], output[-1]['predicted_label'])
             print (" ".join(tokens))
             print (" ".join([w if i not in tagged else colored(w, 'red') for i, w in enumerate(words)]))
@@ -124,6 +125,7 @@ for c, b in enumerate(batch):
                 f1 = 0
             tagging_scores.append((r, p, f1))
             print (r, p, f1)
+            print ()
 
         
 
