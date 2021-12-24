@@ -76,24 +76,29 @@ for c, b in enumerate(batch):
     if preds[0] != 0:
         print (id2label[preds[0]])
         saliency = []
-        token = []
+        output = []
         i = 0
+        print (sc)
         for t in words:
             if i == ss or i == os:
                 i += 1
             if i>=ss and i<=se:
                 assert sc[i-1] == 0
                 saliency.append(sc[i-1])
+                output.append(colored(t, "blue"))
             elif i>=os and i<=oe:
                 assert sc[i-1] == 0
                 saliency.append(sc[i-1])
+                output.append(colored(t, "yellow"))
             else:
+                output.append(t)
                 t = convert_token(t)
                 sub_len = len(tokenizer.tokenize(t))
                 saliency.append(sc[i: i+sub_len].mean())
                 i += sub_len
         top3 = np.array(saliency).argsort()[-3:].tolist()
-        print (" ".join([w if i not in top3 else colored(w, 'red') for i, w in enumerate(words)]))
+        output = [w if i not in top3 else colored(w, 'red') for i, w in enumerate(words)]
+        print (" ".join(output))
     predictions += preds
     batch_size = len(preds)
 
