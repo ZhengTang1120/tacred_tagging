@@ -158,7 +158,7 @@ for c, d in enumerate(data):
             correct = 0
             pred = 0
             for j, t in enumerate(words):
-                if j in rationale and j in tagged:
+                if j in rationale:
                     pred += 1
                     if j in tagged:
                         correct += 1
