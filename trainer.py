@@ -170,7 +170,7 @@ class BERTtrainer(Trainer):
 
         saliency, _ = torch.max(embs.grad.data.abs(),dim=2)
         mask = torch.logical_and(inputs[0].gt(0), inputs[0].lt(20))
-        mask[0][0] = 0
+        mask[0][0] = True
         saliency = saliency.masked_fill(mask, 0)
         print (saliency)
         top3 = saliency.data.cpu().numpy()[0].argsort()[-3:].tolist()
