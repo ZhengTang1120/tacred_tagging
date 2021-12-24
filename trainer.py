@@ -172,7 +172,7 @@ class BERTtrainer(Trainer):
         print (saliency)
         mask = torch.logical_and(inputs[0].gt(0), inputs[0].lt(20))
         print (mask)
-        saliency = saliency.masked_fill(mask, -constant.INFINITY_NUMBER)
+        saliency = saliency.masked_fill(mask, 0)
         print (saliency)
         top3 = saliency.data.cpu().numpy()[0][1:-1].argsort()[-3:].tolist()
         print (top3)
