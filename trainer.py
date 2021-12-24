@@ -172,6 +172,5 @@ class BERTtrainer(Trainer):
         mask = torch.logical_and(inputs[0].gt(0), inputs[0].lt(20)) + inputs[0].eq(101) + inputs[0].eq(102)
         
         saliency = saliency.masked_fill(mask, 0)
-        print (saliency)
-        top3 = saliency.data.cpu().numpy()[0].argsort()[-3:].tolist()
-        return predictions, [top3], inputs[0].data.cpu().numpy()[0]
+        # top3 = saliency.data.cpu().numpy()[0].argsort()[-3:].tolist()
+        return predictions, saliency
