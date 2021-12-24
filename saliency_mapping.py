@@ -101,6 +101,7 @@ for c, b in enumerate(batch):
                 i += sub_len
         top3 = np.array(saliency).argsort()[-3:].tolist()
         tokens = [w if i not in top3 else colored(w, 'red') for i, w in enumerate(tokens)]
+        print (saliency)
         print (" ".join(tokens))
         if len(tagged)>0:
             correct = 0
