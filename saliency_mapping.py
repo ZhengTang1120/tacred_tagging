@@ -93,7 +93,6 @@ for c, b in enumerate(batch):
         top3 = np.array(saliency).argsort()[-3:].tolist()
         print (" ".join([w if i not in top3 else colored(w, 'red') for i, w in enumerate(words)]))
     predictions += preds
-    scs += sc
     batch_size = len(preds)
 
         
