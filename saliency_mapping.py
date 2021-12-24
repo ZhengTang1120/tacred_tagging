@@ -79,8 +79,8 @@ for c, b in enumerate(batch):
     ss, se = origin[c]['subj_start'], origin[c]['subj_end']
     os, oe = origin[c]['obj_start'], origin[c]['obj_end']
     preds,sc = trainer.predict_with_saliency(b)
+    output.append({'gold_label':batch.gold()[c], 'predicted_label':id2label[predictions[c]], 'predicted_tags':[], 'gold_tags':[]})
     if preds[0] != 0:
-        print (id2label[preds[0]])
         saliency = []
         tokens = []
         i = 0
@@ -102,10 +102,13 @@ for c, b in enumerate(batch):
                 saliency.append(sc[i: i+sub_len].mean())
                 i += sub_len
         top3 = np.array(saliency).argsort()[-3:].tolist()
+        output[-1]["predicted_tags"] = top3
         tokens = [w if i not in top3 else colored(w, 'red') for i, w in enumerate(tokens)]
-        print (saliency)
-        print (" ".join(tokens))
         if len(tagged)>0:
+            output[-1]['gold_tags'] = tagged
+            print (output[-1]['gold_label'], output[-1]['predicted_label'])
+            print (" ".join(tokens))
+            print (" ".join([w if i not in tagged else colored(w, 'red') for i, w in enumerate(words)]))
             correct = 0
             pred = 0
             for j, t in enumerate(words):
@@ -121,6 +124,7 @@ for c, b in enumerate(batch):
             except ZeroDivisionError:
                 f1 = 0
             tagging_scores.append((r, p, f1))
+            print (r, p, f1)
     predictions += preds
     batch_size = len(preds)
 
@@ -129,3 +133,5 @@ for c, b in enumerate(batch):
 tr, tp, tf = zip(*tagging_scores)
 
 print("{} set rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
+with open("output_saliency_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
+    f.write(json.dumps(output))

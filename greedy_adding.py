@@ -148,12 +148,15 @@ for c, d in enumerate(data):
             else:
                 rationale = [ss, os]
                 break
-        print (id2label[predictions[c]])
+        
         rationale.remove(ss)
         rationale.remove(os)
         output[-1]["predicted_tags"] = rationale
-        print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
+        
         if len(tagged)>0:
+            print (output[-1]['gold_label'], output[-1]['predicted_label'])
+            print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
+            print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
             output[-1]['gold_tags'] = tagged
             correct = 0
             pred = 0
@@ -173,11 +176,12 @@ for c, d in enumerate(data):
             except ZeroDivisionError:
                 f1 = 0
             tagging_scores.append((r, p, f1))
+            print (r, p, f1)
 
 tr, tp, tf = zip(*tagging_scores)
 
 print("{} set rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
-with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
+with open("output_greedy_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
     f.write(json.dumps(output))
 
 
