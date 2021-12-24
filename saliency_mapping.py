@@ -60,7 +60,8 @@ batch = DataLoader(data_file, 1, opt, tokenizer, True)
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
-
+with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
+    tagging = f.readlines()
 predictions = []
 
 x = 0
@@ -68,7 +69,10 @@ exact_match = 0
 other = 0
 scs = []
 output = list()
+tagging_scores = list()
 for c, b in enumerate(batch):
+    _, tagged = tagging[c].split('\t')
+    tagged = eval(tagged)
     words = origin[c]['token']
     ss, se = origin[c]['subj_start'], origin[c]['subj_end']
     os, oe = origin[c]['obj_start'], origin[c]['obj_end']
@@ -76,37 +80,54 @@ for c, b in enumerate(batch):
     if preds[0] != 0:
         print (id2label[preds[0]])
         saliency = []
-        output = []
+        tokens = []
         i = 0
-        print (sc)
         for j, t in enumerate(words):
             if j == ss or j == os:
                 i += 1
             if j>=ss and j<=se:
                 assert sc[i-1] == 0
                 saliency.append(sc[i-1])
-                output.append(colored(t, "blue"))
+                tokens.append(colored(t, "blue"))
             elif j>=os and j<=oe:
                 assert sc[i-1] == 0
                 saliency.append(sc[i-1])
-                output.append(colored(t, "yellow"))
+                tokens.append(colored(t, "yellow"))
             else:
-                output.append(t)
+                tokens.append(t)
                 t = convert_token(t)
                 sub_len = len(tokenizer.tokenize(t))
                 saliency.append(sc[i: i+sub_len].mean())
                 i += sub_len
         top3 = np.array(saliency).argsort()[-3:].tolist()
-        output = [w if i not in top3 else colored(w, 'red') for i, w in enumerate(output)]
-        print (" ".join(output))
+        tokens = [w if i not in top3 else colored(w, 'red') for i, w in enumerate(tokens)]
+        print (" ".join(tokens))
+        if len(tagged)>0:
+            correct = 0
+            pred = 0
+            for j, t in enumerate(words):
+                if j in top3:
+                    pred += 1
+                    if j in tagged:
+                        correct += 1
+            if pred > 0:
+                r = correct / pred
+            else:
+                r = 0
+            if len(tagged) > 0:
+                p = correct / len(tagged)
+            else:
+                p = 0
+            try:
+                f1 = 2.0 * p * r / (p + r)
+            except ZeroDivisionError:
+                f1 = 0
+            tagging_scores.append((r, p, f1))
     predictions += preds
     batch_size = len(preds)
 
         
 
-# with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
-#     f.write(json.dumps(output))
-p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
-print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
+tr, tp, tf = zip(*tagging_scores)
 
-print("Evaluation ended.")
+print("{} set rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
