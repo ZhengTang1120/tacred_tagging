@@ -106,14 +106,9 @@ for c, b in enumerate(batch):
             correct = 0
             pred = 0
             for j, t in enumerate(words):
-                if j in top3:
-                    pred += 1
-                    if j in tagged:
-                        correct += 1
-            if pred > 0:
-                r = correct / pred
-            else:
-                r = 0
+                if j in top3 and j in tagged:
+                    correct += 1
+            r = correct / 3
             if len(tagged) > 0:
                 p = correct / len(tagged)
             else:

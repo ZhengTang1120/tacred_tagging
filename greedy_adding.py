@@ -159,11 +159,9 @@ for c, d in enumerate(data):
             pred = 0
             for j, t in enumerate(words):
                 if j in rationale and j in tagged:
-                    pred += 1
-                    if j in tagged:
-                        correct += 1
-            if pred > 0:
-                r = correct / pred
+                    correct += 1
+            if len(rationale) > 0:
+                r = correct / len(rationale)
             else:
                 r = 0
             if len(tagged) > 0:
