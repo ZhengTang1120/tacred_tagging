@@ -64,7 +64,6 @@ label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
 with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     tagging = f.readlines()
-predictions = []
 
 x = 0
 exact_match = 0
@@ -79,7 +78,7 @@ for c, b in enumerate(batch):
     ss, se = origin[c]['subj_start'], origin[c]['subj_end']
     os, oe = origin[c]['obj_start'], origin[c]['obj_end']
     preds,sc = trainer.predict_with_saliency(b)
-    output.append({'gold_label':batch.gold()[c], 'predicted_label':id2label[predictions[c]], 'predicted_tags':[], 'gold_tags':[]})
+    output.append({'gold_label':batch.gold()[c], 'predicted_label':id2label[preds[0]], 'predicted_tags':[], 'gold_tags':[]})
     if preds[0] != 0:
         saliency = []
         tokens = []
@@ -125,8 +124,6 @@ for c, b in enumerate(batch):
                 f1 = 0
             tagging_scores.append((r, p, f1))
             print (r, p, f1)
-    predictions += preds
-    batch_size = len(preds)
 
         
 
