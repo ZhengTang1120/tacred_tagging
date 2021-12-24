@@ -79,14 +79,14 @@ for c, b in enumerate(batch):
         output = []
         i = 0
         print (sc)
-        for t in words:
-            if i == ss or i == os:
+        for j, t in enumerate(words):
+            if j == ss or j == os:
                 i += 1
-            if i>=ss and i<=se:
+            if j>=ss and j<=se:
                 assert sc[i-1] == 0
                 saliency.append(sc[i-1])
                 output.append(colored(t, "blue"))
-            elif i>=os and i<=oe:
+            elif j>=os and j<=oe:
                 assert sc[i-1] == 0
                 saliency.append(sc[i-1])
                 output.append(colored(t, "yellow"))
