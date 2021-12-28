@@ -180,7 +180,7 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
 
-        tokens = torch.LongTensor(tokens).cuda()
+        tokens = torch.LongTensor(tokens).cuda()squeeze(2)
         mask = tokens.eq(0).eq(0).long()
         segment_ids = torch.zeros(tokens.size()).long().cuda()
         batch_size = len(tokens)
