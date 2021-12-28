@@ -188,5 +188,5 @@ class BERTtrainer(Trainer):
 
         h, _ = self.encoder(inputs)
         logits = self.classifier(h)
-        probs = F.softmax(logits, 1).numpy()
+        probs = F.softmax(logits, 1).detach().numpy()
         return probs
