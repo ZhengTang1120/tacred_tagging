@@ -68,7 +68,7 @@ def preprocess(filename, tokenizer):
                 t = convert_token(t)
                 for j, sub_token in enumerate(tokenizer.tokenize(t)):
                     words.append(sub_token)
-            words = ['[CLS]'] + words + ['[SEP]']
+        words = ['[CLS]'] + words + ['[SEP]']
         tokens = tokenizer.convert_tokens_to_ids(words)
         words = [[0] if i>=len(tokens) else [tokens[i]] for i in range(128)]
         output_tokens.append(words)
