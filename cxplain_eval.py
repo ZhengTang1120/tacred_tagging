@@ -22,7 +22,14 @@ explained_model = Pipeline([('counts', counter),
                             ('model', explained_model)])
 explained_model.fit(x_train, y_train)
 
-print(explained_model(x_test))
+class EXModel:
+    def __init__(self, model):
+        self.model = model
+    def predict_proba(self, x):
+        return self.model.predict_proba(x)
+
+explained_model = EXModel(explained_model)
+
 
 from tensorflow.python.keras.losses import binary_crossentropy
 from cxplain import RNNModelBuilder, WordDropMasking, CXPlain
