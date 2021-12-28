@@ -184,7 +184,7 @@ class BERTtrainer(Trainer):
         mask = tokens.eq(0).eq(0).long()
         segment_ids = torch.zeros(tokens.size()).long().cuda()
         batch_size = len(tokens)
-        inputs = [tokens, mask, batch_size, segment_ids]
+        inputs = [tokens, mask, segment_ids]
 
         h, _ = self.encoder(inputs)
         logits = self.classifier(h)
