@@ -174,3 +174,19 @@ class BERTtrainer(Trainer):
         saliency = saliency.masked_fill(mask, 0)
         # top3 = saliency.data.cpu().numpy()[0].argsort()[-3:].tolist()
         return predictions, saliency.data.cpu().numpy()[0][1:-1]
+
+    def predict_proba(self, tokens):
+        # forward
+        self.encoder.eval()
+        self.classifier.eval()
+
+        tokens = torch.LongTensor(tokens).cuda()
+        mask = tokens.eq(0).eq(0).long()
+        segment_ids = torch.zeros(tokens.size()).long().cuda()
+        batch_size = len(tokens)
+        inputs = [tokens, mask, batch_size, segment_ids]
+
+        h, _ = self.encoder(inputs)
+        logits = self.classifier(h)
+        probs = F.softmax(logits, 1).detach().cpu().numpy()
+        return probs
