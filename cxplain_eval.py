@@ -47,7 +47,7 @@ def convert_token(token):
 def preprocess(filename, tokenizer):
     with open(filename) as infile:
         data = json.load(infile)
-    tokens = list()
+    output_tokens = list()
     labels = list()
     for c, d in enumerate(data):
         tokens = list()
@@ -70,9 +70,9 @@ def preprocess(filename, tokenizer):
                 t = convert_token(t)
                 words.append(t)
                 sub_token_len += len(tokenizer.tokenize(t))
-        tokens.append(words)
+        output_tokens.append(words)
         labels.append(relation)
-    return tokens, labels
+    return output_tokens, labels
 
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
