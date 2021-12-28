@@ -1,38 +1,131 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-from cxplain.util.test_util import TestUtil
+import random
+import argparse
+from tqdm import tqdm
+import torch
 
-num_words = 1024
-num_samples = 500
-(x_train, y_train), (x_test, y_test) = TestUtil.get_imdb(word_dictionary_size=num_words,
-                                                         num_subsamples=num_samples)
-from sklearn.pipeline import Pipeline
-from cxplain.util.count_vectoriser import CountVectoriser
-from sklearn.ensemble.forest import RandomForestClassifier
-from sklearn.feature_extraction.text import TfidfTransformer
+from dataloader import DataLoader, convert_token
+from trainer import BERTtrainer, unpack_batch
+from utils import torch_utils, scorer, constant, helper
 
-explained_model = RandomForestClassifier(n_estimators=64, max_depth=5, random_state=1)
+from nltk.translate.bleu_score import corpus_bleu, sentence_bleu
 
-counter = CountVectoriser(num_words)
-tfidf_transformer = TfidfTransformer()
+from pytorch_pretrained_bert.tokenization import BertTokenizer
 
-explained_model = Pipeline([('counts', counter),
-                            ('tfidf', tfidf_transformer),
-                            ('model', explained_model)])
-explained_model.fit(x_train, y_train)
+import json
+
+from termcolor import colored
+
+import numpy as np
+
+import statistics
+
+from tensorflow.python.keras.losses import binary_crossentropy
+from cxplain import RNNModelBuilder, WordDropMasking, CXPlain
+from tensorflow.python.keras.preprocessing.sequence import pad_sequences
+from tensorflow.python.framework.ops import disable_eager_execution
+
+disable_eager_execution()
+
+def convert_token(token):
+    """ Convert PTB tokens to normal tokens """
+    if (token.lower() == '-lrb-'):
+            return '('
+    elif (token.lower() == '-rrb-'):
+        return ')'
+    elif (token.lower() == '-lsb-'):
+        return '['
+    elif (token.lower() == '-rsb-'):
+        return ']'
+    elif (token.lower() == '-lcb-'):
+        return '{'
+    elif (token.lower() == '-rcb-'):
+        return '}'
+    return token
+
+def preprocess(filename, tokenizer):
+    with open(filename) as infile:
+        data = json.load(infile)
+    tokens = list()
+    labels = list()
+    for c, d in enumerate(data):
+        tokens = list()
+        words  = list()
+        relation = constant.LABEL_TO_ID[d['relation']]
+        # anonymize tokens
+        ss, se = d['subj_start'], d['subj_end']
+        os, oe = d['obj_start'], d['obj_end']
+        sub_token_len = 0
+        for i, t in enumerate(d['token']):
+            if sub_token_len >= 128:
+                break
+            if i == ss or i == os:
+                sub_token_len += 1
+            if i>=ss and i<=se:
+                words.append(colored(t, 'blue'))
+            elif i>=os and i<=oe:
+                words.append(colored(t, 'yellow'))
+            else:
+                t = convert_token(t)
+                words.append(t)
+                sub_token_len += len(tokenizer.tokenize(t))
+        tokens.append(words)
+        labels.append(relation)
+    return tokens, labels
+
+parser = argparse.ArgumentParser()
+parser.add_argument('model_dir', type=str, help='Directory of the model.')
+parser.add_argument('--model', type=str, default='best_model.pt', help='Name of the model file.')
+parser.add_argument('--data_dir', type=str, default='dataset/tacred')
+parser.add_argument('--dataset', type=str, default='test', help="Evaluate on dev or test.")
+
+parser.add_argument('--seed', type=int, default=1234)
+parser.add_argument('--cuda', type=bool, default=torch.cuda.is_available())
+parser.add_argument('--cpu', action='store_true')
+
+parser.add_argument('--device', type=int, default=0, help='Word embedding dimension.')
+
+args = parser.parse_args()
+
+torch.manual_seed(args.seed)
+random.seed(args.seed)
+if args.cpu:
+    args.cuda = False
+elif args.cuda:
+    torch.cuda.manual_seed(args.seed)
+
+tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
+
+# load opt
+model_file = args.model_dir + '/' + args.model
+print("Loading model from {}".format(model_file))
+opt = torch_utils.load_config(model_file)
+opt['device'] = args.device
+trainer = BERTtrainer(opt)
+trainer.load(model_file)
+
+# load data
+train_file = opt['data_dir'] + '/train.json'
+data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
+
+x_train, y_train = preprocess(train_file, tokenizer)
+x_test, y_test = preprocess(data_file, tokenizer)
+
+helper.print_config(opt)
+label2id = constant.LABEL_TO_ID
+id2label = dict([(v,k) for k,v in label2id.items()])
+with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
+    tagging = f.readlines()
 
 class EXModel:
     def __init__(self, model):
         self.model = model
     def predict_proba(self, x):
-        print (self.model.predict_proba(x))
         return self.model.predict_proba(x)
 
-explained_model = EXModel(explained_model)
+explained_model = EXModel(trainer)
 
-
-from tensorflow.python.keras.losses import binary_crossentropy
-from cxplain import RNNModelBuilder, WordDropMasking, CXPlain
 
 model_builder = RNNModelBuilder(embedding_size=num_words, with_embedding=True,
                                 num_layers=2, num_units=32, activation="relu", p_dropout=0.2, verbose=0,
@@ -40,36 +133,17 @@ model_builder = RNNModelBuilder(embedding_size=num_words, with_embedding=True,
 masking_operation = WordDropMasking()
 loss = binary_crossentropy
 
-from tensorflow.python.keras.preprocessing.sequence import pad_sequences
-from tensorflow.python.framework.ops import disable_eager_execution
-
-disable_eager_execution()
 
 explainer = CXPlain(explained_model, model_builder, masking_operation, loss)
 
-prior_test_lengths = list(map(len, x_test))
-x_train = pad_sequences(x_train, padding="post", truncating="post", dtype=int)
-x_test = pad_sequences(x_test, padding="post", truncating="post", dtype=int, maxlen=x_train.shape[1])
-explainer.fit(x_train, y_train);
+explainer.fit(x_train, y_train)
 
 attributions = explainer.explain(x_test)
 
-
-import numpy as np
-import matplotlib.pyplot as plt
-from cxplain.visualisation.plot import Plot
-
-plt.rcdefaults()
 
 np.random.seed(909)
 selected_index = np.random.randint(len(x_test))
 selected_sample = x_test[selected_index]
 importances = attributions[selected_index]
-prior_length = prior_test_lengths[selected_index]
 
-# Truncate to original review length prior to padding.
-selected_sample = selected_sample[:prior_length]
-importances = importances[:prior_length]
-words = TestUtil.imdb_dictionary_indidces_to_words(selected_sample)
-
-print(Plot.plot_attribution_nlp(words, importances))
+print (importances)
