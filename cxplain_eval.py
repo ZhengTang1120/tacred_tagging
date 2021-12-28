@@ -98,7 +98,7 @@ elif args.cuda:
     torch.cuda.manual_seed(args.seed)
 
 tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
-
+print (len(tokenizer.vocab))
 # load opt
 model_file = args.model_dir + '/' + args.model
 print("Loading model from {}".format(model_file))
