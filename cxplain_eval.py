@@ -132,7 +132,7 @@ model_builder = RNNModelBuilder(embedding_size=1024, with_embedding=True,
                                 num_layers=2, num_units=32, activation="relu", p_dropout=0.2, verbose=0,
                                 batch_size=32, learning_rate=0.001, num_epochs=2, early_stopping_patience=128)
 masking_operation = WordDropMasking()
-loss = binary_crossentropy
+loss = categorical_crossentropy
 
 
 explainer = CXPlain(explained_model, model_builder, masking_operation, loss)
