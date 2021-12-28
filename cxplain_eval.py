@@ -32,6 +32,9 @@ masking_operation = WordDropMasking()
 loss = binary_crossentropy
 
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
+from tensorflow.python.framework.ops import disable_eager_execution
+
+disable_eager_execution()
 
 explainer = CXPlain(explained_model, model_builder, masking_operation, loss)
 
