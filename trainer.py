@@ -75,11 +75,11 @@ class BERTtrainer(Trainer):
                         if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
         ]
         # parameters = [p for p in self.classifier.parameters() if p.requires_grad] + [p for p in self.encoder.parameters() if p.requires_grad]
-        if opt['cuda']:
-            with torch.cuda.device(self.opt['device']):
-                self.encoder.cuda()
-                self.classifier.cuda()
-                self.criterion.cuda()
+        # if opt['cuda']:
+        #     with torch.cuda.device(self.opt['device']):
+        #         self.encoder.cuda()
+        #         self.classifier.cuda()
+        #         self.criterion.cuda()
 
         self.optimizer = BertAdam(optimizer_grouped_parameters,
              lr=opt['lr'],
@@ -180,13 +180,13 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
 
-        tokens = torch.LongTensor(tokens).cuda().squeeze(2)
+        tokens = torch.LongTensor(tokens).squeeze(2)
         mask = tokens.eq(0).eq(0).long()
-        segment_ids = torch.zeros(tokens.size()).long().cuda()
+        segment_ids = torch.zeros(tokens.size()).long()
         batch_size = len(tokens)
         inputs = [tokens, mask, segment_ids]
 
         h, _ = self.encoder(inputs)
         logits = self.classifier(h)
-        probs = F.softmax(logits, 1).detach().cpu().numpy()
+        probs = F.softmax(logits, 1).numpy()
         return probs
