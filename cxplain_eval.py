@@ -137,7 +137,7 @@ loss = binary_crossentropy
 
 explainer = CXPlain(explained_model, model_builder, masking_operation, loss)
 
-explainer.fit(x_train, y_train)
+explainer.fit(x_train[:32], y_train[:32])
 
 attributions = explainer.explain(x_test)
 
