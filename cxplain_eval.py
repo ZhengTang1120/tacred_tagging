@@ -50,28 +50,28 @@ def preprocess(filename, tokenizer):
     output_tokens = list()
     labels = list()
     for c, d in enumerate(data):
-        tokens = list()
         words  = list()
-        relation = constant.LABEL_TO_ID[d['relation']]
         # anonymize tokens
         ss, se = d['subj_start'], d['subj_end']
         os, oe = d['obj_start'], d['obj_end']
-        sub_token_len = 0
+
         for i, t in enumerate(d['token']):
-            if sub_token_len >= 128:
-                break
-            if i == ss or i == os:
-                sub_token_len += 1
+            if i == ss:
+                words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
+            if i == os:
+                words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
             if i>=ss and i<=se:
-                words.append(colored(t, 'blue'))
+                pass
             elif i>=os and i<=oe:
-                words.append(colored(t, 'yellow'))
+                pass
             else:
                 t = convert_token(t)
-                words.append(t)
-                sub_token_len += len(tokenizer.tokenize(t))
-        words2 = [[0] if i>=len(words) else [words[i]] for i in range(128)]
-        output_tokens.append(words2)
+                for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
+                    words.append(sub_token)
+            words = ['[CLS]'] + words + ['[SEP]']
+        tokens = self.tokenizer.convert_tokens_to_ids(words)
+        words = [[0] if i>=len(tokens) else [tokens[i]] for i in range(128)]
+        output_tokens.append(words)
         labels.append(relation)
     return np.array(output_tokens).astype(int), np.array(labels).astype(int)
 
