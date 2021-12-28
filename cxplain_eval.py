@@ -70,10 +70,10 @@ def preprocess(filename, tokenizer):
                 t = convert_token(t)
                 words.append(t)
                 sub_token_len += len(tokenizer.tokenize(t))
-        words2 = [0 if i>=len(words) else words[i] for i in range(128)]
+        words2 = [[0] if i>=len(words) else [words[i]] for i in range(128)]
         output_tokens.append(words2)
         labels.append(relation)
-    return output_tokens, labels
+    return np.array(output_tokens), np.array(labels)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
@@ -112,7 +112,7 @@ data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 
 x_train, y_train = preprocess(train_file, tokenizer)
 x_test, y_test = preprocess(data_file, tokenizer)
-
+print (x_train.shape)
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
