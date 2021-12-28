@@ -72,7 +72,7 @@ def preprocess(filename, tokenizer):
         tokens = tokenizer.convert_tokens_to_ids(words)
         words = [[0] if i>=len(tokens) else [tokens[i]] for i in range(128)]
         output_tokens.append(words)
-        labels.append(relation)
+        labels.append(constant.LABEL_TO_ID[d['relation']])
     return np.array(output_tokens).astype(int), np.array(labels).astype(int)
 
 parser = argparse.ArgumentParser()
