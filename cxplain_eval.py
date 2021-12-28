@@ -22,6 +22,8 @@ explained_model = Pipeline([('counts', counter),
                             ('model', explained_model)])
 explained_model.fit(x_train, y_train)
 
+print(explained_model(x_test))
+
 from tensorflow.python.keras.losses import binary_crossentropy
 from cxplain import RNNModelBuilder, WordDropMasking, CXPlain
 
