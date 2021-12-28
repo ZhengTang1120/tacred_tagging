@@ -49,7 +49,7 @@ def preprocess(filename, tokenizer):
         data = json.load(infile)
     output_tokens = list()
     labels = list()
-    for c, d in enumerate(data):
+    for c, d in enumerate(data[:32]):
         words  = list()
         # anonymize tokens
         ss, se = d['subj_start'], d['subj_end']
@@ -137,7 +137,7 @@ loss = binary_crossentropy
 
 explainer = CXPlain(explained_model, model_builder, masking_operation, loss)
 
-explainer.fit(x_train[:32], y_train[:32])
+explainer.fit(x_train, y_train)
 
 attributions = explainer.explain(x_test)
 
