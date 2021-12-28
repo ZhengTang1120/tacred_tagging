@@ -42,7 +42,6 @@ explainer.fit(x_train, y_train);
 
 attributions = explainer.explain(x_test)
 
-from __future__ import print_function
 
 import numpy as np
 import matplotlib.pyplot as plt
