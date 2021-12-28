@@ -140,6 +140,9 @@ explainer = CXPlain(explained_model, model_builder, masking_operation, loss)
 
 explainer.fit(x_train, y_train)
 
+my_save_directory = "cxplain/"
+explainer.save(my_save_directory)
+
 attributions = explainer.explain(x_test)
 
 
