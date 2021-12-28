@@ -73,7 +73,7 @@ def preprocess(filename, tokenizer):
         words2 = [[0] if i>=len(words) else [words[i]] for i in range(128)]
         output_tokens.append(words2)
         labels.append(relation)
-    return np.array(output_tokens), np.array(labels)
+    return np.array(output_tokens).astype(int), np.array(labels).astype(int)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
