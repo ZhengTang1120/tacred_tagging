@@ -21,7 +21,7 @@ import numpy as np
 
 import statistics
 
-from tensorflow.python.keras.losses import binary_crossentropy
+from tensorflow.python.keras.losses import categorical_crossentropy
 from cxplain import RNNModelBuilder, WordDropMasking, CXPlain
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.framework.ops import disable_eager_execution
