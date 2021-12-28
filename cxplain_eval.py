@@ -70,7 +70,8 @@ def preprocess(filename, tokenizer):
                 t = convert_token(t)
                 words.append(t)
                 sub_token_len += len(tokenizer.tokenize(t))
-        output_tokens.append(words)
+        words2 = [0 if i>=len(words) else words[i] for i in range(128)]
+        output_tokens.append(words2)
         labels.append(relation)
     return output_tokens, labels
 
