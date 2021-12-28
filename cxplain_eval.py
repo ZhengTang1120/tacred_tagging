@@ -6,7 +6,7 @@ num_words = 1024
 num_samples = 500
 (x_train, y_train), (x_test, y_test) = TestUtil.get_imdb(word_dictionary_size=num_words,
                                                          num_subsamples=num_samples)
-
+print (x_train, y_train)
 from sklearn.pipeline import Pipeline
 from cxplain.util.count_vectoriser import CountVectoriser
 from sklearn.ensemble.forest import RandomForestClassifier
