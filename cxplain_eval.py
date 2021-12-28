@@ -21,7 +21,7 @@ import numpy as np
 
 import statistics
 
-from tensorflow.python.keras.losses import categorical_crossentropy
+from tensorflow.python.keras.losses import binary_crossentropy
 from cxplain import RNNModelBuilder, WordDropMasking, CXPlain
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.framework.ops import disable_eager_execution
@@ -133,7 +133,7 @@ model_builder = RNNModelBuilder(embedding_size=1024, with_embedding=True,
                                 num_layers=2, num_units=32, activation="relu", p_dropout=0.2, verbose=0,
                                 batch_size=32, learning_rate=0.001, num_epochs=2, early_stopping_patience=128)
 masking_operation = WordDropMasking()
-loss = categorical_crossentropy
+loss = binary_crossentropy
 
 
 explainer = CXPlain(explained_model, model_builder, masking_operation, loss)
