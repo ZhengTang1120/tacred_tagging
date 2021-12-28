@@ -38,7 +38,7 @@ disable_eager_execution()
 
 explainer = CXPlain(explained_model, model_builder, masking_operation, loss)
 
-prior_test_lengths = map(len, x_test)
+prior_test_lengths = list(map(len, x_test))
 x_train = pad_sequences(x_train, padding="post", truncating="post", dtype=int)
 x_test = pad_sequences(x_test, padding="post", truncating="post", dtype=int, maxlen=x_train.shape[1])
 explainer.fit(x_train, y_train);
