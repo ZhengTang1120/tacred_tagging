@@ -49,7 +49,7 @@ def preprocess(filename, tokenizer):
         data = json.load(infile)
     output_tokens = list()
     labels = list()
-    for c, d in enumerate(data[:640]):
+    for c, d in enumerate(data):
         words  = list()
         # anonymize tokens
         ss, se = d['subj_start'], d['subj_end']
