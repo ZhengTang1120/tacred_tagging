@@ -145,9 +145,13 @@ my_save_directory = "cxplain/"
 
 explainer = CXPlain.load(my_save_directory)
 attributions = explainer.explain(x_test)
-
+preds = list()
+golds = list()
 for i, t in enumerate(x_test):
     prob = explained_model.predict_proba(t.reshape(1, -1, 1))
     pred = id2label[np.argmax(prob, axis=1).tolist()[0]]
-    print (y_test[i], np.argmax(y_test[i]))
-    print (pred)
+    preds.append(pred)
+    golds.append(id2label[np.argmax(y_test[i])])
+
+p, r, f1 = scorer.score(golds, preds, verbose=True)
+print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
