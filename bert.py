@@ -8,6 +8,8 @@ from pytorch_pretrained_bert.modeling import BertModel
 
 from utils import constant, torch_utils
 
+import datetime
+
 class BERTencoder(nn.Module):
     def __init__(self):
         super().__init__()
@@ -17,6 +19,8 @@ class BERTencoder(nn.Module):
         words = inputs[0]
         mask = inputs[1]
         segment_ids = inputs[2]
+        if (words.size(0) == 32):
+            print(datetime.datetime.now())
         h, pooled_output, embeddings = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
         return pooled_output, embeddings
 
