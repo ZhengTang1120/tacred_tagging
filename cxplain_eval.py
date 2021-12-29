@@ -113,7 +113,7 @@ data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 
 x_train, y_train = preprocess(train_file, tokenizer)
 x_test, y_test = preprocess(data_file, tokenizer)
-print (y_train.shape)
+print (x_train.shape)
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
@@ -147,6 +147,6 @@ explainer = CXPlain.load(my_save_directory)
 attributions = explainer.explain(x_test)
 
 for i, t in enumerate(x_test):
-    prob = explained_model.predict_proba(t)
+    prob = explained_model.predict_proba(t.reshape(1, -1, 1))
     pred = np.argmax(prob.data.cpu().numpy(), axis=1).tolist()
     print (pred)
