@@ -148,5 +148,5 @@ attributions = explainer.explain(x_test)
 
 for i, t in enumerate(x_test):
     prob = explained_model.predict_proba(t.reshape(1, -1, 1))
-    pred = np.argmax(prob.data.cpu().numpy(), axis=1).tolist()
+    pred = np.argmax(prob, axis=1).tolist()
     print (pred)
