@@ -148,6 +148,8 @@ attributions = explainer.explain(x_test)
 preds = list()
 golds = list()
 for i, t in enumerate(x_test):
+    _, tagged = tagging[i].split('\t')
+    tagged = eval(tagged)
     words = origin[i]['token']
     ss, se = origin[i]['subj_start'], origin[i]['subj_end']
     os, oe = origin[i]['obj_start'], origin[i]['obj_end']
@@ -179,7 +181,7 @@ for i, t in enumerate(x_test):
         top3 = np.array(saliency).argsort()[-3:].tolist()
         output[-1]["predicted_tags"] = top3
         tokens = [w if c not in top3 else colored(w, 'red') for c, w in enumerate(tokens)]
-        print (tokens)
+        print (" ".join(tokens))
         if len(tagged)>0:
             output[-1]['gold_tags'] = tagged
             # print (saliency)
