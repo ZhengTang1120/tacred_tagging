@@ -126,7 +126,7 @@ class EXModel:
     def predict_proba(self, x):
         return self.model.predict_proba(x)
 
-# explained_model = EXModel(trainer)
+explained_model = EXModel(trainer)
 
 
 # model_builder = RNNModelBuilder(embedding_size=len(tokenizer.vocab), with_embedding=True,
@@ -146,10 +146,7 @@ my_save_directory = "cxplain/"
 explainer = CXPlain.load(my_save_directory)
 attributions = explainer.explain(x_test)
 
-
-np.random.seed(909)
-selected_index = np.random.randint(len(x_test))
-selected_sample = x_test[selected_index]
-importances = attributions[selected_index]
-
-print (importances)
+for i, t in enumerate(x_test):
+    prob = explained_model(t)
+    pred = np.argmax(prob.data.cpu().numpy(), axis=1).tolist()
+    print (pred)
