@@ -26,8 +26,6 @@ from cxplain import RNNModelBuilder, WordDropMasking, CXPlain
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.framework.ops import disable_eager_execution
 
-import saliency_mapping
-
 disable_eager_execution()
 
 def convert_token(token):
