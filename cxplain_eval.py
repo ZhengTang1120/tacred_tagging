@@ -148,5 +148,6 @@ attributions = explainer.explain(x_test)
 
 for i, t in enumerate(x_test):
     prob = explained_model.predict_proba(t.reshape(1, -1, 1))
-    pred = np.argmax(prob, axis=1).tolist()
+    pred = id2label[np.argmax(prob, axis=1).tolist()[0]]
+    print (y_test[i], np.argmax(y_test[i]))
     print (pred)
