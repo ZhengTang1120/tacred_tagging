@@ -147,6 +147,7 @@ explainer = CXPlain.load(my_save_directory)
 attributions = explainer.explain(x_test)
 preds = list()
 golds = list()
+tagging_scores = list()
 for i, t in enumerate(x_test):
     _, tagged = tagging[i].split('\t')
     tagged = eval(tagged)
