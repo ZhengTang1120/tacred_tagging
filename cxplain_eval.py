@@ -26,6 +26,8 @@ from cxplain import RNNModelBuilder, WordDropMasking, CXPlain
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.framework.ops import disable_eager_execution
 
+import saliency_mapping
+
 disable_eager_execution()
 
 def convert_token(token):
@@ -68,14 +70,13 @@ def preprocess(filename, tokenizer):
                 t = convert_token(t)
                 for j, sub_token in enumerate(tokenizer.tokenize(t)):
                     words.append(sub_token)
-        origin = words[:]
         words = ['[CLS]'] + words + ['[SEP]']
         tokens = tokenizer.convert_tokens_to_ids(words)
         words = [[0] if i>=len(tokens) else [tokens[i]] for i in range(128)]
         output_tokens.append(words)
         relation = [1 if i == constant.LABEL_TO_ID[d['relation']] else 0 for i in range(len(constant.LABEL_TO_ID))]
         labels.append(relation)
-    return np.array(output_tokens).astype(int), np.array(labels).astype(int), origin
+    return np.array(output_tokens).astype(int), np.array(labels).astype(int)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
@@ -112,8 +113,8 @@ trainer.load(model_file)
 train_file = opt['data_dir'] + '/train.json'
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 
-# x_train, y_train, _ = preprocess(train_file, tokenizer)
-x_test, y_test, origin = preprocess(data_file, tokenizer)
+# x_train, y_train = preprocess(train_file, tokenizer)
+x_test, y_test = preprocess(data_file, tokenizer)
 # print (x_train.shape)
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
@@ -129,7 +130,7 @@ class EXModel:
 
 explained_model = EXModel(trainer)
 
-
+origin = json.load(open(data_file))
 # model_builder = RNNModelBuilder(embedding_size=len(tokenizer.vocab), with_embedding=True,
 #                                 num_layers=2, num_units=32, activation="relu", p_dropout=0.2, verbose=0,
 #                                 batch_size=32, learning_rate=0.001, num_epochs=2, early_stopping_patience=128)
@@ -149,6 +150,9 @@ attributions = explainer.explain(x_test)
 preds = list()
 golds = list()
 for i, t in enumerate(x_test):
+    words = origin[i]['token']
+    ss, se = origin[i]['subj_start'], origin[i]['subj_end']
+    os, oe = origin[i]['obj_start'], origin[i]['obj_end']
     prob = explained_model.predict_proba(t.reshape(1, -1, 1))
     pred = id2label[np.argmax(prob, axis=1).tolist()[0]]
     preds.append(pred)
@@ -159,7 +163,7 @@ for i, t in enumerate(x_test):
         saliency = []
         tokens = []
         c = 0
-        for j, t in enumerate(origin[i]):
+        for j, t in enumerate(words):
             if j == ss or j == os:
                 c += 1
             if j>=ss and j<=se:
