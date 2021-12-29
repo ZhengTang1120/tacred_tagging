@@ -120,29 +120,30 @@ id2label = dict([(v,k) for k,v in label2id.items()])
 with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     tagging = f.readlines()
 
-class EXModel:
-    def __init__(self, model):
-        self.model = model
-    def predict_proba(self, x):
-        return self.model.predict_proba(x)
+# class EXModel:
+#     def __init__(self, model):
+#         self.model = model
+#     def predict_proba(self, x):
+#         return self.model.predict_proba(x)
 
-explained_model = EXModel(trainer)
-
-
-model_builder = RNNModelBuilder(embedding_size=len(tokenizer.vocab), with_embedding=True,
-                                num_layers=2, num_units=32, activation="relu", p_dropout=0.2, verbose=0,
-                                batch_size=32, learning_rate=0.001, num_epochs=2, early_stopping_patience=128)
-masking_operation = WordDropMasking()
-loss = binary_crossentropy
+# explained_model = EXModel(trainer)
 
 
-explainer = CXPlain(explained_model, model_builder, masking_operation, loss)
+# model_builder = RNNModelBuilder(embedding_size=len(tokenizer.vocab), with_embedding=True,
+#                                 num_layers=2, num_units=32, activation="relu", p_dropout=0.2, verbose=0,
+#                                 batch_size=32, learning_rate=0.001, num_epochs=2, early_stopping_patience=128)
+# masking_operation = WordDropMasking()
+# loss = binary_crossentropy
 
-explainer.fit(x_train, y_train)
+
+# explainer = CXPlain(explained_model, model_builder, masking_operation, loss)
+
+# explainer.fit(x_train, y_train)
 
 my_save_directory = "cxplain/"
-explainer.save(my_save_directory)
+# explainer.save(my_save_directory)
 
+explainer = CXPlain.load(my_save_directory)
 attributions = explainer.explain(x_test)
 
 
