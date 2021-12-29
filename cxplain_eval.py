@@ -120,11 +120,11 @@ id2label = dict([(v,k) for k,v in label2id.items()])
 with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     tagging = f.readlines()
 
-# class EXModel:
-#     def __init__(self, model):
-#         self.model = model
-#     def predict_proba(self, x):
-#         return self.model.predict_proba(x)
+class EXModel:
+    def __init__(self, model):
+        self.model = model
+    def predict_proba(self, x):
+        return self.model.predict_proba(x)
 
 # explained_model = EXModel(trainer)
 
