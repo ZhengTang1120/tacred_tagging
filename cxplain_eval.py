@@ -147,6 +147,6 @@ explainer = CXPlain.load(my_save_directory)
 attributions = explainer.explain(x_test)
 
 for i, t in enumerate(x_test):
-    prob = explained_model(t)
+    prob = explained_model.predict_proba(t)
     pred = np.argmax(prob.data.cpu().numpy(), axis=1).tolist()
     print (pred)
