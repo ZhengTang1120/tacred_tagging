@@ -50,7 +50,7 @@ def preprocess(filename, tokenizer):
     output_tokens = list()
     labels = list()
     random.shuffle(data)
-    for c, d in enumerate(data[:2048]):
+    for c, d in enumerate(data):
         words  = list()
         # anonymize tokens
         ss, se = d['subj_start'], d['subj_end']
