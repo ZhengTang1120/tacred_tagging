@@ -49,7 +49,7 @@ def preprocess(filename, tokenizer):
         data = json.load(infile)
     output_tokens = list()
     labels = list()
-    random.shuffle(data)
+    # random.shuffle(data)
     for c, d in enumerate(data):
         words  = list()
         # anonymize tokens
