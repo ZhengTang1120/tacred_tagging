@@ -168,7 +168,7 @@ class BERTtrainer(Trainer):
         self.classifier.dropout.eval()
         score_max.backward()
 
-        saliency, _ = torch.max(embs.grad.data.abs(),dim=2)
+        saliency, _ = torch.max(embs.grad.data,dim=2)
         mask = torch.logical_and(inputs[0].gt(0), inputs[0].lt(20)) + inputs[0].eq(101) + inputs[0].eq(102)
         
         saliency = saliency.masked_fill(mask, 0)
