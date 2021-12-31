@@ -98,8 +98,8 @@ data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 x_test, y_test = preprocess(data_file, tokenizer)
 
 def f(x):
-    tv = torch.tensor([tokenizer.encode(v, pad_to_max_length=True, max_length=128,truncation=True) for v in x])
-    scores = trainer.predict_proba(tv)
+    tv = np.array([tokenizer.encode(v, pad_to_max_length=True, max_length=128,truncation=True) for v in x]).astype(int)
+    scores = trainer.predict_proba(tv.reshape(1, -1, 1))
     val = sp.special.logit(scores)
     return val
 
