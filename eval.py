@@ -12,6 +12,7 @@ from utils import torch_utils, scorer, constant, helper
 
 from nltk.translate.bleu_score import corpus_bleu, sentence_bleu
 
+from pytorch_pretrained_bert import tokenization
 from transformers import BertTokenizer
 
 import json
@@ -37,7 +38,9 @@ if args.cpu:
 elif args.cuda:
     torch.cuda.manual_seed(args.seed)
 
-tokenizer = BertTokenizer.from_pretrained('SpanBERT/spanbert-large-cased')
+tokenizer = tokenization.BertTokenizer.from_pretrained('spanbert-large-cased')
+vocab_file = tokenizer.save_vocabulary("saved.vocab")
+tokenizer = BertTokenizer(vocab_file)
 
 # load opt
 model_file = args.model_dir + '/' + args.model
