@@ -102,7 +102,7 @@ def f(x):
     tv = np.array([tokenizer.encode(v, pad_to_max_length=True, max_length=128,truncation=True) for v in x]).astype(int)
     scores = trainer.predict_proba(tv.reshape(1, -1, 1))
     val = sp.special.logit(scores)
-    print (val.size())
+    print (val)
     return val
 
 explainer = shap.Explainer(f, tokenizer, output_names=sorted(constant.LABEL_TO_ID, key=constant.LABEL_TO_ID.get))
