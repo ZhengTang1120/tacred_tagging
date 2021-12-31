@@ -11,7 +11,7 @@ from utils import torch_utils, scorer, constant, helper
 
 from nltk.translate.bleu_score import corpus_bleu, sentence_bleu
 
-from transformers import BertTokenizer
+from pytorch_pretrained_bert.tokenization import BertTokenizer
 
 import json
 
