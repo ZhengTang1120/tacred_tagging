@@ -104,7 +104,7 @@ def f(x):
 
 explainer = shap.Explainer(f, tokenizer, output_names=sorted(constant.LABEL_TO_ID, key=constant.LABEL_TO_ID.get))
 
-shap_values = explainer(x_test, batch_size=48)
+shap_values = explainer(x_test[:10], batch_size=48)
 
 label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
@@ -116,7 +116,7 @@ output = list()
 preds = list()
 golds = list()
 tagging_scores = list()
-for i, t in enumerate(x_test):
+for i, t in enumerate(x_test[:10]):
     _, tagged = tagging[i].split('\t')
     tagged = eval(tagged)
     words = origin[i]['token']
