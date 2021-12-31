@@ -123,7 +123,7 @@ for i, t in enumerate(x_test):
     ss, se = origin[i]['subj_start'], origin[i]['subj_end']
     os, oe = origin[i]['obj_start'], origin[i]['obj_end']
 
-    prob = f(t)
+    prob = f([t])
     class_index = np.argmax(prob, axis=1).tolist()[0]
     pred = id2label[class_index]
     preds.append(pred)
