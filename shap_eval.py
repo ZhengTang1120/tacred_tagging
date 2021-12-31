@@ -104,7 +104,7 @@ def f(x):
 
 explainer = shap.Explainer(f, tokenizer, output_names=sorted(constant.LABEL_TO_ID, key=constant.LABEL_TO_ID.get))
 
-shap_values = explainer(x_test[:10], batch_size=48)
+shap_values = explainer(x_test, batch_size=48)
 
 label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
@@ -116,7 +116,7 @@ output = list()
 preds = list()
 golds = list()
 tagging_scores = list()
-for i, t in enumerate(x_test[:10]):
+for i, t in enumerate(x_test):
     _, tagged = tagging[i].split('\t')
     tagged = eval(tagged)
     words = origin[i]['token']
@@ -127,7 +127,7 @@ for i, t in enumerate(x_test[:10]):
     class_index = np.argmax(prob, axis=1).tolist()[0]
     pred = id2label[class_index]
     preds.append(pred)
-    golds.append(id2label[np.argmax(y_test[i])])
+    golds.append(y_test[i])
     importance = shap_values.values[i][:,class_index]
     output.append({'gold_label':golds[-1], 'predicted_label':preds[-1], 'predicted_tags':[], 'gold_tags':[]})
     if preds[-1] != 'no_relation':
