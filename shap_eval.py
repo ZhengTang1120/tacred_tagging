@@ -110,8 +110,8 @@ label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
 
 origin = json.load(open(data_file))
-with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
-    tagging = f.readlines()
+with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as file:
+    tagging = file.readlines()
 output = list()
 preds = list()
 golds = list()
