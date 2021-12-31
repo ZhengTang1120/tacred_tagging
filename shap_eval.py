@@ -104,7 +104,7 @@ def f(x):
 
 explainer = shap.Explainer(f, tokenizer, output_names=sorted(constant.LABEL_TO_ID, key=constant.LABEL_TO_ID.get))
 
-shap_values = explainer(x_test, batch_size=32)
+shap_values = explainer(x_test, batch_size=64)
 
 label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
