@@ -98,11 +98,9 @@ data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 x_test, y_test = preprocess(data_file, tokenizer)
 
 def f(x):
-    print (len(x))
     tv = np.array([tokenizer.encode(v, pad_to_max_length=True, max_length=128,truncation=True) for v in x]).astype(int)
-    scores = trainer.predict_proba(tv.reshape(1, -1, 1))
+    scores = trainer.predict_proba(tv.reshape(len(x), -1, 1))
     val = sp.special.logit(scores)
-    print (val)
     return val
 
 explainer = shap.Explainer(f, tokenizer, output_names=sorted(constant.LABEL_TO_ID, key=constant.LABEL_TO_ID.get))
