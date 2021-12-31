@@ -55,8 +55,9 @@ def preprocess(filename, tokenizer):
                 for j, sub_token in enumerate(tokenizer.tokenize(t)):
                     words.append(sub_token)
         words = ['[CLS]'] + words + ['[SEP]']
+        output_tokens.append(words)
         labels.append(d['relation'])
-    return words, labels
+    return output_tokens, labels
 
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
