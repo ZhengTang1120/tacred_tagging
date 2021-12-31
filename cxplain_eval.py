@@ -159,7 +159,7 @@ for i, t in enumerate(x_test):
     pred = id2label[np.argmax(prob, axis=1).tolist()[0]]
     preds.append(pred)
     golds.append(id2label[np.argmax(y_test[i])])
-    importance = attributions[i]
+    importance = attributions[i][1:-1]
     output.append({'gold_label':golds[-1], 'predicted_label':preds[-1], 'predicted_tags':[], 'gold_tags':[]})
     if preds[-1] != 'no_relation':
         saliency = []
