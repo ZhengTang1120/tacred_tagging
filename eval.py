@@ -39,8 +39,8 @@ elif args.cuda:
     torch.cuda.manual_seed(args.seed)
 
 tokenizer = tokenization.BertTokenizer.from_pretrained('spanbert-large-cased')
-# vocab_file = tokenizer.save_vocabulary("saved_vocab/")
-# tokenizer = BertTokenizer(vocab_file)
+vocab_file = tokenizer.save_vocabulary("saved_vocab/")
+tokenizer = BertTokenizer(vocab_file, do_lower_case=False)
 
 # load opt
 model_file = args.model_dir + '/' + args.model
