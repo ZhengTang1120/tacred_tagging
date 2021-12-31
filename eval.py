@@ -39,7 +39,7 @@ elif args.cuda:
     torch.cuda.manual_seed(args.seed)
 
 tokenizer = tokenization.BertTokenizer.from_pretrained('spanbert-large-cased')
-vocab_file = tokenizer.save_vocabulary("saved.vocab")
+vocab_file = tokenizer.save_vocabulary("saved_vocab/")
 tokenizer = BertTokenizer(vocab_file)
 
 # load opt
