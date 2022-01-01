@@ -102,7 +102,7 @@ def f(x):
     val = sp.special.logit(scores)
     return val
 
-explainer = shap.DeepExplainer(f, tokenizer, output_names=sorted(constant.LABEL_TO_ID, key=constant.LABEL_TO_ID.get))
+explainer = shap.DeepExplainer(f, tokenizer)
 
 shap_values = explainer(x_test, batch_size=32)
 
