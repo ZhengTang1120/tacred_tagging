@@ -121,7 +121,6 @@ if args.dataset == "train":
                         cand_r = rationale+[i]
                         cand_r.sort()
                         tokens = []
-                        print (cand_r, len(words), rationale)
                         for j in cand_r:
                             if j == ss:
                                 tokens.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+subj+']']+1))
