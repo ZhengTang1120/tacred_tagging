@@ -106,8 +106,8 @@ with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     tagging = f.readlines()
 
 def predict(text):
-    text = text.split(' ')
-    tokens = np.array([tokenizer.convert_tokens_to_ids(t) for t in text]).astype(int)
+    text = [text.split(' ')]
+    tokens = np.array([tokenizer.encode(v) for v in x]).astype(int)
     scores = trainer.predict_proba(tokens.reshape(1, -1, 1))
     return scores
 
