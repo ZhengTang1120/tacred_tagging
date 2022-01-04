@@ -109,18 +109,14 @@ with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     tagging = f.readlines()
 
 def predict(texts):
-    print (texts)
-    texts = [t.split(' ') for t in texts]
-    print (texts)
+    texts = [filter(None, t.split(' ')) for t in texts]
     tokens = np.array([tokenizer.convert_tokens_to_ids(t) for t in texts]).astype(int)
-    print ([tokenizer.convert_tokens_to_ids(t) for t in texts])
     scores = trainer.predict_proba(tokens.reshape(1, -1, 1))
     return scores
 
 explainer = LimeTextExplainer(class_names=id2label, split_expression=' ')
 predictions = list()
 for i, t in enumerate(x_test):
-    print ()
     text = ' '.join(t)
     assert len(t) == len(text.split(' '))
     prob = predict([text])
