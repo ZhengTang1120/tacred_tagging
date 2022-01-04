@@ -143,7 +143,6 @@ for i, t in enumerate(x_test):
     if id2label[pred] != 'no_relation':
         exp = explainer.explain_instance(text, predict, num_features=len(t), num_samples=2000, labels=[pred, l])
         importance = {x[0]:x[1] for x in exp.as_list(label=pred)}
-        print (exp.as_list(label=pred), [tokenizer.tokenize(ddd) for ddd in words])
         saliency = []
         tokens = []
         for j, x in enumerate(words):
@@ -155,8 +154,8 @@ for i, t in enumerate(x_test):
                     saliency.append(0)
                     tokens.append(colored(x, "yellow"))
                 else:
-                    tokens.append(x)
-                    saliency.append(statistics.mean([importance[xx] for xx in tokenizer.tokenize(x)]))
+                    tokens.append(convert_token(t))
+                    saliency.append(statistics.mean([importance[xx] for xx in tokenizer.tokenize(convert_token(x))]))
             else:
                 tokens.append(x)
                 saliency.append(0)
