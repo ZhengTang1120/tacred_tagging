@@ -137,7 +137,7 @@ if args.dataset == "train":
                         score = p[r]
                         rationale.append(cr[b])
                     else:
-                        probs = p
+                        probs = p.unsqueeze(1)
                         break
                 else:
                     tokens = ["[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+obj+']']+1), "[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+obj+']']+1)]
@@ -149,10 +149,9 @@ if args.dataset == "train":
                     with torch.cuda.device(args.device):
                         inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
                     b, _, p = trainer.update_cand(inputs, r)
-                    probs = p
+                    probs = p.unsqueeze(1)
                     break
             label = torch.LongTensor([r]).cuda()
-            print (probs.size(), label.size())
             loss = trainer.criterion(probs, label)
             loss.backward()
             trainer.optimizer.step()

@@ -96,7 +96,6 @@ class BERTtrainer(Trainer):
         h,_ = self.encoder(inputs)
         logits = self.classifier(h)
         loss = self.criterion(logits, labels)
-        print (logits.size(), labels.size())
         loss_val = loss.item()
         # backward
         loss.backward()
