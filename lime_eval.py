@@ -128,6 +128,8 @@ explainer = LimeTextExplainer(class_names=id2label, split_expression=' ')
 predictions = list()
 tagging_scores = list()
 for i, t in enumerate(x_test):
+    _, tagged = tagging[i].split('\t')
+    tagged = eval(tagged)
     words = origin[i]['token']
     ss, se = origin[i]['subj_start'], origin[i]['subj_end']
     os, oe = origin[i]['obj_start'], origin[i]['obj_end']
