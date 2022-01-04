@@ -108,11 +108,18 @@ id2label = dict([(v,k) for k,v in label2id.items()])
 with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     tagging = f.readlines()
 
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
+
 def predict(texts):
     texts = [[x if x!='' else '[MASK]' for x in t.split(' ')] for t in texts]
     tokens = np.array([tokenizer.convert_tokens_to_ids(t) for t in texts]).astype(int)
-    scores = trainer.predict_proba(tokens.reshape(len(texts), -1, 1))
-    return scores
+    probs = None
+    for batch in chunks(tokens, 40):
+        probs = trainer.predict_proba(batch) if probs is None else np.concatenate((probs, trainer.predict_proba(batch)), axis=0)
+    return probs
 
 explainer = LimeTextExplainer(class_names=id2label, split_expression=' ')
 predictions = list()
