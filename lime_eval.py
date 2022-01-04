@@ -19,6 +19,7 @@ from termcolor import colored
 import numpy as np
 
 import statistics
+from lime.lime_text import LimeTextExplainer
 
 def convert_token(token):
     """ Convert PTB tokens to normal tokens """
