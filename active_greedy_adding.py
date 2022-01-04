@@ -139,7 +139,7 @@ if args.dataset == "train":
                         candidates = list(zip(*candidates))
                         with torch.cuda.device(args.device):
                             inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
-                        o = trainer.update_cand(inputs, r)
+                        o = trainer.update_cand(inputs)
                         if probs is None:
                             probs = o
                         else:
@@ -161,7 +161,7 @@ if args.dataset == "train":
                     candidates = list(zip(*candidates))
                     with torch.cuda.device(args.device):
                         inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
-                    probs = trainer.update_cand(inputs, r)
+                    probs = trainer.update_cand(inputs)
                     b = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
                     probs = probs[b].unsqueeze(0)
                     break
