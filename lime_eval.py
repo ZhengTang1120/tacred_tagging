@@ -158,6 +158,7 @@ for i, t in enumerate(x_test):
                 tokens.append(t)
                 t = convert_token(t)
                 sub_len = len(tokenizer.tokenize(t))
+                print (t, c, sub_len)
                 saliency.append(statistics.mean(importance[c: c+sub_len]))
                 c += sub_len
         top3 = np.array(saliency).argsort()[-3:].tolist()
