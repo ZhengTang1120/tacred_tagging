@@ -104,7 +104,7 @@ if args.dataset == "train":
         f1 = 0
         for c, d in enumerate(train_data):
             words, ss, se, os, oe, subj, obj = d
-
+            label = label2id[tdata[c]['relation']]
             rationale = [ss, os]
             score = 0
             probs = None
@@ -132,7 +132,7 @@ if args.dataset == "train":
                     candidates = list(zip(*candidates))
                     with torch.cuda.device(args.device):
                         inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
-                    b, p = trainer.update_cand(inputs, predictions[c])
+                    b, p = trainer.update_cand(inputs, r)
                     if score < p[r]:
                         score = p[r]
                         rationale.append(cr[b])
@@ -148,10 +148,11 @@ if args.dataset == "train":
                     candidates = list(zip(*candidates))
                     with torch.cuda.device(args.device):
                         inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
-                    b, _, p = trainer.update_cand(inputs, predictions[c])
+                    b, _, p = trainer.update_cand(inputs, r)
                     probs = p
                     break
-            loss = trainer.criterion(probs, r)
+            label = torch.Long([r]).cuda()
+            loss = trainer.criterion(probs, label)
             loss.backward()
             trainer.optimizer.step()
             trainer.optimizer.zero_grad()
