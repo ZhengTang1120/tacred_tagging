@@ -131,23 +131,14 @@ class BERTtrainer(Trainer):
 
     def update_cand(self, inputs, r):
 
-        # step forward
         self.encoder.train()
         self.classifier.train()
-
-        h, _ = self.encoder(inputs)
-        logits = self.classifier(h)
+        h,_ = self.encoder(inputs)
+        probs = self.classifier(h)
 
         best = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
 
-        loss = self.criterion(logits[best].unsqueeze(0), r)
-        loss_val = loss.item()
-        # backward
-        loss.backward()
-        self.optimizer.step()
-        self.optimizer.zero_grad()
-        h = logits = inputs = labels = None
-        return loss_val
+        return best, probs[best]
 
     def predict_cand2(self, inputs, prev):
         self.encoder.eval()
@@ -160,9 +151,9 @@ class BERTtrainer(Trainer):
         best = np.argmax(prob_maxs)
 
         if prob_maxs[best]<prev:
-            return False
+            return -1, None, None
         else:
-            return prob_maxs[best], predictions[best], best
+            return best, prob_maxs[best], predictions[best]
 
     def predict_with_saliency(self, batch0):
         inputs, labels = unpack_batch(batch0, self.opt['cuda'], self.opt['device'])
