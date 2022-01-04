@@ -11,7 +11,8 @@ from utils import torch_utils, scorer, constant, helper
 
 from nltk.translate.bleu_score import corpus_bleu, sentence_bleu
 
-from pytorch_pretrained_bert.tokenization import BertTokenizer
+from pytorch_pretrained_bert import tokenization
+from transformers import BertTokenizer
 
 import json
 from termcolor import colored
@@ -85,8 +86,9 @@ args = parser.parse_args()
 torch.manual_seed(args.seed)
 random.seed(args.seed)
 
-tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
-print (len(tokenizer.vocab))
+tokenizer = tokenization.BertTokenizer.from_pretrained('spanbert-large-cased')
+vocab_file = tokenizer.save_vocabulary("saved_vocab/")
+tokenizer = BertTokenizer(vocab_file, do_lower_case=False)
 # load opt
 model_file = args.model_dir + '/' + args.model
 print("Loading model from {}".format(model_file))
