@@ -11,7 +11,6 @@ from utils import torch_utils, scorer, constant, helper
 
 from nltk.translate.bleu_score import corpus_bleu, sentence_bleu
 
-from pytorch_pretrained_bert import tokenization
 from transformers import BertTokenizer
 
 import json
@@ -89,6 +88,7 @@ random.seed(args.seed)
 tokenizer = tokenization.BertTokenizer.from_pretrained('spanbert-large-cased')
 vocab_file = tokenizer.save_vocabulary("saved_vocab/")
 tokenizer = BertTokenizer(vocab_file, do_lower_case=False)
+print (len(tokenizer.vocab))
 # load opt
 model_file = args.model_dir + '/' + args.model
 print("Loading model from {}".format(model_file))
@@ -112,6 +112,7 @@ def predict(texts):
     texts = [t.split(' ') for t in texts]
     print (texts)
     tokens = np.array([tokenizer.convert_tokens_to_ids(t) for t in texts]).astype(int)
+    print ([tokenizer.convert_tokens_to_ids(t) for t in texts])
     scores = trainer.predict_proba(tokens.reshape(1, -1, 1))
     return scores
 
