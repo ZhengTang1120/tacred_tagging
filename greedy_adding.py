@@ -131,7 +131,9 @@ for c, d in enumerate(data):
                     cand_r.sort()
                     tokens = []
                     for j in cand_r:
-                        if j == ss or j == os:
+                        if j == ss:
+                        tokens.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+obj+']']+1))
+                        if j == os:
                             tokens.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+obj+']']+1))
                         else:
                             tokens += tokenizer.tokenize(words[j])
