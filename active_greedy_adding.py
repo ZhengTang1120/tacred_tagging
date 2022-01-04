@@ -80,7 +80,7 @@ random.seed(args.seed)
 torch.cuda.manual_seed(args.seed)
 label2id = constant.LABEL_TO_ID
 opt['num_class'] = len(label2id)
-
+id2label = dict([(v,k) for k,v in label2id.items()])
 tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
 
 if args.dataset == "train":
