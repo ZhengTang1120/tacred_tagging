@@ -116,7 +116,7 @@ predictions = list()
 for i, t in enumerate(x_test):
     text = ' '.join(t)
     assert len(t) == len(text.split(' '))
-    probs = predict(text)
+    prob = predict(text)
     pred = np.argmax(prob, axis=1).tolist()[0]
     predictions.append(id2label[pred])
     exp = explainer.explain_instance(text, predict, num_features=len(t), num_samples=2000, labels=[pred, l])
