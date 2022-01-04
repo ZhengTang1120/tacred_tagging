@@ -151,7 +151,7 @@ if args.dataset == "train":
                     b, _, p = trainer.update_cand(inputs, r)
                     probs = p
                     break
-            label = torch.Long([r]).cuda()
+            label = torch.LongTensor([r]).cuda()
             loss = trainer.criterion(probs, label)
             loss.backward()
             trainer.optimizer.step()
