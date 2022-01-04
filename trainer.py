@@ -148,7 +148,6 @@ class BERTtrainer(Trainer):
                     probs = o
                 else:
                     probs = torch.cat([probs, o], dim = 0)
-        print (probs.size())
         best = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
         return best, probs[best]
 
