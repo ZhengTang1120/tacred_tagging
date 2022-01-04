@@ -73,6 +73,8 @@ args = parser.parse_args()
 torch.manual_seed(args.seed)
 random.seed(args.seed)
 torch.cuda.manual_seed(args.seed)
+label2id = constant.LABEL_TO_ID
+opt['num_class'] = len(label2id)
 
 tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
 opt = vars(args)
