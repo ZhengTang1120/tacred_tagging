@@ -70,7 +70,7 @@ parser.add_argument('--dataset', type=str, default='train', help="Evaluate on de
 parser.add_argument('--cuda', type=bool, default=torch.cuda.is_available())
 parser.add_argument('--cpu', action='store_true', help='Ignore CUDA.')
 parser.add_argument('--lr', type=float, default=1.0, help='Applies to sgd and adagrad.')
-
+parser.add_argument('--warmup_prop', type=float, default=0.1, help='Proportion of training to perform linear learning rate warmup for.')
 args = parser.parse_args()
 opt = vars(args)
 torch.manual_seed(args.seed)
