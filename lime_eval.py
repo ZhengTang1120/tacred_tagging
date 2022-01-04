@@ -108,7 +108,7 @@ with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
 def predict(text):
     text = text.split(' ')
     tokens = np.array([tokenizer.convert_tokens_to_ids(t) for t in text]).astype(int)
-    scores = trainer.predict_proba(tokens.reshape(len(x), -1, 1))
+    scores = trainer.predict_proba(tokens.reshape(1, -1, 1))
     return scores
 
 explainer = LimeTextExplainer(class_names=id2label, split_expression=' ')
