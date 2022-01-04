@@ -126,6 +126,7 @@ if args.dataset == "train":
                             if j == os:
                                 tokens.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+obj+']']+1))
                             else:
+                                print (j, len(words))
                                 tokens += tokenizer.tokenize(words[j])
                         ids = tokenizer.convert_tokens_to_ids(['[CLS]']+tokens+['[SEP]'])
                         mask = [1] * len(ids)
