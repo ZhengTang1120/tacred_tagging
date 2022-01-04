@@ -9,6 +9,7 @@ from pytorch_pretrained_bert.tokenization import BertTokenizer
 from termcolor import colored
 
 import statistics
+import time
 
 def get_long_tensor(tokens_list, batch_size):
     """ Convert list of list of tokens to a padded LongTensor. """
@@ -90,11 +91,11 @@ if args.dataset == "train":
     
 
     with open(train_file) as infile:
-        tdata = json.load(infile)[:100]
+        tdata = json.load(infile)
     train_data = preprocess(tdata, tokenizer)
 
     with open(dev_file) as infile:
-        ddata = json.load(infile)[:10]
+        ddata = json.load(infile)
     dev_data = preprocess(ddata, tokenizer)
 
     opt['steps'] = len(tdata) * 10
@@ -102,6 +103,7 @@ if args.dataset == "train":
     trainer = BERTtrainer(opt)
     for epoch in range(10):
         f1 = 0
+        start_time = time.time()
         random.shuffle(train_data)
         for c, d in enumerate(train_data):
             words, ss, se, os, oe, subj, obj = d
@@ -217,6 +219,8 @@ if args.dataset == "train":
             model_file = 'saved_models/250/best_model.pt'
             trainer.save(model_file)
             f1 = dev_f1
+        duration = time.time() - start_time
+        print (duration)
 
     
 
