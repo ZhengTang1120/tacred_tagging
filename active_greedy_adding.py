@@ -90,11 +90,11 @@ if args.dataset == "train":
     
 
     with open(train_file) as infile:
-        tdata = json.load(infile)
+        tdata = json.load(infile)[:1000]
     train_data = preprocess(tdata, tokenizer)
 
     with open(dev_file) as infile:
-        ddata = json.load(infile)
+        ddata = json.load(infile)[:10]
     dev_data = preprocess(ddata, tokenizer)
 
     opt['steps'] = len(tdata) * 10
