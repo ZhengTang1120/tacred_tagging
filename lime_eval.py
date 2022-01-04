@@ -128,7 +128,6 @@ explainer = LimeTextExplainer(class_names=id2label, split_expression=' ')
 predictions = list()
 for i, t in enumerate(x_test):
     text = ' '.join(t)
-    print (len(t))
     assert len(t) == len(text.split(' '))
     prob = predict([text])
     pred = np.argmax(prob, axis=1).tolist()[0]
