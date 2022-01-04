@@ -138,7 +138,8 @@ class BERTtrainer(Trainer):
             probs = self.classifier(h).data.cpu().numpy()
             print (probs.shape)
         else:
-            probs = np.empty([inputs.size(0), 42])
+            print (inputs[0].size())
+            probs = np.empty([inputs[0].size(0), 42])
             chunks = inputs[0].size(0)//32+1
             for i in range(chunks):
                 temp = [ii.chunk(chunks)[i] for ii in inputs]
