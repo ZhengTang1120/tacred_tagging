@@ -137,8 +137,7 @@ class BERTtrainer(Trainer):
             h,_ = self.encoder(inputs)
             probs = self.classifier(h)
         else:
-            probs = tokens = torch.LongTensor(inputs[0].size(0), 42).fill_(constant.PAD_ID)
-            print (probs.size())
+            probs = tokens = torch.LongTensor(inputs[0].size(0), 42).fill_(-1)
             chunks = inputs[0].size(0)//32+1
             prev = 0
             for i in range(chunks):
