@@ -80,13 +80,7 @@ if args.dataset == "train":
     train_file = opt['data_dir'] + '/train.json'
     dev_file = opt['data_dir'] + '/dev.json'
 
-    # model
-    model_file = opt['model_file'] 
-    print("Loading model from {}".format(model_file))
-    model_opt = torch_utils.load_config(model_file)
-    model_opt['optim'] = opt['optim']
-    trainer = BERTtrainer(model_opt)
-    trainer.load(model_file)
+    trainer = BERTtrainer(opt)
 
     with open(train_file) as infile:
         tdata = json.load(infile)
