@@ -178,7 +178,7 @@ if args.dataset == "train":
                         tokens = []
                         for j in cand_r:
                             if j == ss:
-                                tokens.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+obj+']']+1))
+                                tokens.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+subj+']']+1))
                             if j == os:
                                 tokens.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+obj+']']+1))
                             else:
@@ -199,7 +199,7 @@ if args.dataset == "train":
                         predictions.append(id2label[p])
                         break
                 else:
-                    tokens = ["[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+obj+']']+1), "[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+obj+']']+1)]
+                    tokens = ["[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+subj+']']+1), "[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+obj+']']+1)]
                     ids = tokenizer.convert_tokens_to_ids(['[CLS]']+tokens+['[SEP]'])
                     mask = [1] * len(ids)
                     segment_ids = [0] * len(ids)
