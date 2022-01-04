@@ -166,6 +166,7 @@ if args.dataset == "train":
             golds.append(ddata[c]['relation'])
             rationale = [ss, os]
             score = 0
+            pred = None
             probs = None
             while True:
                 candidates = list()
@@ -194,9 +195,10 @@ if args.dataset == "train":
                     b, s, p = trainer.predict_cand2(inputs, score)
                     if b != -1:
                         score = s
+                        pred = p
                         rationale.append(cr[b])
                     else:
-                        predictions.append(id2label[p])
+                        predictions.append(id2label[pred])
                         break
                 else:
                     tokens = ["[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+subj+']']+1), "[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+obj+']']+1)]
