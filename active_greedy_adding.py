@@ -58,7 +58,8 @@ def preprocess(data, tokenizer):
                 t = convert_token(t)
                 words.append(t)
                 sub_token_len += len(tokenizer.tokenize(t))
-        processed.append((words, ss, se, os, oe, d['subj_type'], d['obj_type']))
+        if ss <= len(words) or os <= len(words):
+            processed.append((words, ss, se, os, oe, d['subj_type'], d['obj_type']))
     return processed
 
 parser = argparse.ArgumentParser()
