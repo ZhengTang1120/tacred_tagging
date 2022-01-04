@@ -148,7 +148,7 @@ if args.dataset == "train":
                     candidates = list(zip(*candidates))
                     with torch.cuda.device(args.device):
                         inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
-                    b, _, p = trainer.update_cand(inputs, r)
+                    b, p = trainer.update_cand(inputs, r)
                     probs = p.unsqueeze(0)
                     break
             label = torch.LongTensor([r]).cuda()
