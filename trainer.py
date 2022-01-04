@@ -133,21 +133,21 @@ class BERTtrainer(Trainer):
 
         self.encoder.train()
         self.classifier.train()
-        if inputs[0].size(0)<=32:
-            h,_ = self.encoder(inputs)
-            probs = self.classifier(h).data.cpu().numpy()
-            print (probs.shape)
-        else:
-            print (inputs[0].size())
-            probs = np.empty([inputs[0].size(0), 42])
-            chunks = inputs[0].size(0)//32+1
-            for i in range(chunks):
-                temp = [ii.chunk(chunks)[i] for ii in inputs]
-                h, _ = self.encoder(temp)
-                probs = self.classifier(h).data.cpu().numpy()
+        # if inputs[0].size(0)<=32:
+        h,_ = self.encoder(inputs)
+        probs = self.classifier(h)
+        print (probs.size())
+        # else:
+        #     print (inputs[0].size())
+        #     probs = tokens = torch.LongTensor(batch_size, token_len)
+        #     chunks = inputs[0].size(0)//32+1
+        #     for i in range(chunks):
+        #         temp = [ii.chunk(chunks)[i] for ii in inputs]
+        #         h, _ = self.encoder(temp)
+        #         probs[32*i:32*(i+1)] = self.classifier(h)
 
 
-        best = np.argmax(probs, axis=0).tolist()[r]
+        best = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
         return best, probs[best]
 
     def predict_cand2(self, inputs, prev):
