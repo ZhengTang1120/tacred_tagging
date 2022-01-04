@@ -116,6 +116,7 @@ def predict(texts):
 explainer = LimeTextExplainer(class_names=id2label, split_expression=' ')
 predictions = list()
 for i, t in enumerate(x_test):
+    print ()
     text = ' '.join(t)
     assert len(t) == len(text.split(' '))
     prob = predict([text])
