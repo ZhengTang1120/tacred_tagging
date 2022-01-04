@@ -90,7 +90,7 @@ if args.dataset == "train":
     
 
     with open(train_file) as infile:
-        tdata = json.load(infile)[:1000]
+        tdata = json.load(infile)[:100]
     train_data = preprocess(tdata, tokenizer)
 
     with open(dev_file) as infile:
@@ -102,6 +102,7 @@ if args.dataset == "train":
     trainer = BERTtrainer(opt)
     for epoch in range(10):
         f1 = 0
+        random.shuffle(train_data)
         for c, d in enumerate(train_data):
             words, ss, se, os, oe, subj, obj = d
             r = label2id[tdata[c]['relation']]
