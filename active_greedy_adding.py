@@ -140,7 +140,7 @@ if args.dataset == "train":
                         probs = p.unsqueeze(0)
                         break
                 else:
-                    tokens = ["[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+obj+']']+1), "[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+obj+']']+1)]
+                    tokens = ["[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+subj+']']+1), "[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+obj+']']+1)]
                     ids = tokenizer.convert_tokens_to_ids(['[CLS]']+tokens+['[SEP]'])
                     mask = [1] * len(ids)
                     segment_ids = [0] * len(ids)
@@ -156,6 +156,7 @@ if args.dataset == "train":
             loss.backward()
             trainer.optimizer.step()
             trainer.optimizer.zero_grad()
+            print (loss.item())
 
         predictions = []
         golds = []
