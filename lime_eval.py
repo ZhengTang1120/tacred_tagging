@@ -140,6 +140,7 @@ for i, t in enumerate(x_test):
     output.append({'gold_label':y_test[i], 'predicted_label':id2label[pred], 'predicted_tags':[], 'gold_tags':[]})
     if id2label[pred] != 'no_relation':
         exp = explainer.explain_instance(text, predict, num_features=len(t), num_samples=2000, labels=[pred, l])
+        print (text)
         print (exp.as_list(label=pred))
         importance = [x[1] for x in exp.as_list(label=pred)]
         saliency = []
