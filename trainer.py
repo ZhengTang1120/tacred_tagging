@@ -149,6 +149,21 @@ class BERTtrainer(Trainer):
         h = logits = inputs = labels = None
         return loss_val
 
+    def predict_cand2(self, inputs, prev):
+        self.encoder.eval()
+        self.classifier.eval()
+        with torch.no_grad():
+            h,_ = self.encoder(inputs)
+            probs = self.classifier(h)
+        predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
+        prob_maxs = np.amax(probs.data.cpu().numpy(), axis=1)
+        best = np.argmax(prob_maxs)
+
+        if prob_maxs[best]<prev:
+            return False
+        else:
+            return prob_maxs[best], predictions[best], best
+
     def predict_with_saliency(self, batch0):
         inputs, labels = unpack_batch(batch0, self.opt['cuda'], self.opt['device'])
         self.encoder.eval()
