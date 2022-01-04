@@ -71,6 +71,8 @@ parser.add_argument('--cuda', type=bool, default=torch.cuda.is_available())
 parser.add_argument('--cpu', action='store_true', help='Ignore CUDA.')
 parser.add_argument('--lr', type=float, default=1.0, help='Applies to sgd and adagrad.')
 parser.add_argument('--warmup_prop', type=float, default=0.1, help='Proportion of training to perform linear learning rate warmup for.')
+
+
 args = parser.parse_args()
 opt = vars(args)
 torch.manual_seed(args.seed)
@@ -85,7 +87,7 @@ if args.dataset == "train":
     train_file = opt['data_dir'] + '/train.json'
     dev_file = opt['data_dir'] + '/dev.json'
 
-    trainer = BERTtrainer(opt)
+    
 
     with open(train_file) as infile:
         tdata = json.load(infile)
@@ -95,6 +97,9 @@ if args.dataset == "train":
         ddata = json.load(infile)
     dev_data = preprocess(data, tokenizer)
 
+    opt['steps'] = len(tdata) * 10
+
+    trainer = BERTtrainer(opt)
     for epoch in range(10):
         f1 = 0
         for c, d in enumerate(train_data):
