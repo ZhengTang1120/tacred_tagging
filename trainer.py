@@ -129,27 +129,13 @@ class BERTtrainer(Trainer):
         best = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
         return best, predictions[best]
 
-    def update_cand(self, inputs, r):
+    def update_cand(self, inputs):
 
         self.encoder.train()
         self.classifier.train()
-        if inputs[0].size(0)<=32:
-            h,_ = self.encoder(inputs)
-            probs = self.classifier(h)
-        else:
-            probs = None
-            chunks = inputs[0].size(0)//32+1
-            prev = 0
-            for i in range(chunks):
-                temp = [ii.chunk(chunks)[i] for ii in inputs]
-                h, _ = self.encoder(temp)
-                o = self.classifier(h)
-                if probs is None:
-                    probs = o
-                else:
-                    probs = torch.cat([probs, o], dim = 0)
-        best = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
-        return best, probs[best]
+        h,_ = self.encoder(inputs)
+        probs = self.classifier(h)
+        return probs
 
     def predict_cand2(self, inputs, prev):
         self.encoder.eval()

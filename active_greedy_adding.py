@@ -133,10 +133,19 @@ if args.dataset == "train":
                         segment_ids = [0] * len(ids)
                         candidates.append((ids, mask, segment_ids))
                 if len(candidates)!=0:
-                    candidates = list(zip(*candidates))
-                    with torch.cuda.device(args.device):
-                        inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
-                    b, p = trainer.update_cand(inputs, r)
+                    chunks = [candidates[x:x+32] for x in range(0, len(candidates), 32)]
+                    probs = None
+                    for candidates in chunks:
+                        candidates = list(zip(*candidates))
+                        with torch.cuda.device(args.device):
+                            inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
+                        o = trainer.update_cand(inputs, r)
+                        if probs is None:
+                            probs = o
+                        else:
+                            probs = torch.cat([probs, o], dim = 0)
+                    b = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
+                    p = probs[b]
                     if score < p[r]:
                         score = p[r]
                         rationale.append(cr[b])
@@ -152,8 +161,9 @@ if args.dataset == "train":
                     candidates = list(zip(*candidates))
                     with torch.cuda.device(args.device):
                         inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
-                    b, p = trainer.update_cand(inputs, r)
-                    probs = p.unsqueeze(0)
+                    probs = trainer.update_cand(inputs, r)
+                    b = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
+                    probs = probs[b].unsqueeze(0)
                     break
             label = torch.LongTensor([r]).cuda()
             loss = trainer.criterion(probs, label)
