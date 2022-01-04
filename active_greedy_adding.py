@@ -69,7 +69,7 @@ parser.add_argument('--device', type=int, default=0, help='Word embedding dimens
 parser.add_argument('--dataset', type=str, default='train', help="Evaluate on dev or test.")
 
 args = parser.parse_args()
-
+opt = vars(args)
 torch.manual_seed(args.seed)
 random.seed(args.seed)
 torch.cuda.manual_seed(args.seed)
@@ -77,7 +77,7 @@ label2id = constant.LABEL_TO_ID
 opt['num_class'] = len(label2id)
 
 tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
-opt = vars(args)
+
 if args.dataset == "train":
     train_file = opt['data_dir'] + '/train.json'
     dev_file = opt['data_dir'] + '/dev.json'
