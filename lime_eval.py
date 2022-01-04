@@ -119,6 +119,7 @@ for i, t in enumerate(x_test):
     prob = predict(text)
     pred = np.argmax(prob, axis=1).tolist()[0]
     predictions.append(id2label[pred])
+    l = id2label[y_test[i]]
     exp = explainer.explain_instance(text, predict, num_features=len(t), num_samples=2000, labels=[pred, l])
 
 p, r, f1 = scorer.score(y_test, predictions, verbose=True)
