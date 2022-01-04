@@ -70,8 +70,8 @@ parser.add_argument('--data_dir', type=str, default='dataset/tacred')
 parser.add_argument('--seed', type=int, default=1234)
 parser.add_argument('--device', type=int, default=0, help='Word embedding dimension.')
 parser.add_argument('--dataset', type=str, default='train', help="Evaluate on dev or test.")
-parser.add_argument('--cuda', type=bool, default=torch.cuda.is_available())
-parser.add_argument('--cpu', action='store_true', help='Ignore CUDA.')
+# parser.add_argument('--cuda', type=bool, default=torch.cuda.is_available())
+# parser.add_argument('--cpu', action='store_true', help='Ignore CUDA.')
 parser.add_argument('--lr', type=float, default=1.0, help='Applies to sgd and adagrad.')
 parser.add_argument('--warmup_prop', type=float, default=0.1, help='Proportion of training to perform linear learning rate warmup for.')
 
@@ -80,7 +80,7 @@ args = parser.parse_args()
 opt = vars(args)
 torch.manual_seed(args.seed)
 random.seed(args.seed)
-torch.cuda.manual_seed(args.seed)
+torch.manual_seed(args.seed)
 label2id = constant.LABEL_TO_ID
 opt['num_class'] = len(label2id)
 id2label = dict([(v,k) for k,v in label2id.items()])
@@ -138,8 +138,7 @@ if args.dataset == "train":
                     probs = None
                     for candidates in chunks:
                         candidates = list(zip(*candidates))
-                        with torch.cuda.device(args.device):
-                            inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
+                        inputs = [get_long_tensor(c, len(c)) for c in candidates]
                         o = trainer.update_cand(inputs)
                         if probs is None:
                             probs = o
@@ -160,13 +159,12 @@ if args.dataset == "train":
                     segment_ids = [0] * len(ids)
                     candidates.append((ids, mask, segment_ids))
                     candidates = list(zip(*candidates))
-                    with torch.cuda.device(args.device):
-                        inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
+                    inputs = [get_long_tensor(c, len(c)) for c in candidates]
                     probs = trainer.update_cand(inputs)
                     b = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
                     probs = probs[b].unsqueeze(0)
                     break
-            label = torch.LongTensor([r]).cuda()
+            label = torch.LongTensor([r])
             loss = trainer.criterion(probs, label)
             loss.backward()
             trainer.optimizer.step()
@@ -204,8 +202,7 @@ if args.dataset == "train":
                         candidates.append((ids, mask, segment_ids))
                 if len(candidates)!=0:
                     candidates = list(zip(*candidates))
-                    with torch.cuda.device(args.device):
-                        inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
+                    inputs = [get_long_tensor(c, len(c)) for c in candidates]
                     b, s, p = trainer.predict_cand2(inputs, score)
                     if b != -1:
                         score = s
@@ -221,8 +218,7 @@ if args.dataset == "train":
                     segment_ids = [0] * len(ids)
                     candidates.append((ids, mask, segment_ids))
                     candidates = list(zip(*candidates))
-                    with torch.cuda.device(args.device):
-                        inputs = [get_long_tensor(c, len(c)).cuda() for c in candidates]
+                    inputs = [get_long_tensor(c, len(c)) for c in candidates]
                     b, s, p = trainer.predict_cand2(inputs, score)
                     predictions.append(id2label[p])
                     break

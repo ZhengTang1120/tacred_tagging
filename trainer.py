@@ -75,11 +75,11 @@ class BERTtrainer(Trainer):
                         if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
         ]
         # parameters = [p for p in self.classifier.parameters() if p.requires_grad] + [p for p in self.encoder.parameters() if p.requires_grad]
-        if opt['cuda']:
-            with torch.cuda.device(self.opt['device']):
-                self.encoder.cuda()
-                self.classifier.cuda()
-                self.criterion.cuda()
+        # if opt['cuda']:
+        #     with torch.cuda.device(self.opt['device']):
+        #         self.encoder.cuda()
+        #         self.classifier.cuda()
+        #         self.criterion.cuda()
 
         self.optimizer = BertAdam(optimizer_grouped_parameters,
              lr=opt['lr'],
