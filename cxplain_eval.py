@@ -93,10 +93,6 @@ args = parser.parse_args()
 
 torch.manual_seed(args.seed)
 random.seed(args.seed)
-if args.cpu:
-    args.cuda = False
-elif args.cuda:
-    torch.cuda.manual_seed(args.seed)
 
 tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
 print (len(tokenizer.vocab))
