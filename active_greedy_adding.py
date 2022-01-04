@@ -104,7 +104,7 @@ if args.dataset == "train":
         f1 = 0
         for c, d in enumerate(train_data):
             words, ss, se, os, oe, subj, obj = d
-            label = label2id[tdata[c]['relation']]
+            r = label2id[tdata[c]['relation']]
             rationale = [ss, os]
             score = 0
             probs = None
