@@ -76,7 +76,7 @@ torch.cuda.manual_seed(args.seed)
 
 tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
 
-if dataset == "train":
+if args.dataset == "train":
     train_file = opt['data_dir'] + '/train.json'
     dev_file = opt['data_dir'] + '/dev.json'
 
