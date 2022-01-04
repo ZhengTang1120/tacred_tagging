@@ -137,19 +137,18 @@ class BERTtrainer(Trainer):
             h,_ = self.encoder(inputs)
             probs = self.classifier(h)
         else:
-            probs = tokens = torch.LongTensor(inputs[0].size(0), 42).fill_(-1)
+            probs = None
             chunks = inputs[0].size(0)//32+1
             prev = 0
             for i in range(chunks):
                 temp = [ii.chunk(chunks)[i] for ii in inputs]
-                print ([x.size() for x in temp])
                 h, _ = self.encoder(temp)
                 o = self.classifier(h)
-                print (o.size())
-                probs[prev:o.size(0)] = o
-                prev += o.size(0)
-                print (probs)
-
+                if probs is None:
+                    probs = o
+                else:
+                    probs = torch.cat([probs, o], dim = 0)
+        print (probs.size())
         best = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
         return best, probs[best]
 
