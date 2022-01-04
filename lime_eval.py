@@ -143,22 +143,22 @@ for i, t in enumerate(x_test):
     if id2label[pred] != 'no_relation':
         exp = explainer.explain_instance(text, predict, num_features=len(t), num_samples=2000, labels=[pred, l])
         importance = {x[0]:x[1] for x in exp.as_list(label=pred)}
-        print (exp, t, [tokenizer.tokenize(ddd) for ddd in t])
+        print (exp.as_list(label=pred), [tokenizer.tokenize(ddd) for ddd in words])
         saliency = []
         tokens = []
-        for j, t in enumerate(words):
+        for j, x in enumerate(words):
             if j< 128:
                 if j>=ss and j<=se:
                     saliency.append(0)
-                    tokens.append(colored(t, "blue"))
+                    tokens.append(colored(x, "blue"))
                 elif j>=os and j<=oe:
                     saliency.append(0)
-                    tokens.append(colored(t, "yellow"))
+                    tokens.append(colored(x, "yellow"))
                 else:
-                    tokens.append(t)
-                    saliency.append(statistics.mean([importance[x] for x in tokenizer.tokenize(t)]))
+                    tokens.append(x)
+                    saliency.append(statistics.mean([importance[x] for x in tokenizer.tokenize(x)]))
             else:
-                tokens.append(t)
+                tokens.append(x)
                 saliency.append(0)
         top3 = np.array(saliency).argsort()[-3:].tolist()
         output[-1]["predicted_tags"] = top3
