@@ -10,6 +10,7 @@ from termcolor import colored
 
 import statistics
 import time
+import numpy as np
 
 def get_long_tensor(tokens_list, batch_size):
     """ Convert list of list of tokens to a padded LongTensor. """
