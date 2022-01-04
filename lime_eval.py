@@ -156,7 +156,7 @@ for i, t in enumerate(x_test):
                     tokens.append(colored(x, "yellow"))
                 else:
                     tokens.append(x)
-                    saliency.append(statistics.mean([importance[x] for x in tokenizer.tokenize(x)]))
+                    saliency.append(statistics.mean([importance[xx] for xx in tokenizer.tokenize(x)]))
             else:
                 tokens.append(x)
                 saliency.append(0)
