@@ -105,9 +105,9 @@ id2label = dict([(v,k) for k,v in label2id.items()])
 with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     tagging = f.readlines()
 
-def predict(text):
-    text = [text.split(' ')]
-    tokens = np.array([tokenizer.convert_tokens_to_ids(t) for t in text]).astype(int)
+def predict(texts):
+    texts = [t.split(' ') for t in texts]
+    tokens = np.array([tokenizer.convert_tokens_to_ids(t) for t in texts]).astype(int)
     scores = trainer.predict_proba(tokens.reshape(1, -1, 1))
     return scores
 
@@ -116,7 +116,7 @@ predictions = list()
 for i, t in enumerate(x_test):
     text = ' '.join(t)
     assert len(t) == len(text.split(' '))
-    prob = predict(text)
+    prob = predict([text])
     pred = np.argmax(prob, axis=1).tolist()[0]
     predictions.append(id2label[pred])
     l = label2id[y_test[i]]
