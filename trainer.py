@@ -149,7 +149,7 @@ class BERTtrainer(Trainer):
                 print (o.size())
                 probs[prev:o.size(0)] = o
                 prev += o.size(0)
-            print (probs)
+                print (probs)
 
         best = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
         return best, probs[best]
