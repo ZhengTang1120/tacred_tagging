@@ -115,9 +115,10 @@ def chunks(lst, n):
 
 def predict(texts):
     texts = [[x if x!='' else '[MASK]' for x in t.split(' ')] for t in texts]
-    tokens = np.array([tokenizer.convert_tokens_to_ids(t) for t in texts]).astype(int)
+    tokens = [tokenizer.convert_tokens_to_ids(t) for t in texts]
     probs = None
     for batch in chunks(tokens, 40):
+        batch = np.array(batch).astype(int).reshape(len(batch), -1, 1)
         probs = trainer.predict_proba(batch) if probs is None else np.concatenate((probs, trainer.predict_proba(batch)), axis=0)
     return probs
 
