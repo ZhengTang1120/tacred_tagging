@@ -152,6 +152,7 @@ if args.dataset == "train":
                     probs = p
                     break
             label = torch.LongTensor([r]).cuda()
+            print (probs.size(), label.size())
             loss = trainer.criterion(probs, label)
             loss.backward()
             trainer.optimizer.step()
