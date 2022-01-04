@@ -69,6 +69,7 @@ parser.add_argument('--device', type=int, default=0, help='Word embedding dimens
 parser.add_argument('--dataset', type=str, default='train', help="Evaluate on dev or test.")
 parser.add_argument('--cuda', type=bool, default=torch.cuda.is_available())
 parser.add_argument('--cpu', action='store_true', help='Ignore CUDA.')
+parser.add_argument('--lr', type=float, default=1.0, help='Applies to sgd and adagrad.')
 
 args = parser.parse_args()
 opt = vars(args)
