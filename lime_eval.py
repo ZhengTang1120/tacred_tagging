@@ -64,6 +64,8 @@ def preprocess(filename, tokenizer):
                 for j, sub_token in enumerate(tokenizer.tokenize(t)):
                     words.append(sub_token)
         words = ['[CLS]'] + words + ['[SEP]']
+        if len(words) > 128:
+                words = words[:128]
         output_tokens.append(words)
         relation = d['relation']
         labels.append(relation)
@@ -126,7 +128,7 @@ explainer = LimeTextExplainer(class_names=id2label, split_expression=' ')
 predictions = list()
 for i, t in enumerate(x_test):
     text = ' '.join(t)
-    print (len(text))
+    print (len(t))
     assert len(t) == len(text.split(' '))
     prob = predict([text])
     pred = np.argmax(prob, axis=1).tolist()[0]
