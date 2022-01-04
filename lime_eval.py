@@ -143,7 +143,7 @@ for i, t in enumerate(x_test):
     if id2label[pred] != 'no_relation':
         exp = explainer.explain_instance(text, predict, num_features=len(t), num_samples=2000, labels=[pred, l])
         importance = {x[0]:x[1] for x in exp.as_list(label=pred)}
-        print (exp, t, tokenizer.tokenize(t))
+        print (exp, t, [tokenizer.tokenize(ddd) for ddd in t])
         saliency = []
         tokens = []
         for j, t in enumerate(words):
