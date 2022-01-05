@@ -6,7 +6,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--data', type=str, default='output_lime_132_test_best_model_6')
 args = parser.parse_args()
 
-data_file = opt['data_dir'] + '/test.json'.format(args.dataset)
+data_file = '../../tacred_tagging/dataset/tacred/test.json'.format(args.dataset)
 
 origin = json.load(open(data_file))
 
