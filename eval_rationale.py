@@ -20,7 +20,7 @@ for i, item in enumerate(output):
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
         importance = item['predicted_tags']
-        if len(tagged)>0:
+        if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
             pred = 0
             for j, t in enumerate(words):
