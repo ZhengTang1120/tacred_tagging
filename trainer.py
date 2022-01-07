@@ -91,8 +91,6 @@ class BERTtrainer(Trainer):
              warmup=opt['warmup_prop'],
              t_total= opt['train_batch'] * self.opt['num_epoch'])
 
-        self.finish_burnin = False
-
     def update(self, batch, epoch):
         inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
 
@@ -121,30 +119,14 @@ class BERTtrainer(Trainer):
                     tagging_mask = torch.round(tagging_output).squeeze(2).eq(0)
                     logits = self.classifier(h[i], inputs[0][i].unsqueeze(0), tagging_mask[i].unsqueeze(0))
                     loss += self.criterion(logits, labels.unsqueeze(1)[i]) + 0.01*torch.sum(tagging_mask)
-                    # tag_cands, n = self.tagger.generate_cand_tags(tagging_output[i], self.opt['device'])
-                    # if n != -1:
-                    #     logits = self.classifier(h[i], torch.cat(n*[inputs[0][i].unsqueeze(0)], dim=0), tag_cands)
-                    #     best = np.argmax(logits.data.cpu().numpy(), axis=0).tolist()[labels[i]]
-                    #     # loss += self.criterion2(tagging_output[i], tag_cands[best].unsqueeze(1).to(torch.float32))
-                    #     loss += self.criterion(logits[best].unsqueeze(0), labels.unsqueeze(1)[i]) + 0.01*torch.sum(tagging_output[i])
+                    tag_cands, n = self.tagger.generate_cand_tags(tagging_output[i], self.opt['device'])
+                    if n != -1:
+                        logits = self.classifier(h[i], torch.cat(n*[inputs[0][i].unsqueeze(0)], dim=0), tag_cands)
+                        best = np.argmax(logits.data.cpu().numpy(), axis=0).tolist()[labels[i]]
+                        loss += self.criterion2(tagging_output[i], tag_cands[best].unsqueeze(1).to(torch.float32))
+                        loss += self.criterion(logits[best].unsqueeze(0), labels.unsqueeze(1)[i]) + 0.01*torch.sum(tagging_output[i])
 
-        # print ('loss: ', loss)
         loss_val = loss.item()
-        # if epoch == self.opt['burnin'] + 1 and not self.finish_burnin:
-        #     param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())+list(self.tagger.named_parameters())
-        #     no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-        #     optimizer_grouped_parameters = [
-        #         {'params': [p for n, p in param_optimizer
-        #                     if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
-        #         {'params': [p for n, p in param_optimizer
-        #                     if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
-        #     ]
-        #     self.optimizer = BertAdam(optimizer_grouped_parameters,
-        #          lr=self.opt['lr'],
-        #          warmup=self.opt['warmup_prop'],
-        #          t_total= self.opt['train_batch'] * (self.opt['num_epoch'] - self.opt['burnin']),
-        #          schedule='cooldown_linear')
-        #     self.finish_burnin = True
 
         # backward
         loss.backward()
