@@ -36,7 +36,7 @@ class BERTclassifier(nn.Module):
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
         self.opt = opt
 
-    def forward(self, h, c, , subj_mask, obj_mask):
+    def forward(self, h, c, subj_mask, obj_mask):
         cls_out = torch.cat([c, pool(h, subj_mask.eq(0), type="avg"), pool(h, obj_mask.eq(0), type="avg")], 1)
         cls_out = self.dropout(cls_out)
         logits = self.classifier(cls_out)
