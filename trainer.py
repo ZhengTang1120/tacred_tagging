@@ -93,8 +93,8 @@ class BERTtrainer(Trainer):
         self.encoder.train()
         self.classifier.train()
 
-        h = self.encoder(inputs)
-        logits = self.classifier(h)
+        h, mask = self.encoder(inputs)
+        logits = self.classifier(h, mask)
         loss = self.criterion(logits, labels)
         loss_val = loss.item()
         # backward
@@ -110,8 +110,8 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
         with torch.no_grad():
-            h = self.encoder(inputs)
-            probs = self.classifier(h)
+            h, mask = self.encoder(inputs)
+            probs = self.classifier(h, mask)
         loss = self.criterion(probs, labels).item()
         # probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()

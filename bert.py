@@ -18,7 +18,8 @@ class BERTencoder(nn.Module):
         mask = inputs[1]
         segment_ids = inputs[2]
         h, pooled_output = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
-        return h
+        out_mask = torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(7))
+        return h, out_mask
 
 class BERTclassifier(nn.Module):
     def __init__(self, opt):
@@ -28,8 +29,7 @@ class BERTclassifier(nn.Module):
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
         self.opt = opt
 
-    def forward(self, h):
-        out_mask = torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(7))
+    def forward(self, h, out_mask):
         cls_out = pool(h, out_mask.eq(0), type="avg")
         cls_out = self.dropout(cls_out)
         logits = self.classifier(cls_out)
