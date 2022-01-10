@@ -52,24 +52,31 @@ class DataLoader(object):
             # anonymize tokens
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
-
+            ent_mask = []
             for i, t in enumerate(d['token']):
-                if i == ss:
-                    words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
-                if i == os:
-                    words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
-                if i>=ss and i<=se:
-                    pass
-                elif i>=os and i<=oe:
-                    pass
-                else:
-                    t = convert_token(t)
-                    for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
-                        words.append(sub_token)
+                # if i == ss:
+                #     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
+                # if i == os:
+                #     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
+                # if i>=ss and i<=se:
+                #     pass
+                # elif i>=os and i<=oe:
+                #     pass
+                # else:
+
+                t = convert_token(t)
+                for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
+                    words.append(sub_token)
+                    if i>=ss and i<=se:
+                        ent_mask.append(1)
+                    elif i>=os and i<=oe:
+                        ent_mask.append(1)
+                    else:
+                        ent_mask.append(0)
+
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
-            # print ([(words[v], t) for v,t in enumerate(tokens)])
             if len(tokens) > 128:
                 tokens = tokens[:128]
             mask = [1] * len(tokens)
@@ -77,7 +84,7 @@ class DataLoader(object):
             if self.do_eval:
                 processed += [(tokens, mask, segment_ids, relation, words)]
             elif (len([aa for aa in tokens if aa>0 and aa<20]) == 2) or relation == 0:
-                processed += [(tokens, mask, segment_ids, relation, words)]
+                processed += [(tokens, mask, segment_ids, ent_mask, relation, words)]
         return processed
 
     def gold(self):
@@ -101,6 +108,7 @@ class DataLoader(object):
         words = batch[0]
         mask = batch[1]
         segment_ids = batch[2]
+        ent_mask = batch[3]
         # convert to tensors
         words = get_long_tensor(words, batch_size)
         mask = get_long_tensor(mask, batch_size)
@@ -108,7 +116,7 @@ class DataLoader(object):
 
         rels = torch.LongTensor(batch[-2])#
 
-        return (words, mask, segment_ids, rels)
+        return (words, mask, segment_ids, ent_mask, rels)
 
     def __iter__(self):
         for i in range(self.__len__()):
