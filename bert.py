@@ -30,14 +30,16 @@ class BERTclassifier(nn.Module):
     def __init__(self, opt):
         super().__init__()
         in_dim = 1024
-        self.classifier = nn.Linear(in_dim, opt['num_class'])
+        self.classifier = nn.Linear(3 * in_dim, opt['num_class'])
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
         self.opt = opt
 
     def forward(self, h, words, tags):
         pool_type = self.opt['pooling']
-        out_mask = tags.unsqueeze(2).eq(1) + torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(20))
-        cls_out = pool(h, out_mask.eq(0), type=pool_type)
+        subj_mask = torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(3))
+        obj_mask = torch.logical_and(words.unsqueeze(2).gt(2), words.unsqueeze(2).lt(20))
+        tag_mask = tags.unsqueeze(2).eq(1)
+        cls_out = torch.cat([pool(h, tag_mask.eq(0), type=pool_type), pool(h, subj_mask.eq(0), type=pool_type), pool(h, obj_mask.eq(0), type=pool_type)], 1)
         cls_out = self.dropout(cls_out)
         logits = self.classifier(cls_out)
         return logits
