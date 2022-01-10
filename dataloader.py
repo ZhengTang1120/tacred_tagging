@@ -69,13 +69,11 @@ class DataLoader(object):
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
-            if len(tokens) > 128:
-                tokens = tokens[:128]
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
             if self.do_eval:
                 processed += [(tokens, mask, segment_ids, relation, words)]
-            elif (len([aa for aa in tokens if aa>0 and aa<20]) == 2) or relation == 0:
+            elif (len([aa for aa in tokens if aa>0 and aa<9]) == 2) or relation == 0:
                 processed += [(tokens, mask, segment_ids, relation, words)]
         return processed
 
