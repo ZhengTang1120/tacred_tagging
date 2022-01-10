@@ -113,6 +113,7 @@ class DataLoader(object):
         words = get_long_tensor(words, batch_size)
         mask = get_long_tensor(mask, batch_size)
         segment_ids = get_long_tensor(segment_ids, batch_size)
+        ent_mask = get_long_tensor(ent_mask, batch_size)
 
         rels = torch.LongTensor(batch[-2])#
 
