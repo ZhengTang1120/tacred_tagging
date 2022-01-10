@@ -18,22 +18,26 @@ class BERTencoder(nn.Module):
         mask = inputs[1]
         segment_ids = inputs[2]
         h, pooled_output = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
-        out_mask = torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(9))# + words.unsqueeze(2).eq(101)
-        for i, x in enumerate(torch.sum(out_mask, 1)):
+        subj_mask = torch.logical_and(words.unsqueeze(2).gt(4), words.unsqueeze(2).lt(9))# + words.unsqueeze(2).eq(101)
+        obj_mask = torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(5))
+        for i, x in enumerate(torch.sum(subj_mask, 1)):
             if x[0].item() == 0:
                 print (words[i])
-        return h, pooled_output, out_mask
+        for i, x in enumerate(torch.sum(obj_mask, 1)):
+            if x[0].item() == 0:
+                print (words[i])
+        return h, pooled_output, subj_mask, obj_mask
 
 class BERTclassifier(nn.Module):
     def __init__(self, opt):
         super().__init__()
         in_dim = 1024
-        self.classifier = nn.Linear(2 * in_dim, opt['num_class'])
+        self.classifier = nn.Linear(3 * in_dim, opt['num_class'])
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
         self.opt = opt
 
-    def forward(self, h, c, out_mask):
-        cls_out = torch.cat([c, pool(h, out_mask.eq(0), type="avg")], 1)
+    def forward(self, h, c, , subj_mask, obj_mask):
+        cls_out = torch.cat([c, pool(h, subj_mask.eq(0), type="avg"), pool(h, obj_mask.eq(0), type="avg")], 1)
         cls_out = self.dropout(cls_out)
         logits = self.classifier(cls_out)
         return logits
