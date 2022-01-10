@@ -75,10 +75,12 @@ class DataLoader(object):
                         ent_mask.append(0)
 
             words = ['[CLS]'] + words + ['[SEP]']
+            ent_mask = [0] + ent_mask + [0]
             relation = self.label2id[d['relation']]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
             if len(tokens) > 128:
                 tokens = tokens[:128]
+                ent_mask = ent_mask[:128]
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
             if self.do_eval:
