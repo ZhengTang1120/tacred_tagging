@@ -84,8 +84,8 @@ class DataLoader(object):
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
             if self.do_eval:
-                processed += [(tokens, mask, segment_ids, relation, words)]
-            elif (len([aa for aa in tokens if aa>0 and aa<20]) == 2) or relation == 0:
+                processed += [(tokens, mask, segment_ids, ent_mask, relation, words)]
+            elif (len([aa for aa in ent_mask if aa == 1]) == 2) or relation == 0:
                 processed += [(tokens, mask, segment_ids, ent_mask, relation, words)]
         return processed
 
