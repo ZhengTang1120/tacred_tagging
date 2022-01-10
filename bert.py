@@ -19,6 +19,7 @@ class BERTencoder(nn.Module):
         segment_ids = inputs[2]
         h, pooled_output = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
         out_mask = torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(7))
+        print (sum(out_mask))
         return h, out_mask
 
 class BERTclassifier(nn.Module):
