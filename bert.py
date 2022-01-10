@@ -18,8 +18,8 @@ class BERTencoder(nn.Module):
         mask = inputs[1]
         segment_ids = inputs[2]
         h, pooled_output = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
-        subj_mask = torch.logical_and(words.unsqueeze(2).gt(4), words.unsqueeze(2).lt(9))# + words.unsqueeze(2).eq(101)
-        obj_mask = torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(5))
+        subj_mask = words.unsqueeze(2).eq(1)
+        obj_mask = words.unsqueeze(2).eq(2)
         for i, x in enumerate(torch.sum(subj_mask, 1)):
             if x[0].item() == 0:
                 print (words[i])
