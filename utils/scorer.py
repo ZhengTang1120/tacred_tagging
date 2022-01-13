@@ -21,19 +21,20 @@ def score(key, prediction, verbose=False):
     correct_by_relation = Counter()
     guessed_by_relation = Counter()
     gold_by_relation    = Counter()
-
+    binary_correct      = 0
     # Loop over the data to compute a score
     for row in range(len(key)):
         gold = key[row]
         guess = prediction[row]
          
         if gold == NO_RELATION and guess == NO_RELATION:
-            pass
+            binary_correct += 1
         elif gold == NO_RELATION and guess != NO_RELATION:
             guessed_by_relation[guess] += 1
         elif gold != NO_RELATION and guess == NO_RELATION:
             gold_by_relation[gold] += 1
         elif gold != NO_RELATION and guess != NO_RELATION:
+            binary_correct += 1
             guessed_by_relation[guess] += 1
             gold_by_relation[gold] += 1
             if gold == guess:
@@ -90,10 +91,12 @@ def score(key, prediction, verbose=False):
     f1_micro = 0.0
     if prec_micro + recall_micro > 0.0:
         f1_micro = 2.0 * prec_micro * recall_micro / (prec_micro + recall_micro)
+
+    binary_acc = binary_correct / len(key)
     print( "Precision (micro): {:.3%}".format(prec_micro) )
     print( "   Recall (micro): {:.3%}".format(recall_micro) )
     print( "       F1 (micro): {:.3%}".format(f1_micro) )
-    return prec_micro, recall_micro, f1_micro
+    return prec_micro, recall_micro, f1_micro, binary_acc
 
 if __name__ == "__main__":
     # Parse the arguments from stdin
