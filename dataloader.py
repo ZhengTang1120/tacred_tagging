@@ -12,21 +12,29 @@ from utils import constant, helper
 from collections import defaultdict
 from statistics import mean
 
+from termcolor import colored
+
 
 class DataLoader(object):
     """
     Load data from json files, preprocess and prepare batches.
     """
-    def __init__(self, filename, batch_size, opt, tokenizer, do_eval = False):
+    def __init__(self, filename, batch_size, opt, tokenizer, do_eval = True, tagging = None):
         self.batch_size = batch_size
         self.opt = opt
         self.label2id = constant.LABEL_TO_ID
         self.tokenizer = tokenizer
         self.do_eval = do_eval
 
+        if not do_eval:
+            assert tagging is not None
+            with open(tagging) as f:
+                self.tagging = f.readlines()
+
         with open(filename) as infile:
             data = json.load(infile)
         data = self.preprocess(data, opt)
+
         if not do_eval:
             data = sorted(data, key=lambda f: len(f[0]))
         
@@ -42,39 +50,68 @@ class DataLoader(object):
 
     def preprocess(self, data, opt):
 
-
+        missed = 0
         """ Preprocess the data and convert to ids. """
         processed = []
-        processed_rule = []
         for c, d in enumerate(data):
             tokens = list()
             words  = list()
-            # anonymize tokens
+            origin = list()
+            if not self.do_eval:
+                _, tagged = self.tagging[c].split('\t')
+                tagged = eval(tagged)
+            else:
+                tagged = []
+            tagging_mask = list()
+
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
-
+            subj = []
+            obj = []
             for i, t in enumerate(d['token']):
                 if i == ss:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[SUBJ-'+d['subj_type']+']']+1))
+                    tagging_mask.append(0)
                 if i == os:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
+                    tagging_mask.append(0)
                 if i>=ss and i<=se:
-                    pass
+                    # for sub_token in self.tokenizer.tokenize(t):
+                    #     subj.append(sub_token)
+                    origin.append((colored(t, "blue"), [len(words)]))
                 elif i>=os and i<=oe:
-                    pass
+                    # for sub_token in self.tokenizer.tokenize(t):
+                    #     obj.append(sub_token)
+                    origin.append((colored(t, "yellow"), [len(words)]))
                 else:
                     t = convert_token(t)
+                    origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
                     for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                         words.append(sub_token)
+                        if i in tagged and j == len(self.tokenizer.tokenize(t))-1:
+                            tagging_mask.append(1)
+                        else:
+                            tagging_mask.append(0)
+            
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
+            tagging_mask = [0]+tagging_mask+[0]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
+            if len(tokens) > self.opt['max_length']:
+                tokens = tokens[:self.opt['max_length']]
+                tagging_mask = tagging_mask[:self.opt['max_length']]
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
             if self.do_eval:
-                processed += [(tokens, mask, segment_ids, relation, words)]
-            elif (len([aa for aa in tokens if aa>0 and aa<9]) == 2) or relation == 0:
-                processed += [(tokens, mask, segment_ids, relation, words)]
+                processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, origin)]
+            elif (len([aa for aa in tokens if aa>0 and aa<20]) == 2) or relation == 0:
+                processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, origin)]
+                
+            # if sum(tagging_mask)!=0:
+            #     print (d['token'])
+            #     print (words)
+            #     print ([w for i,w in enumerate(d['token']) if i in tagged])
+            #     print ([w for i, w in enumerate(words) if tagging_mask[i]==1])
         return processed
 
     def gold(self):
@@ -98,14 +135,16 @@ class DataLoader(object):
         words = batch[0]
         mask = batch[1]
         segment_ids = batch[2]
+        tagging_mask = batch[3]
         # convert to tensors
         words = get_long_tensor(words, batch_size)
         mask = get_long_tensor(mask, batch_size)
         segment_ids = get_long_tensor(segment_ids, batch_size)
+        tagging_mask = get_long_tensor(tagging_mask, batch_size)
 
         rels = torch.LongTensor(batch[-2])#
 
-        return (words, mask, segment_ids, rels)
+        return (words, mask, segment_ids, tagging_mask, batch[4], rels)
 
     def __iter__(self):
         for i in range(self.__len__()):

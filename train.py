@@ -31,6 +31,7 @@ parser.add_argument('--id', type=str, default='00', help='Model ID under which t
 parser.add_argument('--info', type=str, default='', help='Optional info for the experiment.')
 
 parser.add_argument('--seed', type=int, default=42)
+parser.add_argument('--max_length', type=int, default=128)
 parser.add_argument('--cuda', type=bool, default=torch.cuda.is_available())
 parser.add_argument('--cpu', action='store_true', help='Ignore CUDA.')
 
@@ -42,6 +43,7 @@ parser.add_argument('--pooling', choices=['max', 'avg', 'sum'], default='max', h
 parser.add_argument('--decay_epoch', type=int, default=5, help='Decay learning rate after this epoch.')
 parser.add_argument('--lr_decay', type=float, default=0.9, help='Learning rate decay rate.')
 parser.add_argument('--warmup_prop', type=float, default=0.1, help='Proportion of training to perform linear learning rate warmup for.')
+parser.add_argument('--burnin', type=int, default=5)
 
 parser.add_argument("--eval_per_epoch", default=10, type=int, help="How many times it evaluates on dev set per epoch")
 
@@ -56,15 +58,16 @@ np.random.seed(args.seed)
 random.seed(args.seed)
 if args.cpu:
     args.cuda = False
+    args.device = None
 elif args.cuda:
     torch.cuda.manual_seed(args.seed)
 
 tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
 
-train_batch = DataLoader(opt['data_dir'] + '/conll04_train_tacred.json', opt['batch_size'], opt, tokenizer)
+train_batch = DataLoader(opt['data_dir'] + '/conll04_train_tacred.json', opt['batch_size'], opt, tokenizer, False, opt['data_dir'] + '/tagging_conll04_train.txt.txt')
 train_num_example = train_batch.num_examples
 train_batch = list(train_batch)
-dev_batch = DataLoader(opt['data_dir'] + '/conll04_dev_tacred.json', opt['batch_size'], opt, tokenizer, True)
+dev_batch = DataLoader(opt['data_dir'] + '/conll04_dev_tacred.json', opt['batch_size'], opt, tokenizer)
 
 model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
 model_save_dir = opt['save_dir'] + '/' + model_id
@@ -82,7 +85,7 @@ global_step = 0
 format_str = '{}: step {}/{} (epoch {}/{}), loss = {:.6f} ({:.3f} sec/batch), lr: {:.6f}'
 max_steps = len(train_batch) * opt['num_epoch']
 
-opt['steps'] = max_steps
+opt['train_batch'] = len(train_batch)
 
 # model
 if not opt['load']:
@@ -110,7 +113,8 @@ for epoch in range(1, opt['num_epoch']+1):
         start_time = time.time()
         global_step += 1
         loss, current_lr = trainer.update(batch, epoch)
-        torch.cuda.empty_cache()
+        if args.cuda:
+            torch.cuda.empty_cache()
         train_loss += loss
         if global_step % opt['log_step'] == 0:
             duration = time.time() - start_time
@@ -123,16 +127,16 @@ for epoch in range(1, opt['num_epoch']+1):
             predictions = []
             dev_loss = 0
             for _, batch in enumerate(dev_batch):
-                preds, dloss = trainer.predict(batch, id2label, tokenizer)
+                preds, tags, dloss = trainer.predict(batch, id2label, tokenizer)
                 predictions += preds
                 dev_loss += dloss
             predictions = [id2label[p] for p in predictions]
             train_loss = train_loss / train_num_example * opt['batch_size'] # avg loss per batch
             dev_loss = dev_loss / dev_batch.num_examples * opt['batch_size']
 
-            dev_p, dev_r, dev_f1 = scorer.score(dev_batch.gold(), predictions)
-            print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
-                train_loss, dev_loss, dev_f1))
+            dev_p, dev_r, dev_f1, bi_acc = scorer.score(dev_batch.gold(), predictions)
+            print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}, binary_accuracy = {:.4f}".format(epoch,\
+                train_loss, dev_loss, dev_f1, bi_acc))
             dev_score = dev_f1
             file_logger.log("{}\t{:.6f}\t{:.6f}\t{:.4f}\t{:.4f}".format(epoch, train_loss, dev_loss, dev_score, max([dev_score] + dev_score_history)))
 
