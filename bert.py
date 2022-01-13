@@ -36,8 +36,8 @@ class BERTclassifier(nn.Module):
 
     def forward(self, h, words, tags):
         pool_type = self.opt['pooling']
-        subj_mask = torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(3))
-        obj_mask = torch.logical_and(words.unsqueeze(2).gt(2), words.unsqueeze(2).lt(20))
+        subj_mask = torch.logical_and(words.unsqueeze(2).gt(4), words.unsqueeze(2).lt(9))
+        obj_mask = torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(5))
         tag_mask = tags.unsqueeze(2).eq(1)
         for i, x in enumerate(torch.sum(subj_mask, 1)):
             if x[0].item() == 0:
