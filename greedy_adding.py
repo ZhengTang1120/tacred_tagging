@@ -96,7 +96,7 @@ trainer.load(model_file)
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, True)
 
-with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
+with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset.replace("_tacred",""))) as f:
     tagging = f.readlines()
 
 helper.print_config(opt)
