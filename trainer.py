@@ -86,7 +86,7 @@ class BERTtrainer(Trainer):
              warmup=opt['warmup_prop'],
              t_total=opt['steps'])
 
-     def update(self, batch, epoch):
+    def update(self, batch, epoch):
         inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
 
         # step forward
