@@ -86,14 +86,14 @@ class BERTtrainer(Trainer):
              warmup=opt['warmup_prop'],
              t_total=opt['steps'])
 
-    def update(self, batch, epoch):
+     def update(self, batch, epoch):
         inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
 
         # step forward
         self.encoder.train()
         self.classifier.train()
 
-        h, c, mask1, mask2 = self.encoder(inputs)
+        h, c, _, mask1, mask2 = self.encoder(inputs)
         logits = self.classifier(h, c, mask1, mask2)
         loss = self.criterion(logits, labels)
         loss_val = loss.item()
@@ -110,10 +110,86 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
         with torch.no_grad():
-            h, c, mask1, mask2 = self.encoder(inputs)
+            h, c, _, mask1, mask2 = self.encoder(inputs)
             probs = self.classifier(h, c, mask1, mask2)
         loss = self.criterion(probs, labels).item()
         # probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         
         return predictions, loss
+
+    def predict_cand(self, inputs, r):
+        self.encoder.eval()
+        self.classifier.eval()
+        with torch.no_grad():
+            h, c, _, mask1, mask2  = self.encoder(inputs)
+            probs = self.classifier(h, c, mask1, mask2)
+        predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
+
+        best = np.argmax(probs.data.cpu().numpy(), axis=0).tolist()[r]
+        return best, predictions[best]
+
+    def update_cand(self, inputs):
+
+        self.encoder.train()
+        self.classifier.train()
+        h, c, _, mask1, mask2  = self.encoder(inputs)
+        probs = self.classifier(h, c, mask1, mask2)
+        return probs
+
+    def predict_cand2(self, inputs, prev):
+        self.encoder.eval()
+        self.classifier.eval()
+        with torch.no_grad():
+            h, c, _, mask1, mask2  = self.encoder(inputs)
+            probs = self.classifier(h, c, mask1, mask2)
+        predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
+        prob_maxs = np.amax(probs.data.cpu().numpy(), axis=1)
+        best = np.argmax(prob_maxs)
+
+        if prob_maxs[best]<prev:
+            return -1, None, None
+        else:
+            return best, prob_maxs[best], predictions[best]
+
+    def predict_with_saliency(self, batch0):
+        inputs, labels = unpack_batch(batch0, self.opt['cuda'], self.opt['device'])
+        self.encoder.eval()
+        self.classifier.eval()
+
+        h, c, embs, mask1, mask2  = self.encoder(inputs)
+        embs.retain_grad()
+
+        logits = self.classifier(h, c, mask1, mask2)
+        probs = F.softmax(logits, 1)
+        predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
+        score_max = probs[0, predictions]
+        
+        self.encoder.train()
+        self.classifier.train()
+
+        self.classifier.dropout.eval()
+        score_max.backward()
+
+        saliency, _ = torch.max(embs.grad.data,dim=2)
+        mask = torch.logical_and(inputs[0].gt(0), inputs[0].lt(20)) + inputs[0].eq(101) + inputs[0].eq(102)
+        
+        saliency = saliency.masked_fill(mask, 0)
+        # top3 = saliency.data.cpu().numpy()[0].argsort()[-3:].tolist()
+        return predictions, saliency.data.cpu().numpy()[0][1:-1]
+
+    def predict_proba(self, tokens):
+        # forward
+        self.encoder.eval()
+        self.classifier.eval()
+
+        tokens = torch.LongTensor(tokens).squeeze(2).cuda()
+        mask = tokens.eq(0).eq(0).long().cuda()
+        segment_ids = torch.zeros(tokens.size()).long().cuda()
+        batch_size = len(tokens)
+        inputs = [tokens, mask, segment_ids]
+
+        h, c, _, mask1, mask2  = self.encoder(inputs)
+        probs = self.classifier(h, c, mask1, mask2)
+        probs = F.softmax(logits, 1).data.cpu().detach().numpy()
+        return probs
