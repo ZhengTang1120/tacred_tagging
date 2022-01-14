@@ -190,6 +190,6 @@ class BERTtrainer(Trainer):
         inputs = [tokens, mask, segment_ids]
 
         h, c, _, mask1, mask2  = self.encoder(inputs)
-        probs = self.classifier(h, c, mask1, mask2)
+        logits = self.classifier(h, c, mask1, mask2)
         probs = F.softmax(logits, 1).data.cpu().detach().numpy()
         return probs
