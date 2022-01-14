@@ -62,7 +62,7 @@ batch = DataLoader(data_file, 1, opt, tokenizer, True)
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
-with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
+with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset.replace("_tacred",""))) as f:
     tagging = f.readlines()
 
 x = 0
