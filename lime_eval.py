@@ -64,8 +64,8 @@ def preprocess(filename, tokenizer):
                 for j, sub_token in enumerate(tokenizer.tokenize(t)):
                     words.append(sub_token)
         words = ['[CLS]'] + words + ['[SEP]']
-        if len(words) > 128:
-                words = words[:128]
+        # if len(words) > 128:
+        #         words = words[:128]
         output_tokens.append(words)
         relation = d['relation']
         labels.append(relation)
