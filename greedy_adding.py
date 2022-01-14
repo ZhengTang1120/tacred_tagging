@@ -158,7 +158,7 @@ for c, d in enumerate(data):
         if len(tagged)>0:
             print (output[-1]['gold_label'], output[-1]['predicted_label'])
             print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
-            print (" ".join([w if i not in rationale else colored(w, 'red') for i, w in enumerate(words)]))
+            print (" ".join([w if i not in tagged else colored(w, 'red') for i, w in enumerate(words)]))
             output[-1]['gold_tags'] = tagged
             correct = 0
             pred = 0
