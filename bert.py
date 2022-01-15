@@ -22,10 +22,10 @@ class BERTencoder(nn.Module):
         obj_mask = torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(5))
         for i, x in enumerate(torch.sum(subj_mask, 1)):
             if x[0].item() == 0:
-                print (words[i])
+                subj_mask[i] = torch.ones(subj_mask[i].size())
         for i, x in enumerate(torch.sum(obj_mask, 1)):
             if x[0].item() == 0:
-                print (words[i])
+                obj_mask[i] = torch.ones(obj_mask[i].size())
         return h, pooled_output, embedding, subj_mask, obj_mask
 
 class BERTclassifier(nn.Module):
