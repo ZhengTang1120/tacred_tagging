@@ -178,20 +178,28 @@ class BERTtrainer(Trainer):
         # top3 = saliency.data.cpu().numpy()[0].argsort()[-3:].tolist()
         return predictions, saliency.data.cpu().numpy()[0][1:-1]
 
-    def predict_proba(self, tokens):
+    def predict_proba(self, tokenss):
         # forward
         self.encoder.eval()
         self.classifier.eval()
+        probs = None
+        for tokens in chunks(tokenss):
 
-        print (tokens)
+            tokens = torch.LongTensor(tokens).squeeze(2)
+            mask = tokens.eq(0).eq(0).long()
+            segment_ids = torch.zeros(tokens.size()).long()
+            batch_size = len(tokens)
+            inputs = [tokens, mask, segment_ids]
 
-        tokens = torch.LongTensor(tokens).squeeze(2)
-        mask = tokens.eq(0).eq(0).long()
-        segment_ids = torch.zeros(tokens.size()).long()
-        batch_size = len(tokens)
-        inputs = [tokens, mask, segment_ids]
-
-        h, c, _, mask1, mask2  = self.encoder(inputs)
-        logits = self.classifier(h, c, mask1, mask2)
-        probs = F.softmax(logits, 1).data.numpy()
+            h, c, _, mask1, mask2  = self.encoder(inputs)
+            logits = self.classifier(h, c, mask1, mask2)
+            if probs is None:
+                probs = F.softmax(logits, 1).data.numpy()
+            else:
+                probs = np.concatenate((a, b), axis=0)
         return probs
+
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
