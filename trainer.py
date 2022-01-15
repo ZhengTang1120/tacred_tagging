@@ -183,13 +183,13 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
 
-        tokens = torch.LongTensor(tokens).squeeze(2).cuda()
-        mask = tokens.eq(0).eq(0).long().cuda()
-        segment_ids = torch.zeros(tokens.size()).long().cuda()
+        tokens = torch.LongTensor(tokens).squeeze(2)
+        mask = tokens.eq(0).eq(0).long()
+        segment_ids = torch.zeros(tokens.size()).long()
         batch_size = len(tokens)
         inputs = [tokens, mask, segment_ids]
 
         h, c, _, mask1, mask2  = self.encoder(inputs)
         logits = self.classifier(h, c, mask1, mask2)
-        probs = F.softmax(logits, 1).data.cpu().detach().numpy()
+        probs = F.softmax(logits, 1).data.numpy()
         return probs
