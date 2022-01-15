@@ -50,7 +50,7 @@ def preprocess(filename, tokenizer):
     output_tokens = list()
     labels = list()
     # random.shuffle(data)
-    for c, d in enumerate(data):
+    for c, d in enumerate(data[:2000]):
         words  = list()
         # anonymize tokens
         ss, se = d['subj_start'], d['subj_end']
@@ -128,7 +128,7 @@ explained_model = EXModel(trainer)
 origin = json.load(open(data_file))
 model_builder = RNNModelBuilder(embedding_size=len(tokenizer.vocab), with_embedding=True,
                                 num_layers=2, num_units=32, activation="relu", p_dropout=0.2, verbose=0,
-                                batch_size=16, learning_rate=0.001, num_epochs=2, early_stopping_patience=128)
+                                batch_size=32, learning_rate=0.001, num_epochs=2, early_stopping_patience=128)
 masking_operation = WordDropMasking()
 loss = binary_crossentropy
 
