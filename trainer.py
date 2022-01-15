@@ -75,11 +75,11 @@ class BERTtrainer(Trainer):
                         if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
         ]
         # parameters = [p for p in self.classifier.parameters() if p.requires_grad] + [p for p in self.encoder.parameters() if p.requires_grad]
-        # if opt['cuda']:
-        #     with torch.cuda.device(self.opt['device']):
-        #         self.encoder.cuda()
-        #         self.classifier.cuda()
-        #         self.criterion.cuda()
+        if opt['cuda']:
+            with torch.cuda.device(self.opt['device']):
+                self.encoder.cuda()
+                self.classifier.cuda()
+                self.criterion.cuda()
 
         self.optimizer = BertAdam(optimizer_grouped_parameters,
              lr=opt['lr'],
@@ -185,9 +185,9 @@ class BERTtrainer(Trainer):
         probs = None
         for tokens in chunks(tokenss, 24):
 
-            tokens = torch.LongTensor(tokens).squeeze(2)
-            mask = tokens.eq(0).eq(0).long()
-            segment_ids = torch.zeros(tokens.size()).long()
+            tokens = torch.LongTensor(tokens).squeeze(2).cuda()
+            mask = tokens.eq(0).eq(0).long().cuda()
+            segment_ids = torch.zeros(tokens.size()).long().cuda()
             batch_size = len(tokens)
             inputs = [tokens, mask, segment_ids]
 
@@ -195,7 +195,6 @@ class BERTtrainer(Trainer):
             logits = self.classifier(h, c, mask1, mask2)
             if probs is None:
                 probs = F.softmax(logits, 1).data.numpy()
-                print (probs.shape)
             else:
                 probs = np.concatenate((probs, F.softmax(logits, 1).data.numpy()), axis=0)
         return probs
