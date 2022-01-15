@@ -137,7 +137,7 @@ explainer = CXPlain(explained_model, model_builder, masking_operation, loss)
 
 explainer.fit(x_train, y_train)
 
-my_save_directory = "cxplain/"
+my_save_directory = "cxplain_conll04/"
 explainer.save(my_save_directory)
 # output = list()
 # explainer = CXPlain.load(my_save_directory)
