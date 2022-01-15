@@ -183,6 +183,8 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
 
+        print (tokens.shape)
+
         tokens = torch.LongTensor(tokens).squeeze(2)
         mask = tokens.eq(0).eq(0).long()
         segment_ids = torch.zeros(tokens.size()).long()
