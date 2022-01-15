@@ -183,7 +183,7 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
         probs = None
-        for tokens in chunks(tokenss):
+        for tokens in chunks(tokenss, 24):
 
             tokens = torch.LongTensor(tokens).squeeze(2)
             mask = tokens.eq(0).eq(0).long()
