@@ -195,8 +195,9 @@ class BERTtrainer(Trainer):
             logits = self.classifier(h, c, mask1, mask2)
             if probs is None:
                 probs = F.softmax(logits, 1).data.numpy()
+                print (probs.shape)
             else:
-                probs = np.concatenate((a, b), axis=0)
+                probs = np.concatenate((probs, F.softmax(logits, 1).data.numpy()), axis=0)
         return probs
 
 def chunks(lst, n):
