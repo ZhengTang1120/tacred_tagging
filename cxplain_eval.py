@@ -137,7 +137,7 @@ origin = json.load(open(data_file))
 
 # explainer.fit(x_train, y_train)
 
-my_save_directory = "cxplain_new/"
+my_save_directory = "cxplain/"
 # explainer.save(my_save_directory)
 output = list()
 explainer = CXPlain.load(my_save_directory)
