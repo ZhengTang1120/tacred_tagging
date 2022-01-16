@@ -3,10 +3,10 @@ import argparse
 import statistics
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data', type=str, default='output_lime_132_test_best_model_6.json')
+parser.add_argument('--data', type=str, default='output_lime_667_test_best_model_8.json')
 args = parser.parse_args()
 
-data_file = '../../tacred_tagging/dataset/tacred/test.json'
+data_file = '../../tacred_tagging/dataset/tacred/conll04_test_tacred.json'
 
 origin = json.load(open(data_file))
 
