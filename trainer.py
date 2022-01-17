@@ -114,7 +114,7 @@ class BERTtrainer(Trainer):
             probs = self.classifier(h)
         loss = self.criterion(probs, labels).item()
         probs = F.softmax(probs, 1).data.cpu().numpy()
-        predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
+        predictions = np.argmax(probs, axis=1).tolist()
         
         return predictions, loss, probs
 
