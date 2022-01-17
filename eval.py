@@ -18,6 +18,7 @@ from transformers import BertTokenizer
 import json
 
 import numpy as np
+import math
 
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
@@ -80,7 +81,7 @@ for c, b in enumerate(batch):
     p2 = np.take_along_axis(probs_r, preds.reshape(-1, 1),1)
     for i, p in enumerate(preds):
         if p!=0:
-            log_odd = p1[i]/(1.0-p1[i]) - p2[i]/(1.0-p2[i])
+            log_odd = math.log(p1[i]/(1.0-p1[i])) - math.log(p2[i]/(1.0-p2[i]))
             log_odds.append(log_odd)
     predictions += preds.tolist()
     batch_size = len(preds.tolist())
