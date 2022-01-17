@@ -75,8 +75,10 @@ for c, b in enumerate(batch):
     _, _, probs_r = trainer.predict(batch_r[c], id2label, tokenizer)
     p1 = np.take_along_axis(probs, preds,1)
     p2 = np.take_along_axis(probs_r, preds,1)
-    log_odd = p1/(1.0-p1) - p2/(1.0-p2)
-    log_odds.append(log_odd)
+    for i, p in enumerate(preds):
+        if p!=0:
+            log_odd = p1[i]/(1.0-p1[i]) - p2[i]/(1.0-p2[i])
+            log_odds.append(log_odd)
     predictions += preds
     batch_size = len(preds)
 output = list()
@@ -87,5 +89,5 @@ for i, p in enumerate(predictions):
 #     f.write(json.dumps(output))
 p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
 print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
-
+print (sum(log_odds)/len(log_odds))
 print("Evaluation ended.")
