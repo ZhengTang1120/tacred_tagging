@@ -45,10 +45,12 @@ class DataLoader(object):
 
         """ Preprocess the data and convert to ids. """
         processed = []
-        processed_rule = []
+        if opt['rationale'] and opt['do_rationale']:
+            rationales = json.load(open(opt['rationale']))
         for c, d in enumerate(data):
             tokens = list()
             words  = list()
+            rationale = rationales[c]['predicted_tags']
             # anonymize tokens
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
@@ -64,8 +66,11 @@ class DataLoader(object):
                     pass
                 else:
                     t = convert_token(t)
-                    for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
-                        words.append(sub_token)
+                    if i in rationale:
+                        words.append('[MASK]')
+                    else:
+                        for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
+                            words.append(sub_token)
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
             tokens = self.tokenizer.convert_tokens_to_ids(words)

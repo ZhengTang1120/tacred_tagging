@@ -27,7 +27,9 @@ parser.add_argument('--seed', type=int, default=1234)
 parser.add_argument('--cuda', type=bool, default=torch.cuda.is_available())
 parser.add_argument('--cpu', action='store_true')
 
-parser.add_argument('--device', type=int, default=0, help='Word embedding dimension.')
+parser.add_argument('--device', type=int, default=0, help='device')
+
+parser.add_argument('--rationale', type=str, default='output_lime_132_test_best_model_6.json', help='rationale')
 
 args = parser.parse_args()
 
@@ -53,7 +55,10 @@ trainer.load(model_file)
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 print("Loading data from {} with batch size {}...".format(data_file, 1))
+opt['do_rationale'] = False
 batch = DataLoader(data_file, 1, opt, tokenizer, True)
+opt['do_rationale'] = True
+batch_r = DataLoader(data_file, 1, opt, tokenizer, True)
 
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
@@ -64,8 +69,14 @@ predictions = []
 x = 0
 exact_match = 0
 other = 0
+log_odds = list()
 for c, b in enumerate(batch):
-    preds,_ = trainer.predict(b, id2label, tokenizer)
+    preds, _, probs = trainer.predict(b, id2label, tokenizer)
+    _, _, probs_r = trainer.predict(batch_r[c], id2label, tokenizer)
+    p1 = np.take_along_axis(probs, preds,1)
+    p2 = np.take_along_axis(probs_r, preds,1)
+    log_odd = p1/(1.0-p1) - p2/(1.0-p2)
+    log_odds.append(log_odd)
     predictions += preds
     batch_size = len(preds)
 output = list()

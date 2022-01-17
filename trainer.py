@@ -113,10 +113,10 @@ class BERTtrainer(Trainer):
             h,_ = self.encoder(inputs)
             probs = self.classifier(h)
         loss = self.criterion(probs, labels).item()
-        # probs = F.softmax(logits, 1)
+        probs = F.softmax(logits, 1).data.cpu().numpy()
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         
-        return predictions, loss
+        return predictions, loss, probs
 
     def predict_cand(self, inputs, r):
         self.encoder.eval()
