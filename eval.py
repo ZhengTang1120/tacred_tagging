@@ -76,9 +76,11 @@ log_odds = list()
 for c, b in enumerate(batch):
     preds, _, probs = trainer.predict(b, id2label, tokenizer)
     _, _, probs_r = trainer.predict(batch_r[c], id2label, tokenizer)
-    print (preds.shape, probs.shape)
+    print (preds, probs)
     p1 = np.take_along_axis(probs, preds.reshape(-1, 1),1)
     p2 = np.take_along_axis(probs_r, preds.reshape(-1, 1),1)
+    print (p1, p2)
+    exit()
     for i, p in enumerate(preds):
         if p!=0:
             log_odd = p1[i]/(1.0-p1[i]) - p2[i]/(1.0-p2[i])
