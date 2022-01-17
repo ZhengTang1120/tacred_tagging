@@ -81,8 +81,8 @@ for c, b in enumerate(batch):
         if p!=0:
             log_odd = p1[i]/(1.0-p1[i]) - p2[i]/(1.0-p2[i])
             log_odds.append(log_odd)
-    predictions += preds
-    batch_size = len(preds)
+    predictions += preds.tolist()
+    batch_size = len(preds.tolist())
 output = list()
 for i, p in enumerate(predictions):
         predictions[i] = id2label[p]
