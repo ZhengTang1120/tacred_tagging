@@ -17,6 +17,8 @@ from transformers import BertTokenizer
 
 import json
 
+import numpy as np
+
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
 parser.add_argument('--model', type=str, default='best_model.pt', help='Name of the model file.')
@@ -75,8 +77,8 @@ for c, b in enumerate(batch):
     preds, _, probs = trainer.predict(b, id2label, tokenizer)
     _, _, probs_r = trainer.predict(batch_r[c], id2label, tokenizer)
     print (preds.shape, probs.shape)
-    p1 = np.take_along_axis(probs, preds,1)
-    p2 = np.take_along_axis(probs_r, preds,1)
+    p1 = np.take_along_axis(probs, preds.reshape(-1, 1),1)
+    p2 = np.take_along_axis(probs_r, preds.reshape(-1, 1),1)
     for i, p in enumerate(preds):
         if p!=0:
             log_odd = p1[i]/(1.0-p1[i]) - p2[i]/(1.0-p2[i])
