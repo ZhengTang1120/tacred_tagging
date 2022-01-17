@@ -49,6 +49,7 @@ model_file = args.model_dir + '/' + args.model
 print("Loading model from {}".format(model_file))
 opt = torch_utils.load_config(model_file)
 opt['device'] = args.device
+opt['rationale'] = args.rationale
 trainer = BERTtrainer(opt)
 trainer.load(model_file)
 
@@ -73,6 +74,7 @@ log_odds = list()
 for c, b in enumerate(batch):
     preds, _, probs = trainer.predict(b, id2label, tokenizer)
     _, _, probs_r = trainer.predict(batch_r[c], id2label, tokenizer)
+    print (preds.shape, probs.shape)
     p1 = np.take_along_axis(probs, preds,1)
     p2 = np.take_along_axis(probs_r, preds,1)
     for i, p in enumerate(preds):
