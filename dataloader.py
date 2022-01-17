@@ -50,7 +50,10 @@ class DataLoader(object):
         for c, d in enumerate(data):
             tokens = list()
             words  = list()
-            rationale = rationales[c]['predicted_tags']
+            if opt['rationale'] and opt['do_rationale']:
+                rationale = rationales[c]['predicted_tags']
+            else:
+                rationale = []
             # anonymize tokens
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
