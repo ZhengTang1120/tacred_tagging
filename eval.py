@@ -57,11 +57,11 @@ trainer.load(model_file)
 
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
-print("Loading data from {} with batch size {}...".format(data_file, 1))
+print("Loading data from {} with batch size {}...".format(data_file, 32))
 opt['do_rationale'] = False
-batch = DataLoader(data_file, 1, opt, tokenizer, True)
+batch = DataLoader(data_file, 32, opt, tokenizer, True)
 opt['do_rationale'] = True
-batch_r = DataLoader(data_file, 1, opt, tokenizer, True)
+batch_r = DataLoader(data_file, 32, opt, tokenizer, True)
 
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
