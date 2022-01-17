@@ -165,13 +165,12 @@ for i, t in enumerate(x_test):
         top3 = [k for k in saliency_map][:3]#np.array(saliency).argsort()[-3:].tolist()
         output[-1]["predicted_tags"] = top3
         tokens = [w if w not in top3 else colored(w, 'red') for c, w in enumerate(tokens)]
-        print (" ".join(tokens))
         if len(tagged)>0:
             output[-1]['gold_tags'] = tagged
-            # print (saliency)
-            # print (output[-1]['gold_label'], output[-1]['predicted_label'])
-            # print (" ".join(tokens))
-            # print (" ".join([w if i not in tagged else colored(w, 'red') for i, w in enumerate(words)]))
+            print (saliency)
+            print (output[-1]['gold_label'], output[-1]['predicted_label'])
+            print (" ".join(tokens))
+            print (" ".join([w if i not in tagged else colored(w, 'red') for i, w in enumerate(words)]))
             correct = 0
             pred = 0
             for j, t in enumerate(words):
