@@ -144,6 +144,7 @@ for i, t in enumerate(x_test):
         exp = explainer.explain_instance(text, predict, num_features=len(t), num_samples=2000, labels=[pred, l])
         importance = {x[0]:x[1] for x in exp.as_list(label=pred)}
         saliency = []
+        saliency_map = dict()
         tokens = []
         for j, x in enumerate(words):
             if j< 128:
@@ -156,12 +157,14 @@ for i, t in enumerate(x_test):
                 else:
                     tokens.append(convert_token(x))
                     saliency.append(statistics.mean([importance[xx] for xx in tokenizer.tokenize(convert_token(x))]))
+                    saliency_map[x] = statistics.mean([importance[xx] for xx in tokenizer.tokenize(convert_token(x))])
             else:
                 tokens.append(x)
                 saliency.append(0)
-        top3 = np.array(saliency).argsort()[-3:].tolist()
+        saliency_map = {k: v for k, v in sorted(saliency_map.items(), key=lambda item: item[1], reverse=True)}
+        top3 = [k for k in saliency_map[:3]]#np.array(saliency).argsort()[-3:].tolist()
         output[-1]["predicted_tags"] = top3
-        tokens = [w if c not in top3 else colored(w, 'red') for c, w in enumerate(tokens)]
+        tokens = [w if w not in top3 else colored(w, 'red') for c, w in enumerate(tokens)]
         print (" ".join(tokens))
         if len(tagged)>0:
             output[-1]['gold_tags'] = tagged
@@ -172,7 +175,7 @@ for i, t in enumerate(x_test):
             correct = 0
             pred = 0
             for j, t in enumerate(words):
-                if j in top3 and j in tagged:
+                if t in top3 and j in tagged:
                     correct += 1
             r = correct / 3
             if len(tagged) > 0:
