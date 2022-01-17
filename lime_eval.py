@@ -177,7 +177,7 @@ for i, t in enumerate(x_test):
             for j, t in enumerate(words):
                 if t in top3 and j in tagged:
                     correct += 1
-            r = correct / 3
+            r = correct / len([w for w in words if w in top3])
             if len(tagged) > 0:
                 p = correct / len(tagged)
             else:
