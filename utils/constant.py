@@ -31,9 +31,54 @@ DEPREL_TO_ID = {PAD_TOKEN: 0, UNK_TOKEN: 1, 'punct': 2, 'compound': 3, 'case': 4
 
 NEGATIVE_LABEL = 'no_relation'
 
-LABEL_TO_ID = {'no_relation': 0, 'per:title': 1, 'org:top_members/employees': 2, 'per:employee_of': 3, 'org:alternate_names': 4, 'org:country_of_headquarters': 5, 'per:countries_of_residence': 6, 'org:city_of_headquarters': 7, 'per:cities_of_residence': 8, 'per:age': 9, 'per:stateorprovinces_of_residence': 10, 'per:origin': 11, 'org:subsidiaries': 12, 'org:parents': 13, 'per:spouse': 14, 'org:stateorprovince_of_headquarters': 15, 'per:children': 16, 'per:other_family': 17, 'per:alternate_names': 18, 'org:members': 19, 'per:siblings': 20, 'per:schools_attended': 21, 'per:parents': 22, 'per:date_of_death': 23, 'org:member_of': 24, 'org:founded_by': 25, 'org:website': 26, 'per:cause_of_death': 27, 'org:political/religious_affiliation': 28, 'org:founded': 29, 'per:city_of_death': 30, 'org:shareholders': 31, 'org:number_of_employees/members': 32, 'per:date_of_birth': 33, 'per:city_of_birth': 34, 'per:charges': 35, 'per:stateorprovince_of_death': 36, 'per:religion': 37, 'per:stateorprovince_of_birth': 38, 'per:country_of_birth': 39, 'org:dissolved': 40, 'per:country_of_death': 41}
+LABEL_TO_ID_TAC = {'no_relation': 0, 'per:title': 1, 'org:top_members/employees': 2, 'per:employee_of': 3, 'org:alternate_names': 4, 'org:country_of_headquarters': 5, 'per:countries_of_residence': 6, 'org:city_of_headquarters': 7, 'per:cities_of_residence': 8, 'per:age': 9, 'per:stateorprovinces_of_residence': 10, 'per:origin': 11, 'org:subsidiaries': 12, 'org:parents': 13, 'per:spouse': 14, 'org:stateorprovince_of_headquarters': 15, 'per:children': 16, 'per:other_family': 17, 'per:alternate_names': 18, 'org:members': 19, 'per:siblings': 20, 'per:schools_attended': 21, 'per:parents': 22, 'per:date_of_death': 23, 'org:member_of': 24, 'org:founded_by': 25, 'org:website': 26, 'per:cause_of_death': 27, 'org:political/religious_affiliation': 28, 'org:founded': 29, 'per:city_of_death': 30, 'org:shareholders': 31, 'org:number_of_employees/members': 32, 'per:date_of_birth': 33, 'per:city_of_birth': 34, 'per:charges': 35, 'per:stateorprovince_of_death': 36, 'per:religion': 37, 'per:stateorprovince_of_birth': 38, 'per:country_of_birth': 39, 'org:dissolved': 40, 'per:country_of_death': 41}
+LABEL_TO_ID = {'no_relation': 0, 'Work_For':1, 'Kill':2, 'OrgBased_In':3, 'Live_In':4, 'Located_In':5}
 
 ENTITY_TOKEN_TO_ID = {'[OBJ-CAUSE_OF_DEATH]': 3, '[OBJ-CITY]': 2, '[OBJ-DATE]': 17, '[OBJ-PERSON]': 14, '[OBJ-URL]': 9, '[OBJ-NATIONALITY]': 16, '[OBJ-ORGANIZATION]': 18, '[OBJ-MISC]': 11, '[OBJ-NUMBER]': 12, '[OBJ-CRIMINAL_CHARGE]': 7, '[SUBJ-ORGANIZATION]': 0, '[SUBJ-PERSON]': 1, '[OBJ-DURATION]': 4, '[OBJ-COUNTRY]': 8, '[OBJ-LOCATION]': 15, '[OBJ-RELIGION]': 10, '[OBJ-TITLE]': 6, '[OBJ-STATE_OR_PROVINCE]': 5, '[OBJ-IDEOLOGY]': 13}
 
 INFINITY_NUMBER = 1e12
 MAX_RULE_LEN = 100
+
+LABEL_MAP = {
+  "per:title": "no_relation",
+  "org:top_members/employees": "no_relation",
+  "per:employee_of": "Work_For",
+  "org:alternate_names": "no_relation",
+  "org:country_of_headquarters": "OrgBased_In",
+  "per:countries_of_residence": "Live_In",
+  "org:city_of_headquarters": "OrgBased_In",
+  "per:cities_of_residence": "Live_In",
+  "per:age": "no_relation",
+  "per:stateorprovinces_of_residence": "Live_In",
+  "per:origin": "Live_In",
+  "org:subsidiaries": "no_relation",
+  "org:parents": "no_relation",
+  "per:spouse": "no_relation",
+  "org:stateorprovince_of_headquarters": "OrgBased_In",
+  "per:children": "no_relation",
+  "per:other_family": "no_relation",
+  "per:alternate_names": "no_relation",
+  "org:members": "no_relation",
+  "per:siblings": "no_relation",
+  "per:schools_attended": "no_relation",
+  "per:parents": "no_relation",
+  "per:date_of_death": "no_relation",
+  "org:member_of": "no_relation",
+  "org:founded_by": "no_relation",
+  "org:website": "no_relation",
+  "per:cause_of_death": "no_relation",
+  "org:political/religious_affiliation": "no_relation",
+  "org:founded": "Work_For",
+  "per:city_of_death": "Live_In",
+  "org:shareholders": "no_relation",
+  "org:number_of_employees/members": "no_relation",
+  "per:date_of_birth": "no_relation",
+  "per:city_of_birth": "Live_In",
+  "per:charges": "no_relation",
+  "per:stateorprovince_of_death": "Live_In",
+  "per:religion": "no_relation",
+  "per:stateorprovince_of_birth": "Live_In",
+  "per:country_of_birth": "Live_In",
+  "org:dissolved": "no_relation",
+  "per:country_of_death": "Live_In"
+}
