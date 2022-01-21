@@ -40,6 +40,7 @@ INFINITY_NUMBER = 1e12
 MAX_RULE_LEN = 100
 
 LABEL_MAP = {
+  "no_relation": "no_relation",  
   "per:title": "no_relation",
   "org:top_members/employees": "no_relation",
   "per:employee_of": "Work_For",
