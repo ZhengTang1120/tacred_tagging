@@ -50,6 +50,7 @@ model_file = args.model_dir + '/' + args.model
 print("Loading model from {}".format(model_file))
 opt = torch_utils.load_config(model_file)
 opt['device'] = args.device
+opt['do_rationale'] = False
 trainer = BERTtrainer(opt)
 trainer.load(model_file)
 
