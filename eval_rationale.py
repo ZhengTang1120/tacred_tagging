@@ -4,6 +4,7 @@ import statistics
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data', type=str, default='output_lime_667_test_best_model_8.json')
+parser.add_argument('--top', type=int, default=3)
 args = parser.parse_args()
 
 data_file = '../../tacred_tagging/dataset/tacred/conll04_test_tacred.json'
@@ -20,6 +21,8 @@ for i, item in enumerate(output):
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
         importance = item['predicted_tags']
+        if "greedy" not in args.data:
+            importance = np.array(item['predicted_tags']).argsort()[-3:].tolist()
         if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
             pred = 0
