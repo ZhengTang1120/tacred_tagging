@@ -98,10 +98,10 @@ for c, b in enumerate(batch):
                 tokens.append(t)
                 t = convert_token(t)
                 sub_len = len(tokenizer.tokenize(t))
-                saliency.append(sc[i: i+sub_len].mean())
+                saliency.append(float(sc[i: i+sub_len].mean()))
                 i += sub_len
         top3 = np.array(saliency).argsort()[-3:].tolist()
-        output[-1]["predicted_tags"] = top3
+        output[-1]["predicted_tags"] = saliency
         tokens = [w if i not in top3 else colored(w, 'red') for i, w in enumerate(tokens)]
         if len(tagged)>0:
             output[-1]['gold_tags'] = tagged

@@ -163,7 +163,7 @@ for i, t in enumerate(x_test):
                 saliency.append(0)
         saliency_map = {k: v for k, v in sorted(saliency_map.items(), key=lambda item: item[1], reverse=True)}
         top3 = [k for k in saliency_map][:3]#np.array(saliency).argsort()[-3:].tolist()
-        output[-1]["predicted_tags"] = top3
+        output[-1]["predicted_tags"] = saliency
         tokens = [w if w not in top3 else colored(w, 'red') for c, w in enumerate(tokens)]
         if len(tagged)>0:
             output[-1]['gold_tags'] = tagged

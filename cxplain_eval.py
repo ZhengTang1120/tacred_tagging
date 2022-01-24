@@ -174,10 +174,10 @@ for i, t in enumerate(x_test):
                 tokens.append(t)
                 t = convert_token(t)
                 sub_len = len(tokenizer.tokenize(t))
-                saliency.append(importance[c: c+sub_len].mean())
+                saliency.append(float(importance[c: c+sub_len].mean()))
                 c += sub_len
         top3 = np.array(saliency).argsort()[-3:].tolist()
-        output[-1]["predicted_tags"] = top3
+        output[-1]["predicted_tags"] = saliency
         tokens = [w if c not in top3 else colored(w, 'red') for c, w in enumerate(tokens)]
         print (" ".join(tokens))
         if len(tagged)>0:
