@@ -184,9 +184,10 @@ class BERTtrainer(Trainer):
         self.classifier.eval()
         probs = None
         for tokens in chunks(tokenss, 24):
-            tokens = torch.LongTensor(tokens).squeeze(2).cuda()
-            mask = tokens.eq(0).eq(0).long().cuda()
-            segment_ids = torch.zeros(tokens.size()).long().cuda()
+            with torch.cuda.device(self.opt['device']):
+                tokens = torch.LongTensor(tokens).squeeze(2).cuda()
+                mask = tokens.eq(0).eq(0).long().cuda()
+                segment_ids = torch.zeros(tokens.size()).long().cuda()
             batch_size = len(tokens)
             inputs = [tokens, mask, segment_ids]
 
