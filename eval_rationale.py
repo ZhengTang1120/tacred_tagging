@@ -23,7 +23,7 @@ for i, item in enumerate(output):
         tagged = item['gold_tags']
         importance = item['predicted_tags']
         if "greedy" not in args.data:
-            importance = np.array(item['predicted_tags']).argsort()[args.top].tolist()
+            importance = np.array(item['predicted_tags']).argsort()[-args.top:].tolist()
         if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
             pred = 0
