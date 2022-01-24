@@ -8,7 +8,7 @@ parser.add_argument('--data', type=str, default='output_lime_132_test_best_model
 parser.add_argument('--top', type=int, default=3)
 args = parser.parse_args()
 
-data_file = '../../tacred_tagging/dataset/tacred/conll04_test_tacred.json'
+data_file = '../../tacred_tagging/dataset/tacred/test.json'
 
 origin = json.load(open(data_file))
 
