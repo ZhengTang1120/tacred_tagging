@@ -98,7 +98,7 @@ for c, b in enumerate(batch):
                 tokens.append(t)
                 t = convert_token(t)
                 sub_len = len(tokenizer.tokenize(t))
-                saliency.append(sc[i: i+sub_len].mean())
+                saliency.append(float(sc[i: i+sub_len].mean()))
                 i += sub_len
         top3 = np.array(saliency).argsort()[-3:].tolist()
         output[-1]["predicted_tags"] = saliency
