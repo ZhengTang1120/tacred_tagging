@@ -42,6 +42,8 @@ for i, item in enumerate(output):
                     tokens.append(colored(word, 'yellow'))
                 elif w in importance:
                     tokens.append(colored(word, 'red'))
+                else:
+                    tokens.append(word)
         if predicted_label != "no_relation":
             print (" ".join(tokens))
         if len(tagged)>0 and gold_label == predicted_label:
