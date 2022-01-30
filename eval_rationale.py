@@ -32,6 +32,7 @@ data_file = args.origin
 origin = json.load(open(data_file))
 print (len(origin))
 output = json.load(open(args.data))
+print (len(output))
 tagging_scores = list()
 outcsv = open('tagging.csv', 'w', newline='')
 writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text"])
