@@ -25,6 +25,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--data', type=str, default='output_lime_132_test_best_model_6.json')
 parser.add_argument('--top', type=int, default=3)
 parser.add_argument('--origin', type=str, default='dataset/tacred/test.json')
+parser.add_argument('--out', type=str, default='lime')
 args = parser.parse_args()
 
 data_file = args.origin
@@ -33,7 +34,7 @@ origin = json.load(open(data_file))
 
 output = json.load(open(args.data))
 tagging_scores = list()
-outcsv = open('tagging.csv', 'w', newline='')
+outcsv = open(args.out, 'w', newline='')
 writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text"])
 writer.writeheader()
 for i, item in enumerate(output):
