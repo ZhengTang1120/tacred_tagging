@@ -5,6 +5,12 @@ import numpy as np
 from termcolor import colored
 import csv
 
+from matplotlib.colors import LinearSegmentedColormap, rgb2hex
+
+colors = [(0, 0, 0), (1, 0, 0)] # first color is black, last is red
+cm = LinearSegmentedColormap.from_list(
+        "Custom", colors, N=20)
+
 def convert_token(token):
     """ Convert PTB tokens to normal tokens """
     if (token.lower() == '-lrb-'):
@@ -37,6 +43,8 @@ tagging_scores = list()
 outcsv = open(args.out, 'w', newline='')
 writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text"])
 writer.writeheader()
+lower = float('inf')
+upper = -float('inf')
 for i, item in enumerate(output):
     gold_label = item['gold_label']
     predicted_label = item['predicted_label']
@@ -47,6 +55,8 @@ for i, item in enumerate(output):
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
         importance = item['predicted_tags']
+        lower = min(lower, min(importance))
+        upper = max(upper, max(importance))
         if "lime" in args.data:
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
             importance = [j for j, w in enumerate(words) if w in top]
@@ -64,9 +74,10 @@ for i, item in enumerate(output):
                     tokens.append('<span style="color:darkorange;">%s</span>'%word)
                     # if w in importance:
                     #     tokens.append('<span style="color:darkorange; border: 2px solid red;">%s</span>'%word)
-                elif w in importance:
-                    tokens.append('<span style="color:red;">%s</span>'%word)
+                # elif w in importance:
+                #     tokens.append('<span style="color:red;">%s</span>'%word)
                 else:
+                    (item['predicted_tags'][w])
                     tokens.append(word)
         else:
             for w, word in enumerate(words):
@@ -110,7 +121,7 @@ for i, item in enumerate(output):
             except ZeroDivisionError:
                 f1 = 0
             tagging_scores.append((r, p, f1))
-
+print (lower, upper)
 tr, tp, tf = zip(*tagging_scores)
 outcsv.close()
 print("rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
