@@ -9,7 +9,7 @@ from matplotlib.colors import LinearSegmentedColormap, rgb2hex
 
 colors = [(0, 0, 0), (1, 0, 0)] # first color is black, last is red
 cm = LinearSegmentedColormap.from_list(
-        "Custom", colors, N=20)
+        "Custom", colors, N=50)
 
 def convert_token(token):
     """ Convert PTB tokens to normal tokens """
@@ -77,8 +77,8 @@ for i, item in enumerate(output):
                 # elif w in importance:
                 #     tokens.append('<span style="color:red;">%s</span>'%word)
                 else:
-                    (item['predicted_tags'][w])
-                    tokens.append(word)
+                    col = cm(item['predicted_tags'][w]*100+25)
+                    tokens.append('<span style="color:%s;">%s</span>'%(col, word))
         else:
             for w, word in enumerate(words):
                 word = convert_token(word)
@@ -96,7 +96,7 @@ for i, item in enumerate(output):
                     tokens.append(word)
         if len(importance) > 0 and len(tagged) == 0:
             text = " ".join(tokens)
-            if '<span style="color:red;">' in text:
+            if '<span style="color:red;">' in text or ("greedy" not in args.data and "tagging" not in args.data):
                 writer.writerow({'relation': predicted_label, 'text': text})
             else:
                 print (predicted_label, gold_label)
