@@ -74,29 +74,29 @@ for i, item in enumerate(output):
             text = " ".join(tokens)
             if '<span style="color:red;">' in text:
                 writer.writerow({'relation': predicted_label, 'text': text})
-        else:
-            print (predicted_label, gold_label)
-            print ([words[im] for im in importance], tagged, importance)
-            print (text)
-        if len(tagged)>0 and gold_label == predicted_label:
-            correct = 0
-            pred = 0
-            for j, t in enumerate(words):
-                if j in importance and j in tagged:
-                    correct += 1
-            if len(importance) > 0:
-                r = correct / len(importance)
-            else:
-                r = 0
-            if len(tagged) > 0:
-                p = correct / len(tagged)
-            else:
-                p = 0
-            try:
-                f1 = 2.0 * p * r / (p + r)
-            except ZeroDivisionError:
-                f1 = 0
-            tagging_scores.append((r, p, f1))
+    else:
+        print (predicted_label, gold_label)
+        print ([words[im] for im in importance], tagged, importance)
+        print (text)
+        # if len(tagged)>0 and gold_label == predicted_label:
+        #     correct = 0
+        #     pred = 0
+        #     for j, t in enumerate(words):
+        #         if j in importance and j in tagged:
+        #             correct += 1
+        #     if len(importance) > 0:
+        #         r = correct / len(importance)
+        #     else:
+        #         r = 0
+        #     if len(tagged) > 0:
+        #         p = correct / len(tagged)
+        #     else:
+        #         p = 0
+        #     try:
+        #         f1 = 2.0 * p * r / (p + r)
+        #     except ZeroDivisionError:
+        #         f1 = 0
+        #     tagging_scores.append((r, p, f1))
 
 tr, tp, tf = zip(*tagging_scores)
 outcsv.close()
