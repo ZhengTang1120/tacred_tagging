@@ -7,7 +7,7 @@ import csv
 
 from matplotlib.colors import LinearSegmentedColormap, rgb2hex
 
-colors = [(1, 1, 1), (1, 0, 0)] # first color is black, last is red
+colors = [(0, 0, 0), (1, 0, 0)] # first color is black, last is red
 cm = LinearSegmentedColormap.from_list("Custom", colors)
 
 def convert_token(token):
@@ -42,8 +42,7 @@ tagging_scores = list()
 outcsv = open(args.out, 'w', newline='')
 writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text"])
 writer.writeheader()
-lower = float('inf')
-upper = -float('inf')
+
 for i, item in enumerate(output):
     gold_label = item['gold_label']
     predicted_label = item['predicted_label']
@@ -54,9 +53,8 @@ for i, item in enumerate(output):
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
         importance = item['predicted_tags']
-        print (importance)
-        lower = min(lower, min(importance))
-        upper = max(upper, max(importance))
+        lower = min(importance)
+        upper = max(importance)
         if "lime" in args.data:
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
             importance = [j for j, w in enumerate(words) if w in top]
@@ -77,7 +75,7 @@ for i, item in enumerate(output):
                 # elif w in importance:
                 #     tokens.append('<span style="color:red;">%s</span>'%word)
                 else:
-                    col = rgb2hex(cm(item['predicted_tags'][w]*4))
+                    col = rgb2hex(cm((item['predicted_tags'][w]-lower)/(upper-lower)))
                     tokens.append('<span style="color:%s;">%s</span>'%(col, word))
         else:
             for w, word in enumerate(words):
