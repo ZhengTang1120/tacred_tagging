@@ -95,7 +95,8 @@ trainer.load(model_file)
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, True)
-
+opt['do_rationale'] = False
+opt['rationale'] = False
 with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     tagging = f.readlines()
 
