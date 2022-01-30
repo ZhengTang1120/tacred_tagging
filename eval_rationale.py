@@ -70,7 +70,9 @@ for i, item in enumerate(output):
             if '<span style="color:red;">' in text:
                 writer.writerow({'relation': predicted_label, 'text': text})
             else:
+                print (importance)
                 print (text)
+                print ()
         if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
             pred = 0
