@@ -77,6 +77,7 @@ for i, item in enumerate(output):
                 # elif w in importance:
                 #     tokens.append('<span style="color:red;">%s</span>'%word)
                 else:
+                    print (item['predicted_tags'][w], item['predicted_tags'][w]*100+25, cm(item['predicted_tags'][w]*100+25))
                     col = rgb2hex(cm(item['predicted_tags'][w]*100+25))
                     tokens.append('<span style="color:%s;">%s</span>'%(col, word))
         else:
