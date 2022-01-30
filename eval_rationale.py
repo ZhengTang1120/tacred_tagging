@@ -67,7 +67,7 @@ for i, item in enumerate(output):
                     tokens.append(word)
         if predicted_label != "no_relation":
             print (" ".join(tokens))
-            writer.writerows({'relation': predicted_label, 'text': " ".join(tokens)})
+            writer.writerow({'relation': predicted_label, 'text': " ".join(tokens)})
         if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
             pred = 0
