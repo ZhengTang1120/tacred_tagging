@@ -59,19 +59,24 @@ for i, item in enumerate(output):
                 word = convert_token(word)
                 if w>=ss and w<=se:
                     tokens.append('<span style="color:blue;">%s</span>'%word)
-                    if w in importance:
-                        tokens.append('<span style="color:blue; border: 2px solid red;">%s</span>'%word)
+                    # if w in importance:
+                    #     tokens.append('<span style="color:blue; border: 2px solid red;">%s</span>'%word)
                 elif w>=os and w<=oe:
                     tokens.append('<span style="color:darkorange;">%s</span>'%word)
-                    if w in importance:
-                        tokens.append('<span style="color:darkorange; border: 2px solid red;">%s</span>'%word)
+                    # if w in importance:
+                    #     tokens.append('<span style="color:darkorange; border: 2px solid red;">%s</span>'%word)
                 elif w in importance:
-                    tokens.append('<span style="border: 2px solid red;">%s</span>'%word)
+                    tokens.append('<span style="color:red;">%s</span>'%word)
                 else:
                     tokens.append(word)
         if predicted_label != "no_relation" and len(importance) > 0 and len(tagged) == 0:
             text = " ".join(tokens)
-            writer.writerow({'relation': predicted_label, 'text': text})
+            if '<span style="color:red;">' in text:
+                writer.writerow({'relation': predicted_label, 'text': text})
+            else:
+                print (predicted_label, gold_label)
+                print ([words[im] for im in importance], tagged, importance)
+                print (text)
         if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
             pred = 0
