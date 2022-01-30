@@ -74,6 +74,7 @@ x = 0
 exact_match = 0
 other = 0
 log_odds = list()
+pred_output = open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.txt')), 'w')
 for c, b in enumerate(batch):
     preds, _, probs = trainer.predict(b, id2label, tokenizer)
     _, _, probs_r = trainer.predict(batch_r[c], id2label, tokenizer)
@@ -88,7 +89,8 @@ for c, b in enumerate(batch):
 output = list()
 for i, p in enumerate(predictions):
         predictions[i] = id2label[p]
-
+        pred_output.write(id2label[p]+'\n')
+pred_output.close()
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
 p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
