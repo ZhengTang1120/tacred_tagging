@@ -204,11 +204,12 @@ for i, t in enumerate(x_test):
             print (r, p, f1)
             print ()
 
-tr, tp, tf = zip(*tagging_scores)
 
-print("{} set rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
 with open("output_cxplain_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
     f.write(json.dumps(output))
 
 p, r, f1 = scorer.score(golds, preds, verbose=True)
 print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
+tr, tp, tf = zip(*tagging_scores)
+
+print("{} set rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
