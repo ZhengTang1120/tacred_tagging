@@ -18,6 +18,8 @@ for i, item in enumerate(output):
     gold_label = item['gold_label']
     predicted_label = item['predicted_label']
     words = origin[i]['token']
+    ss, se = origin[i]['subj_start'], origin[i]['subj_end']
+    os, oe = origin[i]['obj_start'], origin[i]['obj_end']
 
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
@@ -25,8 +27,21 @@ for i, item in enumerate(output):
         if "lime" in args.data:
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
             importance = [j for j, w in enumerate(words) if w in top]
-        elif "greedy" not in args.data:
+        elif "greedy" not in args.data or "tagging" not in args.data:
             importance = np.array(item['predicted_tags']).argsort()[-args.top:].tolist()
+        tokens = list()
+        if "greedy" not in args.data or "tagging" not in args.data:
+            pass
+        else:
+            for w, word in enumerate(words):
+                if w>=ss and w<=se:
+                    tokens.append(colored(word, 'blue'))
+                elif w>=os and w<=oe:
+                    tokens.append(colored(word, 'yellow'))
+                elif w in importance:
+                    tolist.append(colored(word, 'red'))
+        if predicted_label != "no_relation":
+            print (" ".join(tokens))
         if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
             pred = 0
