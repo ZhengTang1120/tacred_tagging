@@ -71,7 +71,7 @@ for i, item in enumerate(output):
                 writer.writerow({'relation': predicted_label, 'text': text})
             else:
                 print (predicted_label, gold_label)
-                print ([words[im] for im in importance])
+                print ([words[im] for im in importance], tagged, importance)
                 print (text)
         if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
