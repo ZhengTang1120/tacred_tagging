@@ -9,6 +9,8 @@ parser.add_argument('--top', type=int, default=3)
 parser.add_argument('--origin', type=str, default='dataset/tacred/test.json')
 args = parser.parse_args()
 
+data_file = args.origin
+
 origin = json.load(open(data_file))
 
 output = json.load(open(args.data))
