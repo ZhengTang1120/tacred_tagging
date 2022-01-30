@@ -108,7 +108,7 @@ id2label = dict([(v,k) for k,v in label2id.items()])
 predictions = []
 for c, b in enumerate(batch):
     preds,_,_ = trainer.predict(b, id2label, tokenizer)
-    predictions += preds
+    predictions += preds,tolist()
     batch_size = len(preds)
 
 data = preprocess(data_file, tokenizer)
