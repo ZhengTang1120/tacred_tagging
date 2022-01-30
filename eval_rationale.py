@@ -30,7 +30,7 @@ args = parser.parse_args()
 data_file = args.origin
 
 origin = json.load(open(data_file))
-
+print (len(origin))
 output = json.load(open(args.data))
 tagging_scores = list()
 outcsv = open('tagging.csv', 'w', newline='')
