@@ -73,10 +73,10 @@ for i, item in enumerate(output):
             text = " ".join(tokens)
             if '<span style="color:red;">' in text:
                 writer.writerow({'relation': predicted_label, 'text': text})
-            else:
-                print (predicted_label, gold_label)
-                print ([words[im] for im in importance], tagged, importance)
-                print (text)
+        else:
+            print (predicted_label, gold_label)
+            print ([words[im] for im in importance], tagged, importance)
+            print (text)
         if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
             pred = 0
