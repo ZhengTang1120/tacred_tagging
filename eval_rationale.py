@@ -7,7 +7,7 @@ import csv
 
 from matplotlib.colors import LinearSegmentedColormap, rgb2hex
 
-colors = [(0, 1, 0), (1, 0, 0)] # first color is black, last is red
+colors = [(1, 1, 1), (1, 0, 0)] # first color is black, last is red
 cm = LinearSegmentedColormap.from_list("Custom", colors)
 
 def convert_token(token):
