@@ -4,6 +4,22 @@ import statistics
 import numpy as np
 from termcolor import colored
 
+def convert_token(token):
+    """ Convert PTB tokens to normal tokens """
+    if (token.lower() == '-lrb-'):
+            return '('
+    elif (token.lower() == '-rrb-'):
+        return ')'
+    elif (token.lower() == '-lsb-'):
+        return '['
+    elif (token.lower() == '-rsb-'):
+        return ']'
+    elif (token.lower() == '-lcb-'):
+        return '{'
+    elif (token.lower() == '-rcb-'):
+        return '}'
+    return token
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--data', type=str, default='output_lime_132_test_best_model_6.json')
 parser.add_argument('--top', type=int, default=3)
@@ -36,6 +52,7 @@ for i, item in enumerate(output):
             pass
         else:
             for w, word in enumerate(words):
+                word = convert_token(word)
                 if w>=ss and w<=se:
                     tokens.append(colored(word, 'blue'))
                 elif w>=os and w<=oe:
