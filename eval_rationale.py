@@ -33,9 +33,9 @@ origin = json.load(open(data_file))
 
 output = json.load(open(args.data))
 tagging_scores = list()
-with open('tagging.csv', 'w', newline='') as outcsv:
-    writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text"])
-    writer.writeheader()
+outcsv = open('tagging.csv', 'w', newline='')
+writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text"])
+writer.writeheader()
 for i, item in enumerate(output):
     gold_label = item['gold_label']
     predicted_label = item['predicted_label']
@@ -89,5 +89,5 @@ for i, item in enumerate(output):
             tagging_scores.append((r, p, f1))
 
 tr, tp, tf = zip(*tagging_scores)
-
+outcsv.close()
 print("rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
