@@ -108,7 +108,7 @@ id2label = dict([(v,k) for k,v in label2id.items()])
 predictions = []
 for c, b in enumerate(batch):
     preds,_,_ = trainer.predict(b, id2label, tokenizer)
-    predictions += preds,tolist()
+    predictions += preds.tolist()
     batch_size = len(preds)
 
 data = preprocess(data_file, tokenizer)
@@ -185,7 +185,7 @@ for c, d in enumerate(data):
 tr, tp, tf = zip(*tagging_scores)
 
 print("{} set rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
-with open("output_greedy_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
+with open("output_greedy2_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
     f.write(json.dumps(output))
 
 
