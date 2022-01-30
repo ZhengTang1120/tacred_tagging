@@ -3,6 +3,7 @@ import argparse
 import statistics
 import numpy as np
 from termcolor import colored
+import csv
 
 def convert_token(token):
     """ Convert PTB tokens to normal tokens """
@@ -32,6 +33,9 @@ origin = json.load(open(data_file))
 
 output = json.load(open(args.data))
 tagging_scores = list()
+with open('tagging.csv', 'w', newline='') as outcsv:
+    writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text"])
+    writer.writeheader()
 for i, item in enumerate(output):
     gold_label = item['gold_label']
     predicted_label = item['predicted_label']
@@ -54,15 +58,16 @@ for i, item in enumerate(output):
             for w, word in enumerate(words):
                 word = convert_token(word)
                 if w>=ss and w<=se:
-                    tokens.append(colored(word, 'blue'))
+                    tokens.append('<span style="color:blue;">%s</span>'%word)
                 elif w>=os and w<=oe:
-                    tokens.append(colored(word, 'yellow'))
+                    tokens.append('<span style="color:darkorange;">%s</span>'%word)
                 elif w in importance:
-                    tokens.append(colored(word, 'red'))
+                    tokens.append('<span style="color:red;">%s</span>'%word)
                 else:
                     tokens.append(word)
         if predicted_label != "no_relation":
             print (" ".join(tokens))
+            writer.writerows({'relation': predicted_label, 'text': " ".join(tokens)})
         if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
             pred = 0
