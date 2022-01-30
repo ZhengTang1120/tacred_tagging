@@ -122,6 +122,7 @@ for i, item in enumerate(output):
                 f1 = 0
             tagging_scores.append((r, p, f1))
 print (lower, upper)
+exit()
 tr, tp, tf = zip(*tagging_scores)
 outcsv.close()
 print("rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
