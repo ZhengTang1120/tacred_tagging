@@ -54,6 +54,7 @@ for i, item in enumerate(output):
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
         importance = item['predicted_tags']
+        print (importance)
         lower = min(lower, min(importance))
         upper = max(upper, max(importance))
         if "lime" in args.data:
