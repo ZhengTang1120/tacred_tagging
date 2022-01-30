@@ -54,7 +54,20 @@ for i, item in enumerate(output):
             importance = np.array(item['predicted_tags']).argsort()[-args.top:].tolist()
         tokens = list()
         if "greedy" not in args.data and "tagging" not in args.data:
-            pass
+            or w, word in enumerate(words):
+                word = convert_token(word)
+                if w>=ss and w<=se:
+                    tokens.append('<span style="color:blue;">%s</span>'%word)
+                    # if w in importance:
+                    #     tokens.append('<span style="color:blue; border: 2px solid red;">%s</span>'%word)
+                elif w>=os and w<=oe:
+                    tokens.append('<span style="color:darkorange;">%s</span>'%word)
+                    # if w in importance:
+                    #     tokens.append('<span style="color:darkorange; border: 2px solid red;">%s</span>'%word)
+                elif w in importance:
+                    tokens.append('<span style="color:red;">%s</span>'%word)
+                else:
+                    tokens.append(word)
         else:
             for w, word in enumerate(words):
                 word = convert_token(word)
