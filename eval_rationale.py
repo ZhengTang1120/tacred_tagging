@@ -61,40 +61,40 @@ for i, item in enumerate(output):
         elif "greedy" not in args.data and "tagging" not in args.data:
             importance = np.array(item['predicted_tags']).argsort()[-args.top:].tolist()
         tokens = list()
-        if "greedy" not in args.data and "tagging" not in args.data:
-            for w, word in enumerate(words):
-                word = convert_token(word)
-                if w>=ss and w<=se:
-                    tokens.append('<span style="color:blue;">%s</span>'%word)
-                    # if w in importance:
-                    #     tokens.append('<span style="color:blue; border: 2px solid red;">%s</span>'%word)
-                elif w>=os and w<=oe:
-                    tokens.append('<span style="color:darkorange;">%s</span>'%word)
-                    # if w in importance:
-                    #     tokens.append('<span style="color:darkorange; border: 2px solid red;">%s</span>'%word)
-                # elif w in importance:
-                #     tokens.append('<span style="color:red;">%s</span>'%word)
-                else:
-                    col = rgb2hex(cm((item['predicted_tags'][w]-lower)/(upper-lower)))
-                    tokens.append(t)
-        else:
-            for w, word in enumerate(words):
-                word = convert_token(word)
-                if w>=ss and w<=se:
-                    tokens.append('<span style="color:blue;">%s</span>'%word)
-                    # if w in importance:
-                    #     tokens.append('<span style="color:blue; border: 2px solid red;">%s</span>'%word)
-                elif w>=os and w<=oe:
-                    tokens.append('<span style="color:darkorange;">%s</span>'%word)
-                    # if w in importance:
-                    #     tokens.append('<span style="color:darkorange; border: 2px solid red;">%s</span>'%word)
-                elif w in importance:
-                    tokens.append('<span style="color:red;">%s</span>'%word)
-                else:
-                    tokens.append(word)
+        # if "greedy" not in args.data and "tagging" not in args.data:
+        #     for w, word in enumerate(words):
+        #         word = convert_token(word)
+        #         if w>=ss and w<=se:
+        #             tokens.append('<span style="color:blue;">%s</span>'%word)
+        #             # if w in importance:
+        #             #     tokens.append('<span style="color:blue; border: 2px solid red;">%s</span>'%word)
+        #         elif w>=os and w<=oe:
+        #             tokens.append('<span style="color:darkorange;">%s</span>'%word)
+        #             # if w in importance:
+        #             #     tokens.append('<span style="color:darkorange; border: 2px solid red;">%s</span>'%word)
+        #         # elif w in importance:
+        #         #     tokens.append('<span style="color:red;">%s</span>'%word)
+        #         else:
+        #             col = rgb2hex(cm((item['predicted_tags'][w]-lower)/(upper-lower)))
+        #             tokens.append(t)
+        # else:
+        for w, word in enumerate(words):
+            word = convert_token(word)
+            if w>=ss and w<=se:
+                tokens.append('<span style="color:blue;">%s</span>'%word)
+                # if w in importance:
+                #     tokens.append('<span style="color:blue; border: 2px solid red;">%s</span>'%word)
+            elif w>=os and w<=oe:
+                tokens.append('<span style="color:darkorange;">%s</span>'%word)
+                # if w in importance:
+                #     tokens.append('<span style="color:darkorange; border: 2px solid red;">%s</span>'%word)
+            elif w in importance:
+                tokens.append('<span style="color:red;">%s</span>'%word)
+            else:
+                tokens.append(word)
         if len(importance) > 0 and len(tagged) == 0:
             text = " ".join(tokens)
-            if '<span style="color:red;">' in text or ("greedy" not in args.data and "tagging" not in args.data):
+            if '<span style="color:red;">' in text:
                 writer.writerow({'relation': predicted_label, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type']})
             else:
                 print (predicted_label, gold_label)
