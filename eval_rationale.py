@@ -40,7 +40,7 @@ origin = json.load(open(data_file))
 output = json.load(open(args.data))
 tagging_scores = list()
 outcsv = open(args.out, 'w', newline='')
-writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text"])
+writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type"])
 writer.writeheader()
 
 for i, item in enumerate(output):
@@ -76,7 +76,7 @@ for i, item in enumerate(output):
                 #     tokens.append('<span style="color:red;">%s</span>'%word)
                 else:
                     col = rgb2hex(cm((item['predicted_tags'][w]-lower)/(upper-lower)))
-                    tokens.append('<span style="color:%s;">%s</span>'%(col, word))
+                    tokens.append(t)
         else:
             for w, word in enumerate(words):
                 word = convert_token(word)
@@ -95,7 +95,7 @@ for i, item in enumerate(output):
         if len(importance) > 0 and len(tagged) == 0:
             text = " ".join(tokens)
             if '<span style="color:red;">' in text or ("greedy" not in args.data and "tagging" not in args.data):
-                writer.writerow({'relation': predicted_label, 'text': text})
+                writer.writerow({'relation': predicted_label, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type']})
             else:
                 print (predicted_label, gold_label)
                 print ([words[im] for im in importance], tagged, importance)
