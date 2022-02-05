@@ -98,7 +98,7 @@ for i, item in enumerate(output):
         if len(importance) > 0 and len(tagged) == 0:
             text = " ".join(tokens)
             if '<span style="color:red;">' in text:
-                writer.writerow({'relation': predicted_label, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type', 'subj':" ".join(subj), 'obj':" ".join(obj)]})
+                writer.writerow({'relation': predicted_label, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj)})
             else:
                 print (predicted_label, gold_label)
                 print ([words[im] for im in importance], tagged, importance)
