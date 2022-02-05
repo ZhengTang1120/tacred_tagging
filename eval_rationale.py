@@ -40,7 +40,7 @@ origin = json.load(open(data_file))
 output = json.load(open(args.data))
 tagging_scores = list()
 outcsv = open(args.out, 'w', newline='')
-writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type"])
+writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj"])
 writer.writeheader()
 
 for i, item in enumerate(output):
@@ -49,7 +49,8 @@ for i, item in enumerate(output):
     words = origin[i]['token']
     ss, se = origin[i]['subj_start'], origin[i]['subj_end']
     os, oe = origin[i]['obj_start'], origin[i]['obj_end']
-
+    subj = []
+    obj = []
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
         importance = item['predicted_tags']
@@ -82,10 +83,12 @@ for i, item in enumerate(output):
             word = convert_token(word)
             if w>=ss and w<=se:
                 tokens.append('<span style="color:blue;">%s</span>'%word)
+                subj.append(word)
                 # if w in importance:
                 #     tokens.append('<span style="color:blue; border: 2px solid red;">%s</span>'%word)
             elif w>=os and w<=oe:
                 tokens.append('<span style="color:darkorange;">%s</span>'%word)
+                obj.append(word)
                 # if w in importance:
                 #     tokens.append('<span style="color:darkorange; border: 2px solid red;">%s</span>'%word)
             elif w in importance:
@@ -95,7 +98,7 @@ for i, item in enumerate(output):
         if len(importance) > 0 and len(tagged) == 0:
             text = " ".join(tokens)
             if '<span style="color:red;">' in text:
-                writer.writerow({'relation': predicted_label, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type']})
+                writer.writerow({'relation': predicted_label, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type', 'subj':" ".join(subj), 'obj':" ".join(obj)]})
             else:
                 print (predicted_label, gold_label)
                 print ([words[im] for im in importance], tagged, importance)
