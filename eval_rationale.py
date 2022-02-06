@@ -8,12 +8,14 @@ import csv
 from matplotlib.colors import LinearSegmentedColormap, rgb2hex
 
 def template(predicted_label, subj_type, obj_type, subj, obj):
+    subj = " ".join(subj)
+    obl = " ".join(obj)
     if predicted_label == "per:title":
         return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the title of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "org:top_members/employees":
         return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the top member/employee of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "per:employee_of":
-        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the employee of <span style="color:blue;">{subj_type}({subj})</span>.'
+        return f'<span style="color:blue;">{subj_type}({subj})</span> is the employee of <span style="color:darkorange;">{obj_type}({obj})</span>.'
     if predicted_label == "org:alternate_names":
         return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the alternate name of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "org:country_of_headquarters":
