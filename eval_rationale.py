@@ -9,87 +9,87 @@ from matplotlib.colors import LinearSegmentedColormap, rgb2hex
 
 def template(predicted_label, subj_type, obj_type, subj, obj):
     if predicted_label == "per:title":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the title of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the title of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "org:top_members/employees":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the top member/employee of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the top member/employee of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "per:employee_of":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the employee of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the employee of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "org:alternate_names":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the alternate name of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the alternate name of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "org:country_of_headquarters":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the country of <span style="color:blue;">${subj_type}(${subj})</span>\'s headquarter.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the country of <span style="color:blue;">{subj_type}({subj})</span>\'s headquarter.'
     if predicted_label == "per:countries_of_residence":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the country of <span style="color:blue;">${subj_type}(${subj})</span>\'s residence.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the country of <span style="color:blue;">{subj_type}({subj})</span>\'s residence.'
     if predicted_label == "org:city_of_headquarters":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the city of <span style="color:blue;">${subj_type}(${subj})</span>\'s headquarter.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the city of <span style="color:blue;">{subj_type}({subj})</span>\'s headquarter.'
     if predicted_label == "per:cities_of_residence":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the city of <span style="color:blue;">${subj_type}(${subj})</span>\'s residence.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the city of <span style="color:blue;">{subj_type}({subj})</span>\'s residence.'
     if predicted_label == "per:age":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the age of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the age of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "per:stateorprovinces_of_residence":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the state or province of <span style="color:blue;">${subj_type}(${subj})</span>\'s residence.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the state or province of <span style="color:blue;">{subj_type}({subj})</span>\'s residence.'
     if predicted_label == "per:origin":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the origin of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the origin of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "org:subsidiaries":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the subsidiary of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the subsidiary of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "org:parents":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the parent of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the parent of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "per:spouse":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the spouse of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the spouse of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "org:stateorprovince_of_headquarters":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the state or province of <span style="color:blue;">${subj_type}(${subj})</span>\'s headquarter.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the state or province of <span style="color:blue;">{subj_type}({subj})</span>\'s headquarter.'
     if predicted_label == "per:children":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the child of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the child of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "per:other_family":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the family member of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the family member of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "per:alternate_names":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the alternate name of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the alternate name of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "org:members":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the member of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the member of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "per:siblings":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the sibling of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the sibling of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "per:schools_attended":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the school <span style="color:blue;">${subj_type}(${subj})</span> attended.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the school <span style="color:blue;">{subj_type}({subj})</span> attended.'
     if predicted_label == "per:parents":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the parent of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the parent of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "per:date_of_death":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the date of <span style="color:blue;">${subj_type}(${subj})</span>\'s death.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the date of <span style="color:blue;">{subj_type}({subj})</span>\'s death.'
     if predicted_label == "org:member_of":
-        return '<span style="color:blue;">${subj_type}(${subj})</span> is the member of <span style="color:darkorange;">${obj_type}(${obj})</span>.'
+        return f'<span style="color:blue;">{subj_type}({subj})</span> is the member of <span style="color:darkorange;">{obj_type}({obj})</span>.'
     if predicted_label == "org:founded_by":
-        return '<span style="color:blue;">${subj_type}(${subj})</span> is founded by <span style="color:darkorange;">${obj_type}(${obj})</span>.'
+        return f'<span style="color:blue;">{subj_type}({subj})</span> is founded by <span style="color:darkorange;">{obj_type}({obj})</span>.'
     if predicted_label == "org:website":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the website of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the website of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "per:cause_of_death":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the cause of <span style="color:blue;">${subj_type}(${subj})</span>\'s death.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the cause of <span style="color:blue;">{subj_type}({subj})</span>\'s death.'
     if predicted_label == "org:political/religious_affiliation":
-        return '<span style="color:blue;">${subj_type}(${subj})</span> is a <span style="color:darkorange;">${obj_type}(${obj})</span> affiliation.'
+        return f'<span style="color:blue;">{subj_type}({subj})</span> is a <span style="color:darkorange;">{obj_type}({obj})</span> affiliation.'
     if predicted_label == "org:founded":
-        return '<span style="color:blue;">${subj_type}(${subj})</span> is founded in <span style="color:darkorange;">${obj_type}(${obj})</span>.'
+        return f'<span style="color:blue;">{subj_type}({subj})</span> is founded in <span style="color:darkorange;">{obj_type}({obj})</span>.'
     if predicted_label == "per:city_of_death":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the city of <span style="color:blue;">${subj_type}(${subj})</span>\'s death.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the city of <span style="color:blue;">{subj_type}({subj})</span>\'s death.'
     if predicted_label == "org:shareholders":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the shareholder of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the shareholder of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "org:number_of_employees/members":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the number of employees/members <span style="color:blue;">${subj_type}(${subj})</span> has.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the number of employees/members <span style="color:blue;">{subj_type}({subj})</span> has.'
     if predicted_label == "per:date_of_birth":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the date of <span style="color:blue;">${subj_type}(${subj})</span>\'s birth.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the date of <span style="color:blue;">{subj_type}({subj})</span>\'s birth.'
     if predicted_label == "per:city_of_birth":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the city of <span style="color:blue;">${subj_type}(${subj})</span>\'s birth.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the city of <span style="color:blue;">{subj_type}({subj})</span>\'s birth.'
     if predicted_label == "per:charges":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the charge of <span style="color:blue;">${subj_type}(${subj})</span>.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the charge of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "per:stateorprovince_of_death":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the state or province of <span style="color:blue;">${subj_type}(${subj})</span>\'s death.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the state or province of <span style="color:blue;">{subj_type}({subj})</span>\'s death.'
     if predicted_label == "per:religion":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the <span style="color:blue;">${subj_type}(${subj})</span>\'s religion.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the <span style="color:blue;">{subj_type}({subj})</span>\'s religion.'
     if predicted_label == "per:stateorprovince_of_birth":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the state or province of <span style="color:blue;">${subj_type}(${subj})</span>\'s birth.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the state or province of <span style="color:blue;">{subj_type}({subj})</span>\'s birth.'
     if predicted_label == "per:country_of_birth":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the country of <span style="color:blue;">${subj_type}(${subj})</span>\'s birth.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the country of <span style="color:blue;">{subj_type}({subj})</span>\'s birth.'
     if predicted_label == "org:dissolved":
-        return '<span style="color:blue;">${subj_type}(${subj})</span> is dissolved in <span style="color:darkorange;">${obj_type}(${obj})</span>.'
+        return f'<span style="color:blue;">{subj_type}({subj})</span> is dissolved in <span style="color:darkorange;">{obj_type}({obj})</span>.'
     if predicted_label == "per:country_of_death":
-        return '<span style="color:darkorange;">${obj_type}(${obj})</span> is the country of <span style="color:blue;">${subj_type}(${subj})</span>\'s death.'
+        return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the country of <span style="color:blue;">{subj_type}({subj})</span>\'s death.'
 
 
 colors = [(0, 0, 0), (1, 0, 0)] # first color is black, last is red
@@ -98,17 +98,17 @@ cm = LinearSegmentedColormap.from_list("Custom", colors)
 def convert_token(token):
     """ Convert PTB tokens to normal tokens """
     if (token.lower() == '-lrb-'):
-            return '('
+            return f'('
     elif (token.lower() == '-rrb-'):
-        return ')'
+        return f')'
     elif (token.lower() == '-lsb-'):
-        return '['
+        return f'['
     elif (token.lower() == '-rsb-'):
-        return ']'
+        return f']'
     elif (token.lower() == '-lcb-'):
-        return '{'
+        return f'{'
     elif (token.lower() == '-rcb-'):
-        return '}'
+        return f'}'
     return token
 
 parser = argparse.ArgumentParser()
