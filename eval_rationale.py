@@ -9,7 +9,7 @@ from matplotlib.colors import LinearSegmentedColormap, rgb2hex
 
 def template(predicted_label, subj_type, obj_type, subj, obj):
     subj = " ".join(subj)
-    obl = " ".join(obj)
+    obj = " ".join(obj)
     if predicted_label == "per:title":
         return f'<span style="color:darkorange;">{obj_type}({obj})</span> is the title of <span style="color:blue;">{subj_type}({subj})</span>.'
     if predicted_label == "org:top_members/employees":
