@@ -98,17 +98,17 @@ cm = LinearSegmentedColormap.from_list("Custom", colors)
 def convert_token(token):
     """ Convert PTB tokens to normal tokens """
     if (token.lower() == '-lrb-'):
-            return f'('
+            return '('
     elif (token.lower() == '-rrb-'):
-        return f')'
+        return ')'
     elif (token.lower() == '-lsb-'):
-        return f'['
+        return '['
     elif (token.lower() == '-rsb-'):
-        return f']'
+        return ']'
     elif (token.lower() == '-lcb-'):
-        return f'{'
+        return '{'
     elif (token.lower() == '-rcb-'):
-        return f'}'
+        return '}'
     return token
 
 parser = argparse.ArgumentParser()
