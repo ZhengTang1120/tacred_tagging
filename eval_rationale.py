@@ -130,7 +130,7 @@ outcsv = open(args.out, 'w', newline='')
 writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold"])
 writer.writeheader()
 outcsv2 = open(args.out.replace(".csv","_negatives.csv") , 'w', newline='')
-writer2 = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold"])
+writer2 = csv.DictWriter(outcsv2, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold"])
 writer2.writeheader()
 
 for i, item in enumerate(output):
