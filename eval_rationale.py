@@ -127,7 +127,7 @@ origin = json.load(open(data_file))
 output = json.load(open(args.data))
 tagging_scores = list()
 outcsv = open(args.out, 'w', newline='')
-writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj"])
+writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold"])
 writer.writeheader()
 
 for i, item in enumerate(output):
@@ -186,7 +186,8 @@ for i, item in enumerate(output):
             text = " ".join(tokens)
             if '<span style="color:red;">' in text:
                 relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
-                writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj)})
+                gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
+                writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
             else:
                 print (predicted_label, gold_label)
                 print ([words[im] for im in importance], tagged, importance)
