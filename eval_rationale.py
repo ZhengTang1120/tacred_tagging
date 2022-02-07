@@ -129,6 +129,9 @@ tagging_scores = list()
 outcsv = open(args.out, 'w', newline='')
 writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold"])
 writer.writeheader()
+outcsv2 = open(args.out.replace(".csv","_negatives.csv") , 'w', newline='')
+writer2 = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold"])
+writer2.writeheader()
 
 for i, item in enumerate(output):
     gold_label = item['gold_label']
@@ -141,8 +144,6 @@ for i, item in enumerate(output):
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
         importance = item['predicted_tags']
-        lower = min(importance)
-        upper = max(importance)
         if "lime" in args.data:
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
             importance = [j for j, w in enumerate(words) if w in top]
@@ -187,7 +188,10 @@ for i, item in enumerate(output):
             if '<span style="color:red;">' in text:
                 relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
                 gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
-                writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
+                if gold_label != predicted_label:
+                    writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
+                else:
+                    writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
             else:
                 print (predicted_label, gold_label)
                 print ([words[im] for im in importance], tagged, importance)
@@ -211,8 +215,9 @@ for i, item in enumerate(output):
             except ZeroDivisionError:
                 f1 = 0
             tagging_scores.append((r, p, f1))
-print (lower, upper)
+outcsv.close()
+outcsv2.close()
 exit()
 tr, tp, tf = zip(*tagging_scores)
-outcsv.close()
+
 print("rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
