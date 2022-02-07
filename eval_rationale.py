@@ -189,6 +189,7 @@ for i, item in enumerate(output):
                 relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
                 gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
                 if gold_label != predicted_label:
+                    print (gold_label, gold)
                     writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
                 else:
                     writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
