@@ -128,12 +128,12 @@ origin = json.load(open(data_file))
 
 output = json.load(open(args.data))
 tagging_scores = list()
-# outcsv = open(args.out, 'w', newline='')
-# writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold"])
-# writer.writeheader()
-# outcsv2 = open(args.out.replace(".csv","_negatives.csv") , 'w', newline='')
-# writer2 = csv.DictWriter(outcsv2, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold"])
-# writer2.writeheader()
+outcsv = open(args.out, 'w', newline='')
+writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold"])
+writer.writeheader()
+outcsv2 = open(args.out.replace(".csv","_negatives.csv") , 'w', newline='')
+writer2 = csv.DictWriter(outcsv2, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold"])
+writer2.writeheader()
 
 for i, item in enumerate(output):
     gold_label = item['gold_label']
@@ -145,8 +145,6 @@ for i, item in enumerate(output):
     obj = []
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
-        if len(tagged)!= 0:
-            args.top = len(tagged)
         importance = item['predicted_tags']
         if "lime" in args.data:
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
@@ -189,18 +187,18 @@ for i, item in enumerate(output):
                 tokens.append(word)
         if len(importance) > 0 and len(tagged) == 0:
             text = " ".join(tokens)
-            # if '<span style="color:red;">' in text:
-            #     relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
-            #     gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
-            #     if gold_label != predicted_label:
-            #         print (gold_label, gold)
-            #         writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
-            #     else:
-            #         writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
-            # else:
-            #     print (predicted_label, gold_label)
-            #     print ([words[im] for im in importance], tagged, importance)
-            #     print (text)
+            if '<span style="color:red;">' in text:
+                relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
+                gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
+                if gold_label != predicted_label:
+                    print (gold_label, gold)
+                    writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
+                else:
+                    writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
+            else:
+                print (predicted_label, gold_label)
+                print ([words[im] for im in importance], tagged, importance)
+                print (text)
         if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
             pred = 0
@@ -220,8 +218,8 @@ for i, item in enumerate(output):
             except ZeroDivisionError:
                 f1 = 0
             tagging_scores.append((r, p, f1))
-# outcsv.close()
-# outcsv2.close()
+outcsv.close()
+outcsv2.close()
 
 tr, tp, tf = zip(*tagging_scores)
 
