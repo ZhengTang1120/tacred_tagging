@@ -145,6 +145,8 @@ for i, item in enumerate(output):
     obj = []
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
+        if len(tagged)!= 0:
+            args.top = len(tagged)
         importance = item['predicted_tags']
         if "lime" in args.data:
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
@@ -220,7 +222,7 @@ for i, item in enumerate(output):
             tagging_scores.append((r, p, f1))
 outcsv.close()
 outcsv2.close()
-exit()
+
 tr, tp, tf = zip(*tagging_scores)
 
 print("rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
