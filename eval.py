@@ -88,9 +88,14 @@ pred_output = open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.
 for i, p in enumerate(predictions):
     _, tagged = tagging[i].split('\t')
     tagged = eval(tagged)
+    
     predictions[i] = id2label[p]
     pred_output.write(id2label[p]+'\n')
     output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'predicted_tags':[], 'gold_tags':[]})
+
+    if i in [12462, 9379, 11720, 11179, 12158]:
+        print (id2label[p], batch.gold()[i], tagged, [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])])
+
     if p!=0:
         output[-1]["predicted_tags"] = [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])]
         if len(tagged)>0:
