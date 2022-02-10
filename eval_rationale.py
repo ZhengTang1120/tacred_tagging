@@ -149,7 +149,7 @@ for i, item in enumerate(output):
         importance = item['predicted_tags']
         if i in [2256, 11221, 8480, 6270, 6008]:
             print (predicted_label, gold_label, tagged, importance)
-        if i in [12462, 9379, 11720, 11179, 12158]:
+        if i in [3323, 9868, 3323, 8105, 6721]:
             print (predicted_label, gold_label, tagged, importance)
         if "lime" in args.data:
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
