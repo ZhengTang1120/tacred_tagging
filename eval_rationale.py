@@ -185,7 +185,7 @@ for i, item in enumerate(output):
                 tokens.append('<span style="color:red;">%s</span>'%word)
             else:
                 tokens.append(word)
-        if len(importance) > 0 and len(tagged) == 0:
+        if len(importance) > 0:
             text = " ".join(tokens)
             if '<span style="color:red;">' in text:
                 relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
