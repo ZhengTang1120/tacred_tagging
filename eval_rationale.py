@@ -195,7 +195,7 @@ for i, item in enumerate(output):
             if '<span style="color:red;">' in text:
                 relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
                 gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
-                if i in [12462, 9379, 11720, 11179, 12158]:
+                if i in [3323, 9868, 3323, 8105, 6721]:
                     writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
                 elif i in [2256, 11221, 8480, 6270, 6008]:
                     writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
