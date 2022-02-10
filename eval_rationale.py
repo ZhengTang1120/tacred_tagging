@@ -143,9 +143,12 @@ for i, item in enumerate(output):
     os, oe = origin[i]['obj_start'], origin[i]['obj_end']
     subj = []
     obj = []
+
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
         importance = item['predicted_tags']
+        if i in [2256, 11221, 8480, 6270, 6008]:
+            print (predicted_label, gold_label, tagged, importance)
         if "lime" in args.data:
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
             importance = [j for j, w in enumerate(words) if w in top]
