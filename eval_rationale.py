@@ -149,6 +149,8 @@ for i, item in enumerate(output):
         importance = item['predicted_tags']
         if i in [2256, 11221, 8480, 6270, 6008]:
             print (predicted_label, gold_label, tagged, importance)
+        if i in [12462, 9379, 11720, 11179, 12158]:
+            print (predicted_label, gold_label, tagged, importance)
         if "lime" in args.data:
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
             importance = [j for j, w in enumerate(words) if w in top]
@@ -193,11 +195,9 @@ for i, item in enumerate(output):
             if '<span style="color:red;">' in text:
                 relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
                 gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
-                if i in [2256, 11221, 8480, 6270, 6008]:
-                    print (gold_label, gold)
+                if i in [12462, 9379, 11720, 11179, 12158]:
                     writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
                 elif i in [2256, 11221, 8480, 6270, 6008]:
-                    print (gold_label, gold)
                     writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
             # else:
             #     print (predicted_label, gold_label)
