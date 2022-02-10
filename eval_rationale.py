@@ -190,15 +190,16 @@ for i, item in enumerate(output):
             if '<span style="color:red;">' in text:
                 relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
                 gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
-                if i in [125, 11046, 7370, 9045, 1127]:#[4098, 14252, 12860, 8586, 13426, 14217, 7733, 11037, 11990, 5802, 7185, 6052, 12157, 4596, 995, 13026, 5173, 7541, 2627, 7616, 473, 15189, 1051, 12347, 4181, 2055, 5063, 6996, 7188, 3803, 6661, 1654, 1397, 970, 9197, 1798, 13920, 15225, 300, 9388, 10960, 10359, 3209, 4222, 110, 12268, 10860, 3849, 1167, 2770]
+                if i in [2256, 11221, 8480, 6270, 6008]:
                     print (gold_label, gold)
                     writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
-                elif i in [12896, 4854, 11349, 8330, 2407]:#[1639, 5567, 13884, 9324, 1359, 1639, 8253, 6268, 11800, 15134, 1282, 9407, 12462, 5986, 15334, 7665, 3599, 15400, 13009, 11846, 7626, 12402, 14435, 2806, 14656, 12402, 607, 8216, 8713, 6988, 14809, 5654, 11965, 8119, 5108, 4864, 12980, 7516, 9605, 4265, 5766, 9610, 13009, 6295, 3259, 11586, 8525, 13523, 14909, 4999]
+                elif i in [2256, 11221, 8480, 6270, 6008]:
+                    print (gold_label, gold)
                     writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
-            else:
-                print (predicted_label, gold_label)
-                print ([words[im] for im in importance], tagged, importance)
-                print (text)
+            # else:
+            #     print (predicted_label, gold_label)
+            #     print ([words[im] for im in importance], tagged, importance)
+            #     print (text)
         if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
             pred = 0
