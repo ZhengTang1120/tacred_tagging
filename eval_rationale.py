@@ -147,10 +147,6 @@ for i, item in enumerate(output):
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
         importance = item['predicted_tags']
-        if i in [2256, 11221, 8480, 6270, 6008]:
-            print (predicted_label, gold_label, tagged, importance)
-        if i in [3323, 9868, 3323, 8105, 6721]:
-            print (predicted_label, gold_label, tagged, importance)
         if "lime" in args.data:
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
             importance = [j for j, w in enumerate(words) if w in top]
@@ -195,9 +191,9 @@ for i, item in enumerate(output):
             if '<span style="color:red;">' in text:
                 relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
                 gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
-                if i in [3323, 9868, 3323, 8105, 6721]:
+                if i in [14012, 8147, 9868, 12462, 10584, 3713, 14702, 11118, 3323, 12276, 12276, 5305, 9025, 12382, 11006, 1282, 4872, 441, 7574, 5305, 3323, 11179, 15355, 3713, 11179, 8105, 9025, 13327, 7501, 2402, 1770, 7912, 11006, 3096, 9109, 1579, 11118, 1282, 11439, 7169, 10584, 13327, 14958, 7912, 3905, 7273, 9379, 7574, 3905, 15377]:
                     writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
-                elif i in [2256, 11221, 8480, 6270, 6008]:
+                elif i in [13062, 15369, 12033, 6018, 7352, 1798, 5733, 867, 10215, 4307, 379, 13219, 9325, 120, 3672, 7577, 13874, 1960, 7526, 8405, 6789, 7317, 7585, 2287, 4663, 4307, 6122, 7397, 5822, 5044, 7134, 10342, 12933, 4740, 6074, 7008, 11958, 1499, 6929, 1319, 10984, 2034, 491, 13171, 867, 129, 3130, 379, 3675, 4714]:
                     writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
             # else:
             #     print (predicted_label, gold_label)
