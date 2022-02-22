@@ -224,4 +224,4 @@ outcsv2.close()
 
 tr, tp, tf = zip(*tagging_scores)
 
-print("rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
+print("rationale result: {:.4f}\t{:.4f}\t{:.4f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
