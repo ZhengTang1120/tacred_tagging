@@ -23,7 +23,7 @@ parser.set_defaults(lower=False)
 
 parser.add_argument('--lr', type=float, default=1.0, help='Applies to sgd and adagrad.')
 parser.add_argument('--num_epoch', type=int, default=100, help='Number of total training epochs.')
-parser.add_argument('--batch_size', type=int, default=16, help='Training batch size.')
+parser.add_argument('--batch_size', type=int, default=50, help='Training batch size.')
 parser.add_argument('--log_step', type=int, default=20, help='Print log every k steps.')
 parser.add_argument('--log', type=str, default='logs.txt', help='Write training log to file.')
 parser.add_argument('--save_dir', type=str, default='./saved_models', help='Root dir for saving models.')
