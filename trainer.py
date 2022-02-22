@@ -136,8 +136,10 @@ class BERTtrainer(Trainer):
         with torch.no_grad():
             h, b_out = self.encoder(inputs)
             tagging_output = self.tagger(h)
+            words = inputs[0]
+            ent_mask = torch.logical_and(words.unsqueeze(2).ge(0), words.unsqueeze(2).lt(9))
             tagging_mask = torch.round(tagging_output).squeeze(2).eq(0)
-            tagging_max = np.argmax(tagging_output.squeeze(2).data.cpu().numpy(), axis=1)
+            tagging_max = np.argmax(tagging_output.masked_fill(ent_mask, -constant.INFINITY_NUMBER).squeeze(2).data.cpu().numpy(), axis=1)
             tagging = torch.round(tagging_output).squeeze(2)
             logits = self.classifier(h, inputs[0], tagging_mask)
             probs = F.softmax(logits, 1) * torch.round(b_out)
