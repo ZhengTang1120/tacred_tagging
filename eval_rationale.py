@@ -75,7 +75,7 @@ for i, item in enumerate(output):
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
         importance = item['predicted_tags']
-        # args.top = len(tagged) if len(tagged) != 0 else args.top
+        args.top = len(tagged) if len(tagged) != 0 else args.top
         if "lime" in args.data:
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
             importance = [j for j, w in enumerate(words) if w in top]
