@@ -102,6 +102,7 @@ for i, p in enumerate(predictions):
         print (tags[i].index(1))
         print (batch.words[i])
         print (id2label[p], batch.gold()[i], tagged, [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])])
+        print ()
 
     if p!=0:
         output[-1]["predicted_tags"] = [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])]
@@ -116,8 +117,8 @@ for i, p in enumerate(predictions):
                         correct += 1
             if pred > 0:
                 r = correct / pred
-            else:
-                print (tags[i])
+            # else:
+            #     print (tags[i])
                 r = 0
             if len(tagged) > 0:
                 p = correct / len(tagged)
