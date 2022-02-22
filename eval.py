@@ -91,6 +91,11 @@ for i, p in enumerate(predictions):
     predictions[i] = id2label[p]
     pred_output.write(id2label[p]+'\n')
     output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'predicted_tags':[], 'gold_tags':[]})
+    if i in [1442, 1722, 2111, 2409]:
+        print (tags[i].index(1))
+        print (batch.words[i])
+        print (id2label[p], batch.gold()[i], tagged, [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])])
+
     if p!=0:
         output[-1]["predicted_tags"] = [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])]
         if len(tagged)>0:
