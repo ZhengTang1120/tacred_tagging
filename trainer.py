@@ -157,5 +157,5 @@ class BERTtrainer(Trainer):
                 tags += [t]
             else:
                 tags += [[]]
-        return predictions, tags, loss, tagging_max.data.cpu().numpy().tolist(), words.data.cpu().numpy().tolist()
+        return predictions, tags, loss, tagging_max, words.data.cpu().numpy().tolist()
 
