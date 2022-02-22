@@ -57,10 +57,10 @@ origin = json.load(open(data_file))
 output = json.load(open(args.data))
 tagging_scores = list()
 outcsv = open(args.out, 'w', newline='')
-writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold"])
+writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold", "source"])
 writer.writeheader()
 outcsv2 = open(args.out.replace(".csv","_negatives.csv") , 'w', newline='')
-writer2 = csv.DictWriter(outcsv2, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold"])
+writer2 = csv.DictWriter(outcsv2, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold", "source"])
 writer2.writeheader()
 
 for i, item in enumerate(output):
@@ -121,9 +121,9 @@ for i, item in enumerate(output):
         relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
         gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
         if i in [587, 1679, 1291, 2178, 420, 2253, 1837, 3063, 311, 1435, 890, 40, 620, 2366, 2566, 1114, 3585, 3224, 2180, 39, 2708, 3038, 947, 3661, 542, 1122, 2373, 2686, 1690, 434]:
-            writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
+            writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold, "source":args.data})
         elif i in [2772, 792, 2111, 3396, 2029, 865, 1236, 3498, 2897, 425, 1882, 1598, 3707, 579, 16, 3215, 1876, 3616, 813, 2691, 1226, 3761, 388, 2391, 1734, 1640, 2011, 600, 3318, 2379]:
-            writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
+            writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold, "source":args.data})
 
         if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
