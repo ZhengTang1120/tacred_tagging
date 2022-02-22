@@ -85,7 +85,7 @@ for c, b in enumerate(batch):
     tags += t
     words += w
     tagging_max += tm
-    taggingscores + ts
+    taggingscores += ts
     batch_size = len(preds)
 output = list()
 tagging_scores = []
