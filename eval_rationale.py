@@ -120,9 +120,9 @@ for i, item in enumerate(output):
             # if '<span style="color:red;">' in text:
         relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
         gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
-        if i in [313, 116, 2323, 3371, 1368, 819, 3816, 3492, 3616, 3109, 2316, 139, 2493, 813, 3212, 2447, 750, 955, 1261, 1124, 1868, 1333, 3328, 2029, 1515, 1167, 3120, 1273, 3059, 300, 2995, 283, 3024, 792, 2169, 1667, 3435, 3396, 2809, 2535, 622, 517, 3008, 1563, 510, 865, 862, 332, 3102, 1825]:
+        if i in [587, 1679, 1291, 2178, 420, 2253, 1837, 3063, 311, 1435, 890, 40, 620, 2366, 2566, 1114, 3585, 3224, 2180, 39, 2708, 3038, 947, 3661, 542, 1122, 2373, 2686, 1690, 434]:
             writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
-        elif i in [313, 116, 2323, 3371, 1368, 819, 3816, 3492, 3616, 3109, 2316, 139, 2493, 813, 3212, 2447, 750, 955, 1261, 1124, 1868, 1333, 3328, 2029, 1515, 1167, 3120, 1273, 3059, 300, 2995, 283, 3024, 792, 2169, 1667, 3435, 3396, 2809, 2535, 622, 517, 3008, 1563, 510, 865, 862, 332, 3102, 1825]:
+        elif i in [2772, 792, 2111, 3396, 2029, 865, 1236, 3498, 2897, 425, 1882, 1598, 3707, 579, 16, 3215, 1876, 3616, 813, 2691, 1226, 3761, 388, 2391, 1734, 1640, 2011, 600, 3318, 2379]:
             writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
 
         if len(tagged)>0 and gold_label == predicted_label:
