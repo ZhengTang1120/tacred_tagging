@@ -194,7 +194,7 @@ for i, item in enumerate(output):
         gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
         if i in [13306, 11468, 1248, 2472, 5474, 11630, 2730, 8528, 11586, 13524, 740, 11129, 14152, 600, 15471, 6303, 13781, 8525, 11724, 9324, 7783, 10447, 3059, 5597, 1813, 15425, 1171, 1215, 3030, 13261, 3118, 1409, 14968, 3773, 5334, 13106, 2742, 6940, 7626, 3420, 13817, 4847, 15400, 13174, 13461, 8923, 13452, 1178, 12594, 10852]:
             writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
-            print (i)
+            # print (i)
         elif i in [7335, 1452, 1232, 10939, 8144, 7419, 5617, 7488, 5690, 8330, 7197, 9526, 11202, 15047, 8954, 5976, 4423, 9493, 638, 128, 15089, 4312, 11800, 7382, 9743, 1348, 5187, 10160, 8125, 3639, 4219, 15471, 14453, 2734, 14822, 1291, 1828, 14779, 3959, 13548, 8049, 5108, 3896, 10646, 12246, 8286, 11630, 13817, 13180, 14680]:
             writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
         if len(tagged)>0 and gold_label == predicted_label:
