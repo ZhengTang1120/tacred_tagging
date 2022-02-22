@@ -187,26 +187,16 @@ for i, item in enumerate(output):
                 tokens.append('<span style="color:red;">%s</span>'%word)
             else:
                 tokens.append(word)
-        if len(importance) > 0:
-            text = " ".join(tokens)
-            if '<span style="color:red;">' in text:
-                relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
-                gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
-                if i in [12760, 14997, 4422, 1715, 9605, 2704, 9264, 9610, 4493, 13548, 4858, 2472, 8540, 1609, 5766, 14508, 14597, 5263, 9333, 9539, 4432, 5711, 671, 311, 472, 15134, 3363, 6105, 7557, 15096, 11789, 3745, 13022, 1162, 3420, 6073, 4441, 14822, 4854, 13066, 5321, 1178, 15334, 14975, 8695, 671, 10415, 2520, 9946, 7855]:
-                    writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
-                    print (i)
-                elif i in [7715, 2353, 12411, 14263, 480, 9837, 14236, 7330, 5070, 1446, 7460, 1720, 2494, 14536, 13864, 15157, 388, 8067, 11627, 11607, 9557, 7427, 9759, 12950, 3307, 15006, 743, 9880, 7639, 4631, 11884, 14168, 15313, 2113, 281, 12014, 11016, 12963, 11581, 13747, 12827, 10039, 37, 8455, 8730, 8306, 4893, 12327, 10346, 5869]:
-                    writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
-            else:
-                if i in [12760, 14997, 4422, 1715, 9605, 2704, 9264, 9610, 4493, 13548, 4858, 2472, 8540, 1609, 5766, 14508, 14597, 5263, 9333, 9539, 4432, 5711, 671, 311, 472, 15134, 3363, 6105, 7557, 15096, 11789, 3745, 13022, 1162, 3420, 6073, 4441, 14822, 4854, 13066, 5321, 1178, 15334, 14975, 8695, 671, 10415, 2520, 9946, 7855] or i in [7715, 2353, 12411, 14263, 480, 9837, 14236, 7330, 5070, 1446, 7460, 1720, 2494, 14536, 13864, 15157, 388, 8067, 11627, 11607, 9557, 7427, 9759, 12950, 3307, 15006, 743, 9880, 7639, 4631, 11884, 14168, 15313, 2113, 281, 12014, 11016, 12963, 11581, 13747, 12827, 10039, 37, 8455, 8730, 8306, 4893, 12327, 10346, 5869]:
-                    print (i, predicted_label, gold_label)
-                    print ([words[im] for im in importance], tagged, importance)
-                    print (text)
-        else:
-            if i in [12760, 14997, 4422, 1715, 9605, 2704, 9264, 9610, 4493, 13548, 4858, 2472, 8540, 1609, 5766, 14508, 14597, 5263, 9333, 9539, 4432, 5711, 671, 311, 472, 15134, 3363, 6105, 7557, 15096, 11789, 3745, 13022, 1162, 3420, 6073, 4441, 14822, 4854, 13066, 5321, 1178, 15334, 14975, 8695, 671, 10415, 2520, 9946, 7855] or i in [7715, 2353, 12411, 14263, 480, 9837, 14236, 7330, 5070, 1446, 7460, 1720, 2494, 14536, 13864, 15157, 388, 8067, 11627, 11607, 9557, 7427, 9759, 12950, 3307, 15006, 743, 9880, 7639, 4631, 11884, 14168, 15313, 2113, 281, 12014, 11016, 12963, 11581, 13747, 12827, 10039, 37, 8455, 8730, 8306, 4893, 12327, 10346, 5869]:
-                print (i, predicted_label, gold_label)
-                print ([words[im] for im in importance], tagged, importance)
-                print (text)
+        # if len(importance) > 0:
+        text = " ".join(tokens)
+            # if '<span style="color:red;">' in text:
+        relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
+        gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
+        if i in [13306, 11468, 1248, 2472, 5474, 11630, 2730, 8528, 11586, 13524, 740, 11129, 14152, 600, 15471, 6303, 13781, 8525, 11724, 9324, 7783, 10447, 3059, 5597, 1813, 15425, 1171, 1215, 3030, 13261, 3118, 1409, 14968, 3773, 5334, 13106, 2742, 6940, 7626, 3420, 13817, 4847, 15400, 13174, 13461, 8923, 13452, 1178, 12594, 10852]:
+            writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
+            print (i)
+        elif i in [10917, 11277, 2960, 13594, 6283, 8538, 8262, 5406, 13704, 11061, 686, 5563, 5958, 281, 7963, 3566, 13730, 2396, 6955, 14441, 8059, 2221, 13055, 8925, 8979, 1009, 15225, 8592, 7122, 6568, 8390, 3393, 9122, 12823, 6015, 12199, 851, 9718, 14373, 13574, 12366, 7383, 12936, 933, 7890, 8328, 9374, 8705, 14157, 13076]:
+            writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold})
         if len(tagged)>0 and gold_label == predicted_label:
             correct = 0
             pred = 0
