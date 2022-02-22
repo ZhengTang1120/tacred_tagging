@@ -76,16 +76,10 @@ x = 0
 exact_match = 0
 other = 0
 tags = []
-tagging_max = []
-taggingscores = []
-words = []
 for c, b in enumerate(batch):
-    preds,t,_,tm, w, ts = trainer.predict(b, id2label, tokenizer)
+    preds,t,_ = trainer.predict(b, id2label, tokenizer)
     predictions += preds
     tags += t
-    words += w
-    tagging_max += tm
-    taggingscores += ts
     batch_size = len(preds)
 output = list()
 tagging_scores = []
@@ -97,15 +91,6 @@ for i, p in enumerate(predictions):
     predictions[i] = id2label[p]
     pred_output.write(id2label[p]+'\n')
     output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'predicted_tags':[], 'gold_tags':[]})
-    if i in [1442, 1722, 2111, 2409]:
-        print (words[i])
-        print (tagging_max[i])
-        print (taggingscores[i])
-        print (tags[i])
-        print (tags[i].index(1))
-        print (batch.words[i])
-        print (id2label[p], batch.gold()[i], tagged, [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])])
-        print ()
 
     if p!=0:
         output[-1]["predicted_tags"] = [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])]
