@@ -77,13 +77,15 @@ exact_match = 0
 other = 0
 tags = []
 tagging_max = []
+taggingscores = []
 words = []
 for c, b in enumerate(batch):
-    preds,t,_,tm, w = trainer.predict(b, id2label, tokenizer)
+    preds,t,_,tm, w, ts = trainer.predict(b, id2label, tokenizer)
     predictions += preds
     tags += t
     words += w
     tagging_max += tm
+    taggingscores + ts
     batch_size = len(preds)
 output = list()
 tagging_scores = []
@@ -98,6 +100,7 @@ for i, p in enumerate(predictions):
     if i in [1442, 1722, 2111, 2409]:
         print (words[i])
         print (tagging_max[i])
+        print (taggingscores[i])
         print (tags[i])
         print (tags[i].index(1))
         print (batch.words[i])
