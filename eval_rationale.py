@@ -45,7 +45,7 @@ def convert_token(token):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data', type=str, default='output_lime_132_test_best_model_6.json')
-parser.add_argument('--top', type=int, default=3)
+parser.add_argument('--top', type=int, default=1)
 parser.add_argument('--origin', type=str, default='dataset/tacred/test.json')
 parser.add_argument('--out', type=str, default='lime')
 args = parser.parse_args()
@@ -75,7 +75,7 @@ for i, item in enumerate(output):
     if predicted_label != "no_relation":
         tagged = item['gold_tags']
         importance = item['predicted_tags']
-        args.top = len(tagged) if len(tagged) != 0 else args.top
+        # args.top = len(tagged) if len(tagged) != 0 else args.top
         if "lime" in args.data:
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
             importance = [j for j, w in enumerate(words) if w in top]
