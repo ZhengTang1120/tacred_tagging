@@ -45,7 +45,7 @@ def convert_token(token):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data', type=str, default='output_lime_132_test_best_model_6.json')
-parser.add_argument('--top', type=int, default=3)
+parser.add_argument('--top', type=int, default=1)
 parser.add_argument('--origin', type=str, default='dataset/tacred/test.json')
 parser.add_argument('--out', type=str, default='lime')
 args = parser.parse_args()
