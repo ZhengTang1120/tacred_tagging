@@ -101,13 +101,14 @@ else:
     trainer.load(model_file)  
 
 id2label = dict([(v,k) for k,v in label2id.items()])
-dev_score_history = []
+
 current_lr = opt['lr']
 
 eval_step = max(1, len(train_batch) // args.eval_per_epoch)
 
 # start training
 for epoch in range(1, opt['num_epoch']+1):
+    dev_score_history = []
     train_loss = 0
     random.shuffle(train_batch)
     for i, batch in enumerate(train_batch):
@@ -150,8 +151,6 @@ for epoch in range(1, opt['num_epoch']+1):
                     .format(epoch, dev_p*100, dev_r*100, dev_score*100))
 
             dev_score_history += [dev_score]
-            if len(dev_score_history) == 10:
-                dev_score_history = []
             print("")
 
 print("Training ended with {} epochs.".format(epoch))
