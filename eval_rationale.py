@@ -81,6 +81,7 @@ for i, item in enumerate(output):
             importance = [j for j, w in enumerate(words) if w in top]
         elif "greedy" not in args.data and "tagging" not in args.data:
             importance = np.array(item['predicted_tags']).argsort()[-args.top:].tolist()
+        importance = [i for i in range(len(words)) if i > min(se, oe) and i < max(ss, os)]
         tokens = list()
         # if "greedy" not in args.data and "tagging" not in args.data:
         #     for w, word in enumerate(words):
