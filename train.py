@@ -150,6 +150,8 @@ for epoch in range(1, opt['num_epoch']+1):
                     .format(epoch, dev_p*100, dev_r*100, dev_score*100))
 
             dev_score_history += [dev_score]
+            if len(dev_score_history) == 10:
+                dev_score_history = []
             print("")
 
 print("Training ended with {} epochs.".format(epoch))
