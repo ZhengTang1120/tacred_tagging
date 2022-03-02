@@ -411,7 +411,7 @@ class BertEncoder(nn.Module):
             hidden_states, attn_probs = layer_module(hidden_states, attention_mask)
             if output_all_encoded_layers:
                 all_encoder_layers.append(hidden_states)
-                attn_probs_layers.append(attn_probs)
+            attn_probs_layers.append(attn_probs)
         if not output_all_encoded_layers:
             all_encoder_layers.append(hidden_states)
         return all_encoder_layers, attn_probs_layers
