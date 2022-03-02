@@ -55,7 +55,7 @@ def preprocess(filename, tokenizer):
                 t = convert_token(t)
                 for j, sub_token in enumerate(tokenizer.tokenize(t)):
                     words.append(sub_token)
-        words = ['[CLS]'] + words + ['[SEP]']
+        # words = ['[CLS]'] + words + ['[SEP]']
         output_tokens.append(words)
         labels.append(d['relation'])
     return output_tokens, labels
@@ -129,7 +129,7 @@ for i, t in enumerate(x_test):
     pred = id2label[class_index]
     preds.append(pred)
     golds.append(y_test[i])
-    importance = shap_values.values[i][:,class_index][1:-1]
+    importance = shap_values.values[i][:,class_index]
     output.append({'gold_label':golds[-1], 'predicted_label':preds[-1], 'predicted_tags':[], 'gold_tags':[]})
     if preds[-1] != 'no_relation':
         saliency = []
@@ -181,7 +181,7 @@ for i, t in enumerate(x_test):
 tr, tp, tf = zip(*tagging_scores)
 
 print("{} set rationale result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
-with open("output_shap_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
+with open("output_shap_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '2.json')), 'w') as f:
     f.write(json.dumps(output))
 
 p, r, f1 = scorer.score(golds, preds, verbose=True)
