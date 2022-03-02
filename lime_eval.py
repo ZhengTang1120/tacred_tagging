@@ -116,8 +116,7 @@ def chunks(lst, n):
         yield lst[i:i + n]
 
 def predict(texts):
-    texts = [[x if x!='' else '[MASK]' for x in t.split(' ')] for t in texts]
-    texts = ['[CLS]'] + texts + ['[SEP]']
+    texts = [['[CLS]'] +[x if x!='' else '[MASK]' for x in t.split(' ')]+ ['[SEP]'] for t in texts]
     tokens = [tokenizer.convert_tokens_to_ids(t) for t in texts]
     probs = None
     for batch in chunks(tokens, 32):
