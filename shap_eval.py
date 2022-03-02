@@ -129,8 +129,7 @@ for i, t in enumerate(x_test):
     pred = id2label[class_index]
     preds.append(pred)
     golds.append(y_test[i])
-    importance = shap_values.values[i][:,class_index]
-    print (len(importance))
+    importance = shap_values.values[i][:,class_index][1:-1]
     output.append({'gold_label':golds[-1], 'predicted_label':preds[-1], 'predicted_tags':[], 'gold_tags':[]})
     if preds[-1] != 'no_relation':
         saliency = []
@@ -151,8 +150,6 @@ for i, t in enumerate(x_test):
                 sub_len = len(tokenizer.tokenize(t))
                 saliency.append(importance[c: c+sub_len].mean())
                 c += sub_len
-        print (c)
-        assert len(importance) == x
         top3 = np.array(saliency).argsort()[-3:].tolist()
         output[-1]["predicted_tags"] = saliency
         tokens = [w if c not in top3 else colored(w, 'red') for c, w in enumerate(tokens)]
