@@ -55,7 +55,6 @@ def preprocess(filename, tokenizer):
                 t = convert_token(t)
                 for j, sub_token in enumerate(tokenizer.tokenize(t)):
                     words.append(sub_token)
-        # words = ['[CLS]'] + words + ['[SEP]']
         output_tokens.append(words)
         labels.append(d['relation'])
     return output_tokens, labels
@@ -130,6 +129,7 @@ for i, t in enumerate(x_test):
     preds.append(pred)
     golds.append(y_test[i])
     importance = shap_values.values[i][:,class_index]
+    print (len(importance))
     output.append({'gold_label':golds[-1], 'predicted_label':preds[-1], 'predicted_tags':[], 'gold_tags':[]})
     if preds[-1] != 'no_relation':
         saliency = []
@@ -137,19 +137,23 @@ for i, t in enumerate(x_test):
         c = 0
         for j, t in enumerate(words):
             if j == ss or j == os:
-                c += 1
+                pass
             if j>=ss and j<=se:
                 saliency.append(0)
                 tokens.append(colored(t, "blue"))
+                c += 1
             elif j>=os and j<=oe:
                 saliency.append(0)
                 tokens.append(colored(t, "yellow"))
+                c += 1
             else:
                 tokens.append(t)
                 t = convert_token(t)
                 sub_len = len(tokenizer.tokenize(t))
                 saliency.append(importance[c: c+sub_len].mean())
                 c += sub_len
+        print (c)
+        assert len(importance) == c
         top3 = np.array(saliency).argsort()[-3:].tolist()
         output[-1]["predicted_tags"] = saliency
         tokens = [w if c not in top3 else colored(w, 'red') for c, w in enumerate(tokens)]
