@@ -104,7 +104,7 @@ for c, b in enumerate(batch):
                     sub_len = len(tokenizer.tokenize(t))
                     saliency.append(float(sc[i: i+sub_len].mean()))
                     i += sub_len
-            top3 = np.array(saliency).argsort()[-3:].tolist()
+            top3 = np.array(saliency).argsort()[-3:].tolist() if len(tagged) == 0 else np.array(saliency).argsort()[-len(tagged):].tolist()
             output[-1]["predicted_tags"].append(saliency)
             tokens = [w if i not in top3 else colored(w, 'red') for i, w in enumerate(tokens)]
             if len(tagged)>0:
