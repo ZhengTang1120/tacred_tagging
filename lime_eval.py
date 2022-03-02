@@ -118,6 +118,7 @@ def chunks(lst, n):
 def predict(texts):
     texts = [[x if x!='' else '[MASK]' for x in t.split(' ')] for t in texts]
     tokens = [tokenizer.convert_tokens_to_ids(t) for t in texts]
+    tokens = ['[CLS]'] + tokens + ['[SEP]']
     probs = None
     for batch in chunks(tokens, 32):
         batch = np.array(batch).astype(int).reshape(len(batch), -1, 1)

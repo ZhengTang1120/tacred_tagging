@@ -56,6 +56,7 @@ def preprocess(filename, tokenizer):
                 for j, sub_token in enumerate(tokenizer.tokenize(t)):
                     words.append(sub_token)
         output_tokens.append(words)
+        output_tokens = ['[CLS]'] + output_tokens + ['[SEP]']
         labels.append(d['relation'])
     return output_tokens, labels
 
@@ -128,7 +129,7 @@ for i, t in enumerate(x_test):
     pred = id2label[class_index]
     preds.append(pred)
     golds.append(y_test[i])
-    importance = shap_values.values[i][:,class_index]
+    importance = shap_values.values[i][:,class_index][1:-1]
     output.append({'gold_label':golds[-1], 'predicted_label':preds[-1], 'predicted_tags':[], 'gold_tags':[]})
     if preds[-1] != 'no_relation':
         saliency = []
