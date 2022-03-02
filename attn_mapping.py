@@ -83,7 +83,7 @@ for c, b in enumerate(batch):
     output.append({'gold_label':batch.gold()[c], 'predicted_label':id2label[preds[0]], 'predicted_tags':[], 'gold_tags':[]})
     if preds[0] != 0:
         for x in range(16):
-            sc = attns[x]
+            sc = attns[x][1:-1]
             saliency = []
             tokens = []
             i = 0
