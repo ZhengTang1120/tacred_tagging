@@ -184,8 +184,15 @@ class BERTtrainer(Trainer):
         self.classifier.eval()
 
         h, _, attns = self.encoder(inputs)
-        print (len(attns))
-        print (attns[-1].permute(2,0,1,3)[0].size())
+        
+        attns = attns[-1].permute(2,0,1,3)[0][0]
+
+        logits = self.classifier(h)
+        probs = F.softmax(logits, 1)
+        predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
+
+        return predictions, attns
+
 
     def predict_proba(self, tokenss):
         # forward
