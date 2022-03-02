@@ -21,8 +21,8 @@ class BERTencoder(nn.Module):
         segment_ids = inputs[2]
         # if (words.size(0) == 32):
         #     print(datetime.datetime.now())
-        h, pooled_output, embeddings = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
-        return pooled_output, embeddings
+        h, pooled_output, embeddings, attn_probs = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
+        return pooled_output, embeddings, attn_probs
 
 class BERTclassifier(nn.Module):
     def __init__(self, opt):
