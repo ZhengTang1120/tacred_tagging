@@ -82,6 +82,7 @@ for c, b in enumerate(batch):
     preds,attns = trainer.predict_with_attns(b)
     output.append({'gold_label':batch.gold()[c], 'predicted_label':id2label[preds[0]], 'predicted_tags':[], 'gold_tags':[]})
     if preds[0] != 0:
+        print (preds[0], attns, tagged)
         for x in range(16):
             sc = attns[x]
             saliency = []
