@@ -185,7 +185,7 @@ class BERTtrainer(Trainer):
 
         h, _, attns = self.encoder(inputs)
         print (len(attns))
-        print ((len(a) for a in attns))
+        print ([a.size() for a in attns])
 
     def predict_proba(self, tokenss):
         # forward
