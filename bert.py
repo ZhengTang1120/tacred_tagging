@@ -17,7 +17,7 @@ class BERTencoder(nn.Module):
         words = inputs[0]
         mask = inputs[1]
         segment_ids = inputs[2]
-        h, pooled_output, embedding = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
+        h, pooled_output, embedding, attn_probs = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
         subj_mask = torch.logical_and(words.unsqueeze(2).gt(4), words.unsqueeze(2).lt(9))# + words.unsqueeze(2).eq(101)
         obj_mask = torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(5))
         for i, x in enumerate(torch.sum(subj_mask, 1)):
@@ -26,7 +26,7 @@ class BERTencoder(nn.Module):
         for i, x in enumerate(torch.sum(obj_mask, 1)):
             if x[0].item() == 0:
                 obj_mask[i] = torch.ones(obj_mask[i].size())
-        return h, pooled_output, embedding, subj_mask, obj_mask
+        return h, pooled_output, embedding, subj_mask, obj_mask, attn_probs
 
 class BERTclassifier(nn.Module):
     def __init__(self, opt):

@@ -93,7 +93,7 @@ class BERTtrainer(Trainer):
         self.encoder.train()
         self.classifier.train()
 
-        h, c, _, mask1, mask2 = self.encoder(inputs)
+        h, c, _, mask1, mask2, _ = self.encoder(inputs)
         logits = self.classifier(h, c, mask1, mask2)
         loss = self.criterion(logits, labels)
         loss_val = loss.item()
@@ -110,7 +110,7 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
         with torch.no_grad():
-            h, c, _, mask1, mask2 = self.encoder(inputs)
+            h, c, _, mask1, mask2, _ = self.encoder(inputs)
             probs = self.classifier(h, c, mask1, mask2)
         loss = self.criterion(probs, labels).item()
         # probs = F.softmax(logits, 1)
@@ -122,7 +122,7 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
         with torch.no_grad():
-            h, c, _, mask1, mask2  = self.encoder(inputs)
+            h, c, _, mask1, mask2, _  = self.encoder(inputs)
             probs = self.classifier(h, c, mask1, mask2)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
 
@@ -133,7 +133,7 @@ class BERTtrainer(Trainer):
 
         self.encoder.train()
         self.classifier.train()
-        h, c, _, mask1, mask2  = self.encoder(inputs)
+        h, c, _, mask1, mask2, _  = self.encoder(inputs)
         probs = self.classifier(h, c, mask1, mask2)
         return probs
 
@@ -141,7 +141,7 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
         with torch.no_grad():
-            h, c, _, mask1, mask2  = self.encoder(inputs)
+            h, c, _, mask1, mask2, _  = self.encoder(inputs)
             probs = self.classifier(h, c, mask1, mask2)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         prob_maxs = np.amax(probs.data.cpu().numpy(), axis=1)
@@ -157,7 +157,7 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
 
-        h, c, embs, mask1, mask2  = self.encoder(inputs)
+        h, c, embs, mask1, mask2, _  = self.encoder(inputs)
         embs.retain_grad()
 
         logits = self.classifier(h, c, mask1, mask2)
@@ -178,6 +178,21 @@ class BERTtrainer(Trainer):
         # top3 = saliency.data.cpu().numpy()[0].argsort()[-3:].tolist()
         return predictions, saliency.data.cpu().numpy()[0][1:-1]
 
+    def predict_with_attns(self, batch0):
+        inputs, labels = unpack_batch(batch0, self.opt['cuda'], self.opt['device'])
+        self.encoder.eval()
+        self.classifier.eval()
+
+        h, c, embs, mask1, mask2, attns  = self.encoder(inputs)
+
+        attns = attns[-1].permute(2,0,1,3)[0][0].data.cpu().numpy()
+
+        logits = self.classifier(h, c, mask1, mask2)
+        probs = F.softmax(logits, 1)
+        predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
+
+        return predictions, attns
+
     def predict_proba(self, tokenss):
         # forward
         self.encoder.eval()
@@ -191,7 +206,7 @@ class BERTtrainer(Trainer):
             batch_size = len(tokens)
             inputs = [tokens, mask, segment_ids]
 
-            h, c, _, mask1, mask2  = self.encoder(inputs)
+            h, c, _, mask1, mask2, _  = self.encoder(inputs)
             logits = self.classifier(h, c, mask1, mask2)
             if probs is None:
                 probs = F.softmax(logits, 1).data.cpu().detach().numpy()
