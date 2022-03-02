@@ -185,7 +185,7 @@ class BERTtrainer(Trainer):
 
         h, _, attns = self.encoder(inputs)
         
-        attns = attns[-1].permute(2,0,1,3)[0][0]
+        attns = attns[-1].permute(2,0,1,3)[0][0].data.cpu().numpy()
 
         logits = self.classifier(h)
         probs = F.softmax(logits, 1)

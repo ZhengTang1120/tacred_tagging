@@ -79,7 +79,7 @@ for c, b in enumerate(batch):
     ss, se = origin[c]['subj_start'], origin[c]['subj_end']
     os, oe = origin[c]['obj_start'], origin[c]['obj_end']
     trainer.predict_with_attns(b)
-    preds,attns = trainer.predict_with_attns(b)
+    preds,sc = trainer.predict_with_attns(b)
     output.append({'gold_label':batch.gold()[c], 'predicted_label':id2label[preds[0]], 'predicted_tags':[], 'gold_tags':[]})
     if preds[0] != 0:
         for x in range(16):
