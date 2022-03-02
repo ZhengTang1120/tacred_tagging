@@ -95,7 +95,6 @@ trainer.load(model_file)
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 
 x_test, y_test = preprocess(data_file, tokenizer)
-x_test, y_test = x_test[:10], y_test[:10]
 
 def f(x):
     tv = np.array([tokenizer.encode(v, pad_to_max_length=True, max_length=128,truncation=True) for v in x]).astype(int)
