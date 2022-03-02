@@ -138,15 +138,13 @@ for i, t in enumerate(x_test):
         c = 0
         for j, t in enumerate(words):
             if j == ss or j == os:
-                pass
+                c += 1
             if j>=ss and j<=se:
                 saliency.append(0)
                 tokens.append(colored(t, "blue"))
-                c += 1
             elif j>=os and j<=oe:
                 saliency.append(0)
                 tokens.append(colored(t, "yellow"))
-                c += 1
             else:
                 tokens.append(t)
                 t = convert_token(t)
@@ -154,7 +152,7 @@ for i, t in enumerate(x_test):
                 saliency.append(importance[c: c+sub_len].mean())
                 c += sub_len
         print (c)
-        assert len(importance) == c
+        assert len(importance) == x
         top3 = np.array(saliency).argsort()[-3:].tolist()
         output[-1]["predicted_tags"] = saliency
         tokens = [w if c not in top3 else colored(w, 'red') for c, w in enumerate(tokens)]
