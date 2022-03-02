@@ -55,7 +55,6 @@ def preprocess(filename, tokenizer):
                 t = convert_token(t)
                 for j, sub_token in enumerate(tokenizer.tokenize(t)):
                     words.append(sub_token)
-        words = ['[CLS]'] + words + ['[SEP]']
         output_tokens.append(words)
         output_tokens =  output_tokens
         labels.append(d['relation'])
