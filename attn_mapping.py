@@ -92,11 +92,11 @@ for c, b in enumerate(batch):
                     i += 1
                 if j>=ss and j<=se:
                     # assert sc[i-1] == 0
-                    saliency.append(sc[i-1])
+                    saliency.append(float(sc[i-1]))
                     tokens.append(colored(t, "blue"))
                 elif j>=os and j<=oe:
                     # assert sc[i-1] == 0
-                    saliency.append(sc[i-1])
+                    saliency.append(float(sc[i-1]))
                     tokens.append(colored(t, "yellow"))
                 else:
                     tokens.append(t)
