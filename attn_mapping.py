@@ -130,7 +130,7 @@ for c, b in enumerate(batch):
         
 
 
-with open("output_attention_withent_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
+with open("output_attention_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
     f.write(json.dumps(output))
 
 for x in range(16):
