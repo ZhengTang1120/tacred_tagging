@@ -148,6 +148,8 @@ for i, item in enumerate(output):
         tagged = item['gold_tags']
         importance = item['predicted_tags']
         args.top = len(tagged) if len(tagged) != 0 else 3
+        print (args.data, "attention" in args.data)
+        print (len(item["predicted_tags"]))
         if "lime" in args.data:
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
             importance = [j for j, w in enumerate(words) if w in top]
