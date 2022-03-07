@@ -130,7 +130,7 @@ for i, item in enumerate(output):
         # elif i in [2772, 792, 2111, 3396, 2029, 865, 1236, 3498, 2897, 425, 1882, 1598, 3707, 579, 16, 3215, 1876, 3616, 813, 2691, 1226, 3761, 388, 2391, 1734, 1640, 2011, 600, 3318, 2379]:
         #     writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold, "source":args.data})
 
-        if len(tagged)>0 and gold_label == predicted_label:
+        if len(tagged)>0:
             for k in range(16):
                 correct = 0
                 pred = 0
