@@ -94,13 +94,13 @@ for c, b in enumerate(batch):
                     tokens.append(colored(t, "blue"))
                 elif j>=os and j<=oe:
                     # assert sc[i-1] == 0
-                    saliency.append(float(sc[i-1]))
+                    saliency.append(0)
                     tokens.append(colored(t, "yellow"))
                 else:
                     tokens.append(t)
                     t = convert_token(t)
                     sub_len = len(tokenizer.tokenize(t))
-                    saliency.append(0)
+                    saliency.append(float(sc[i: i+sub_len].mean()))
                     i += sub_len
             top3 = np.array(saliency).argsort()[-3:].tolist() if len(tagged) == 0 else np.array(saliency).argsort()[-len(tagged):].tolist()
             output[-1]["predicted_tags"].append(saliency)
