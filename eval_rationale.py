@@ -126,14 +126,14 @@ data_file = args.origin
 
 origin = json.load(open(data_file))
 
-output = json.load(open(args.data))
-tagging_scores = list()
-outcsv = open(args.out, 'w', newline='')
-writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold", "source"])
-writer.writeheader()
-outcsv2 = open(args.out.replace(".csv","_negatives.csv") , 'w', newline='')
-writer2 = csv.DictWriter(outcsv2, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold", "source"])
-writer2.writeheader()
+# output = json.load(open(args.data))
+# tagging_scores = list() if "attn" not in args.data else [[] for i in range(16)]
+# outcsv = open(args.out, 'w', newline='')
+# writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold", "source"])
+# writer.writeheader()
+# outcsv2 = open(args.out.replace(".csv","_negatives.csv") , 'w', newline='')
+# writer2 = csv.DictWriter(outcsv2, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold", "source"])
+# writer2.writeheader()
 
 for i, item in enumerate(output):
     gold_label = item['gold_label']
@@ -153,6 +153,8 @@ for i, item in enumerate(output):
             importance = [j for j, w in enumerate(words) if w in top]
         elif "greedy" not in args.data and "tagging" not in args.data:
             importance = np.array(item['predicted_tags']).argsort()[-args.top:].tolist()
+        elif "attn" in args.data:
+            importance = [np.array(t).argsort()[-args.top:].tolist() for t in item["predicted_tags"]]
         tokens = list()
         # if "greedy" not in args.data and "tagging" not in args.data:
         #     for w, word in enumerate(words):
@@ -171,53 +173,54 @@ for i, item in enumerate(output):
         #             col = rgb2hex(cm((item['predicted_tags'][w]-lower)/(upper-lower)))
         #             tokens.append(t)
         # else:
-        for w, word in enumerate(words):
-            word = convert_token(word)
-            if w>=ss and w<=se:
-                tokens.append('<span style="color:blue;">%s</span>'%word)
-                subj.append(word)
-                # if w in importance:
-                #     tokens.append('<span style="color:blue; border: 2px solid red;">%s</span>'%word)
-            elif w>=os and w<=oe:
-                tokens.append('<span style="color:darkorange;">%s</span>'%word)
-                obj.append(word)
-                # if w in importance:
-                #     tokens.append('<span style="color:darkorange; border: 2px solid red;">%s</span>'%word)
-            elif w in importance:
-                tokens.append('<span style="color:red;">%s</span>'%word)
-            else:
-                tokens.append(word)
-        # if len(importance) > 0:
-        text = " ".join(tokens)
-            # if '<span style="color:red;">' in text:
-        relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
-        gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
-        if i in [6298, 15400, 14809, 9526, 8471, 267, 4726, 3316, 5285, 9407, 950, 2837, 3420, 3599, 10135, 13022, 4476, 13369, 3985, 4777, 12716, 5567, 12762, 4525, 14144, 2704, 7488, 2555, 5792, 9333, 4436, 1038, 4512, 6486, 10344, 10252, 6958, 14822, 3137, 2647, 7279, 4864, 11674, 2212, 14463, 5236, 5989, 6728, 8379, 7626]:
-            writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold, "source":args.data})
-        elif i in [4315, 1208, 3110, 8321, 9441, 5293, 3287, 11826, 4103, 12578, 12668, 13237, 153, 12541, 14132, 6646, 4819, 5403, 9955, 11092, 1127, 10389, 1669, 12629, 10783, 4303, 1008, 976, 3418, 9741, 8328, 110, 1150, 13924, 11073, 14236, 15321, 14904, 12020, 7427, 12876, 14492, 3608, 95, 12968, 6467, 2716, 6080, 12962, 13207]:
-            writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold, "source":args.data})
-        if len(tagged)>0 and gold_label == predicted_label:
-            correct = 0
-            pred = 0
-            for j, t in enumerate(words):
-                if j in importance and j in tagged:
-                    correct += 1
-            if len(importance) > 0:
-                r = correct / len(importance)
-            else:
-                r = 0
-            if len(tagged) > 0:
-                p = correct / len(tagged)
-            else:
-                p = 0
-            try:
-                f1 = 2.0 * p * r / (p + r)
-            except ZeroDivisionError:
-                f1 = 0
-            tagging_scores.append((r, p, f1))
-outcsv.close()
-outcsv2.close()
+        # for w, word in enumerate(words):
+        #     word = convert_token(word)
+        #     if w>=ss and w<=se:
+        #         tokens.append('<span style="color:blue;">%s</span>'%word)
+        #         subj.append(word)
+        #         # if w in importance:
+        #         #     tokens.append('<span style="color:blue; border: 2px solid red;">%s</span>'%word)
+        #     elif w>=os and w<=oe:
+        #         tokens.append('<span style="color:darkorange;">%s</span>'%word)
+        #         obj.append(word)
+        #         # if w in importance:
+        #         #     tokens.append('<span style="color:darkorange; border: 2px solid red;">%s</span>'%word)
+        #     elif w in importance:
+        #         tokens.append('<span style="color:red;">%s</span>'%word)
+        #     else:
+        #         tokens.append(word)
+        # # if len(importance) > 0:
+        # text = " ".join(tokens)
+        #     # if '<span style="color:red;">' in text:
+        # relation = template(predicted_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
+        # gold = template(gold_label, origin[i]['subj_type'], origin[i]['obj_type'], subj, obj)
+        # if i in [6298, 15400, 14809, 9526, 8471, 267, 4726, 3316, 5285, 9407, 950, 2837, 3420, 3599, 10135, 13022, 4476, 13369, 3985, 4777, 12716, 5567, 12762, 4525, 14144, 2704, 7488, 2555, 5792, 9333, 4436, 1038, 4512, 6486, 10344, 10252, 6958, 14822, 3137, 2647, 7279, 4864, 11674, 2212, 14463, 5236, 5989, 6728, 8379, 7626]:
+        #     writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold, "source":args.data})
+        # elif i in [4315, 1208, 3110, 8321, 9441, 5293, 3287, 11826, 4103, 12578, 12668, 13237, 153, 12541, 14132, 6646, 4819, 5403, 9955, 11092, 1127, 10389, 1669, 12629, 10783, 4303, 1008, 976, 3418, 9741, 8328, 110, 1150, 13924, 11073, 14236, 15321, 14904, 12020, 7427, 12876, 14492, 3608, 95, 12968, 6467, 2716, 6080, 12962, 13207]:
+        #     writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold, "source":args.data})
+        for k in range(16):
+            if len(tagged)>0 and gold_label == predicted_label:
+                correct = 0
+                pred = 0
+                for j, t in enumerate(words):
+                    if j in importance and j in tagged:
+                        correct += 1
+                if len(importance) > 0:
+                    r = correct / len(importance)
+                else:
+                    r = 0
+                if len(tagged) > 0:
+                    p = correct / len(tagged)
+                else:
+                    p = 0
+                try:
+                    f1 = 2.0 * p * r / (p + r)
+                except ZeroDivisionError:
+                    f1 = 0
+                tagging_scores[k].append((r, p, f1))
+# outcsv.close()
+# outcsv2.close()
+for x in range(16):
+    tr, tp, tf = zip(*tagging_scores[x])
 
-tr, tp, tf = zip(*tagging_scores)
-
-print("rationale result: {:.4f}\t{:.4f}\t{:.4f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
+    print("rationale result: {:.4f}\t{:.4f}\t{:.4f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
