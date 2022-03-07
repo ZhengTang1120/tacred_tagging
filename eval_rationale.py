@@ -155,6 +155,7 @@ for i, item in enumerate(output):
             importance = np.array(item['predicted_tags']).argsort()[-args.top:].tolist()
         elif "attention" in args.data:
             importance = [[] for t in range(16)]
+            print (len(item["predicted_tags"]))
             for k, t in enumerate(item["predicted_tags"]):
                 importance[k] = np.array(t).argsort()[-args.top:].tolist()
         tokens = list()
