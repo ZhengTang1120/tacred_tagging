@@ -154,7 +154,7 @@ for i, item in enumerate(output):
         elif "greedy" not in args.data and "tagging" not in args.data:
             importance = np.array(item['predicted_tags']).argsort()[-args.top:].tolist()
         elif "attention" in args.data:
-            importance = [[] for t in range(16)]
+            importance = [[] for _ in range(16)]
             print (len(item["predicted_tags"]))
             for k, t in enumerate(item["predicted_tags"]):
                 importance[k] = np.array(t).argsort()[-args.top:].tolist()
