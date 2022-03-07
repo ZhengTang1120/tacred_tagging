@@ -127,7 +127,7 @@ data_file = args.origin
 origin = json.load(open(data_file))
 
 output = json.load(open(args.data))
-tagging_scores = list() if "attention" not in args.data else [[] for i in range(16)]
+tagging_scores = list()
 # outcsv = open(args.out, 'w', newline='')
 # writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold", "source"])
 # writer.writeheader()
