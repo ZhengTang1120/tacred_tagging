@@ -152,9 +152,7 @@ for i, item in enumerate(output):
             top = [words[j] for j in np.array(item['predicted_tags']).argsort()[-args.top:].tolist()]
             importance = [j for j, w in enumerate(words) if w in top]
         elif "attention" in args.data:
-            importance = [[] for _ in range(16)]
-            for k, t in enumerate(item["predicted_tags"]):
-                importance[k] = np.array(t).argsort()[-args.top:].tolist()
+            importance = np.mean(np.array(item['predicted_tags']), axis=0).argsort()[-args.top:].tolist()
         elif "greedy" not in args.data and "tagging" not in args.data:
             importance = np.array(item['predicted_tags']).argsort()[-args.top:].tolist()
         
@@ -202,54 +200,27 @@ for i, item in enumerate(output):
         # elif i in [4315, 1208, 3110, 8321, 9441, 5293, 3287, 11826, 4103, 12578, 12668, 13237, 153, 12541, 14132, 6646, 4819, 5403, 9955, 11092, 1127, 10389, 1669, 12629, 10783, 4303, 1008, 976, 3418, 9741, 8328, 110, 1150, 13924, 11073, 14236, 15321, 14904, 12020, 7427, 12876, 14492, 3608, 95, 12968, 6467, 2716, 6080, 12962, 13207]:
         #     writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold, "source":args.data})
         if len(tagged)>0:
-            if "attention" in args.data:
-                for k in range(16):
-                    correct = 0
-                    pred = 0
-                    for j, t in enumerate(words):
-                        if j in importance[k] and j in tagged:
-                            correct += 1
-                    if len(importance[k]) > 0:
-                        r = correct / len(importance[k])
-                    else:
-                        r = 0
-                    if len(tagged) > 0:
-                        p = correct / len(tagged)
-                    else:
-                        p = 0
-                    try:
-                        f1 = 2.0 * p * r / (p + r)
-                    except ZeroDivisionError:
-                        f1 = 0
-                    tagging_scores[k].append((r, p, f1))
+            correct = 0
+            pred = 0
+            for j, t in enumerate(words):
+                if j in importance and j in tagged:
+                    correct += 1
+            if len(importance) > 0:
+                r = correct / len(importance)
             else:
-                correct = 0
-                pred = 0
-                for j, t in enumerate(words):
-                    if j in importance and j in tagged:
-                        correct += 1
-                if len(importance) > 0:
-                    r = correct / len(importance)
-                else:
-                    r = 0
-                if len(tagged) > 0:
-                    p = correct / len(tagged)
-                else:
-                    p = 0
-                try:
-                    f1 = 2.0 * p * r / (p + r)
-                except ZeroDivisionError:
-                    f1 = 0
-                tagging_scores.append((r, p, f1))
+                r = 0
+            if len(tagged) > 0:
+                p = correct / len(tagged)
+            else:
+                p = 0
+            try:
+                f1 = 2.0 * p * r / (p + r)
+            except ZeroDivisionError:
+                f1 = 0
+            tagging_scores.append((r, p, f1))
 
 # outcsv.close()
 # outcsv2.close()
-if "attention" in args.data:
-    for x in range(16):
-        tr, tp, tf = zip(*tagging_scores[x])
+tr, tp, tf = zip(*tagging_scores)
 
-        print("rationale result: {:.4f}\t{:.4f}\t{:.4f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
-else:
-    tr, tp, tf = zip(*tagging_scores)
-
-    print("rationale result: {:.4f}\t{:.4f}\t{:.4f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
+print("rationale result: {:.4f}\t{:.4f}\t{:.4f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
