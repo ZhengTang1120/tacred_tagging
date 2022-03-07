@@ -127,7 +127,7 @@ data_file = args.origin
 origin = json.load(open(data_file))
 
 output = json.load(open(args.data))
-tagging_scores = list() if "attn" not in args.data else [[] for i in range(16)]
+tagging_scores = list() if "attention" not in args.data else [[] for i in range(16)]
 # outcsv = open(args.out, 'w', newline='')
 # writer = csv.DictWriter(outcsv, fieldnames = ["relation", "text", "subj_type", "obj_type", "subj", "obj", "gold", "source"])
 # writer.writeheader()
@@ -153,7 +153,7 @@ for i, item in enumerate(output):
             importance = [j for j, w in enumerate(words) if w in top]
         elif "greedy" not in args.data and "tagging" not in args.data:
             importance = np.array(item['predicted_tags']).argsort()[-args.top:].tolist()
-        elif "attn" in args.data:
+        elif "attention" in args.data:
             importance = [np.array(t).argsort()[-args.top:].tolist() for t in item["predicted_tags"]]
         tokens = list()
         # if "greedy" not in args.data and "tagging" not in args.data:
@@ -198,8 +198,8 @@ for i, item in enumerate(output):
         #     writer2.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold, "source":args.data})
         # elif i in [4315, 1208, 3110, 8321, 9441, 5293, 3287, 11826, 4103, 12578, 12668, 13237, 153, 12541, 14132, 6646, 4819, 5403, 9955, 11092, 1127, 10389, 1669, 12629, 10783, 4303, 1008, 976, 3418, 9741, 8328, 110, 1150, 13924, 11073, 14236, 15321, 14904, 12020, 7427, 12876, 14492, 3608, 95, 12968, 6467, 2716, 6080, 12962, 13207]:
         #     writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold, "source":args.data})
-        for k in range(16):
-            if len(tagged)>0 and gold_label == predicted_label:
+        if len(tagged)>0 and gold_label == predicted_label:
+            for k in range(16):
                 correct = 0
                 pred = 0
                 for j, t in enumerate(words):
