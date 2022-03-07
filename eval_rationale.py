@@ -203,10 +203,10 @@ for i, item in enumerate(output):
                 correct = 0
                 pred = 0
                 for j, t in enumerate(words):
-                    if j in importance and j in tagged:
+                    if j in importance[k] and j in tagged:
                         correct += 1
-                if len(importance) > 0:
-                    r = correct / len(importance)
+                if len(importance[k]) > 0:
+                    r = correct / len(importance[k])
                 else:
                     r = 0
                 if len(tagged) > 0:
