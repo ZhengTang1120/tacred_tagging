@@ -90,7 +90,7 @@ for c, b in enumerate(batch):
                     i += 1
                 if j>=ss and j<=se:
                     # assert sc[i-1] == 0
-                    saliency.append(float(sc[i-1]))
+                    saliency.append(0)
                     tokens.append(colored(t, "blue"))
                 elif j>=os and j<=oe:
                     # assert sc[i-1] == 0
@@ -100,7 +100,7 @@ for c, b in enumerate(batch):
                     tokens.append(t)
                     t = convert_token(t)
                     sub_len = len(tokenizer.tokenize(t))
-                    saliency.append(float(sc[i: i+sub_len].mean()))
+                    saliency.append(0)
                     i += sub_len
             top3 = np.array(saliency).argsort()[-3:].tolist() if len(tagged) == 0 else np.array(saliency).argsort()[-len(tagged):].tolist()
             output[-1]["predicted_tags"].append(saliency)
@@ -116,7 +116,7 @@ for c, b in enumerate(batch):
                 for j, t in enumerate(words):
                     if j in top3 and j in tagged:
                         correct += 1
-                r = correct / 3
+                r = correct / len(top3)
                 if len(tagged) > 0:
                     p = correct / len(tagged)
                 else:
