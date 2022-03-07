@@ -240,7 +240,7 @@ for i, item in enumerate(output):
                     f1 = 2.0 * p * r / (p + r)
                 except ZeroDivisionError:
                     f1 = 0
-                tagging_scores[k].append((r, p, f1))
+                tagging_scores.append((r, p, f1))
 
 # outcsv.close()
 # outcsv2.close()
