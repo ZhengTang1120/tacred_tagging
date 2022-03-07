@@ -153,7 +153,6 @@ for i, item in enumerate(output):
             importance = [j for j, w in enumerate(words) if w in top]
         elif "attention" in args.data:
             importance = [[] for _ in range(16)]
-            print (len(item["predicted_tags"]))
             for k, t in enumerate(item["predicted_tags"]):
                 importance[k] = np.array(t).argsort()[-args.top:].tolist()
         elif "greedy" not in args.data and "tagging" not in args.data:
