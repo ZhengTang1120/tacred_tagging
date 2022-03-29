@@ -206,13 +206,13 @@ for i, item in enumerate(output):
                 if j in importance and j in tagged:
                     correct += 1
             if len(importance) > 0:
-                r = correct / len(importance)
-            else:
-                r = 0
-            if len(tagged) > 0:
-                p = correct / len(tagged)
+                p = correct / len(importance)
             else:
                 p = 0
+            if len(tagged) > 0:
+                r = correct / len(tagged)
+            else:
+                r = 0
             try:
                 f1 = 2.0 * p * r / (p + r)
             except ZeroDivisionError:
@@ -221,6 +221,6 @@ for i, item in enumerate(output):
 
 # outcsv.close()
 # outcsv2.close()
-tr, tp, tf = zip(*tagging_scores)
+tp, tr, tf = zip(*tagging_scores)
 
 print("rationale result: {:.4f}\t{:.4f}\t{:.4f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
