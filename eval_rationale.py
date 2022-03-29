@@ -128,20 +128,20 @@ for i, item in enumerate(output):
         # elif i in [2772, 792, 2111, 3396, 2029, 865, 1236, 3498, 2897, 425, 1882, 1598, 3707, 579, 16, 3215, 1876, 3616, 813, 2691, 1226, 3761, 388, 2391, 1734, 1640, 2011, 600, 3318, 2379]:
         #     writer.writerow({'relation': relation, 'text': text, 'subj_type':origin[i]['subj_type'], 'obj_type':origin[i]['obj_type'], 'subj':" ".join(subj), 'obj':" ".join(obj), "gold": gold, "source":args.data})
 
-        if len(tagged)>0 and gold_label == predicted_label:
+        if len(tagged)>0:
             correct = 0
             pred = 0
             for j, t in enumerate(words):
                 if j in importance and j in tagged:
                     correct += 1
             if len(importance) > 0:
-                r = correct / len(importance)
-            else:
-                r = 0
-            if len(tagged) > 0:
-                p = correct / len(tagged)
+                p = correct / len(importance)
             else:
                 p = 0
+            if len(tagged) > 0:
+                r = correct / len(tagged)
+            else:
+                r = 0
             try:
                 f1 = 2.0 * p * r / (p + r)
             except ZeroDivisionError:
@@ -150,6 +150,6 @@ for i, item in enumerate(output):
 # outcsv.close()
 # outcsv2.close()
 
-tr, tp, tf = zip(*tagging_scores)
+tp, tr, tf = zip(*tagging_scores)
 
 print("rationale result: {:.4f}\t{:.4f}\t{:.4f}".format(statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
