@@ -46,7 +46,7 @@ parser.add_argument('--warmup_prop', type=float, default=0.3, help='Proportion o
 parser.add_argument('--burnin', type=int, default=5)
 
 parser.add_argument("--eval_per_epoch", default=10, type=int, help="How many times it evaluates on dev set per epoch")
-parser.add_argument("--top", default=1, type=int, help="How many times it evaluates on dev set per epoch")
+parser.add_argument("--top", default="1", type=str, help="Customized Taggings")
 
 args = parser.parse_args()
 
