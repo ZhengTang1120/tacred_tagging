@@ -96,6 +96,8 @@ class BERTtrainer(Trainer):
         h = self.encoder(inputs)
         subj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(0), inputs[0].unsqueeze(2).lt(3))
         obj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(2), inputs[0].unsqueeze(2).lt(20))
+        print (subj_mask)
+        print (obj_mask)
         logits = self.classifier(h, subj_mask, obj_mask)
         print (logits, labels)
         loss = self.criterion(logits, labels)
