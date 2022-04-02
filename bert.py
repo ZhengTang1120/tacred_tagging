@@ -28,7 +28,21 @@ class BERTclassifier(nn.Module):
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
         self.opt = opt
 
-    def forward(self, h):
-        cls_out = self.dropout(h)#pool(h, out_mask.eq(0), type=pool_type)
+    def forward(self, h, subj_mask, obj_mask):
+        # cls_out = self.dropout(h)
+        cls_out = torch.cat([pool(h, subj_mask.eq(0), type=pool_type), pool(h, obj_mask.eq(0), type=pool_type)], 1)
+        cls_out = self.dropout(cls_out)
         logits = self.classifier(cls_out)
         return logits
+
+def pool(h, mask, type='max'):
+    if type == 'max':
+        h = h.masked_fill(mask, -constant.INFINITY_NUMBER)
+        return torch.max(h, 1)[0]
+    elif type == 'avg':
+        h = h.masked_fill(mask, 0)
+        # print ('size: ', (mask.size(1) - mask.float().sum(1)))
+        return h.sum(1) / (mask.size(1) - mask.float().sum(1))
+    else:
+        h = h.masked_fill(mask, 0)
+        return h.sum(1)
