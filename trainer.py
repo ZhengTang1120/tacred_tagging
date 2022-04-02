@@ -99,6 +99,7 @@ class BERTtrainer(Trainer):
         logits = self.classifier(h, subj_mask, obj_mask)
         print (logits, labels)
         loss = self.criterion(logits, labels)
+        print (loss)
         loss_val = loss.item()
         # backward
         loss.backward()
