@@ -30,7 +30,7 @@ class BERTclassifier(nn.Module):
 
     def forward(self, h, subj_mask, obj_mask):
         # cls_out = self.dropout(h)
-        cls_out = torch.cat([pool(h, subj_mask.eq(0), type=pool_type), pool(h, obj_mask.eq(0), type=pool_type)], 1)
+        cls_out = torch.cat([pool(h, subj_mask.eq(0), type="avg"), pool(h, obj_mask.eq(0), type="avg")], 1)
         cls_out = self.dropout(cls_out)
         logits = self.classifier(cls_out)
         return logits
