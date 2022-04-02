@@ -35,7 +35,7 @@ class BERTclassifier(nn.Module):
         logits = self.classifier(cls_out)
         return logits
 
-def pool(h, mask, type='max'):
+def pool(h, mask, type):
     if type == 'max':
         h = h.masked_fill(mask, -constant.INFINITY_NUMBER)
         return torch.max(h, 1)[0]
