@@ -91,7 +91,7 @@ class DataLoader(object):
                         if i in tagged and j == len(self.tokenizer.tokenize(t))-1:
                             tagging_mask.append(1)
                         else:
-                            tagging_mask.append(0)
+                            tagging_mask.append(1)
             
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
