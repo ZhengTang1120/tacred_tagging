@@ -88,10 +88,10 @@ class DataLoader(object):
                     origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
                     for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                         words.append(sub_token)
-                        if i in tagged and j == len(self.tokenizer.tokenize(t))-1:
+                        if j == len(self.tokenizer.tokenize(t))-1:
                             tagging_mask.append(1)
                         else:
-                            tagging_mask.append(1)
+                            tagging_mask.append(0)
             
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
