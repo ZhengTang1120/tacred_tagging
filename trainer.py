@@ -86,6 +86,9 @@ class BERTtrainer(Trainer):
              warmup=opt['warmup_prop'],
              t_total=opt['steps'])
 
+        for param in self.encoder.model.parameters():
+            param.requires_grad = False
+
     def update(self, batch, epoch):
         inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
 
