@@ -61,17 +61,18 @@ label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
 
 nlls = []
+vocab_size = 0
 for c, b in enumerate(batch):
     inputs, labels, has_tag = unpack_batch(b, opt['cuda'], opt['device'])
     words = inputs[0]
-    words_lens = words.sum()
+    vocab_size += torch.count_nonzero(words)
     mask = inputs[1]
     segment_ids = inputs[2]
     with torch.no_grad():
-        neg_log_likelihood = lm(words, mask, segment_ids, words).loss
+        neg_log_likelihood = lm(words, mask, segment_ids, words)
     nlls.append(neg_log_likelihood)
-print (nlls, torch.stack(nlls).sum())
-ppl = torch.exp(torch.stack(nlls).sum())
+print (nlls, torch.stack(nlls).sum()/vocab_size)
+ppl = torch.exp(torch.stack(nlls).sum()/vocab_size)
 print (ppl)
 
 
