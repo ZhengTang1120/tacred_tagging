@@ -4,6 +4,7 @@ import argparse
 import torch
 from dataloader import DataLoader
 from trainer import unpack_batch
+from pytorch_pretrained_bert.tokenization import BertTokenizer
 
 parser = argparse.ArgumentParser()
 parser.add_argument('model_dir', type=str, help='Directory of the model.')
