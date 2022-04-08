@@ -65,11 +65,13 @@ vocab_size = 0
 for c, b in enumerate(batch):
     inputs, labels, has_tag = unpack_batch(b, opt['cuda'], opt['device'])
     words = inputs[0]
-    vocab_size += torch.count_nonzero(words)
+    wl = torch.count_nonzero(words)
+    target = words.clone()
+    vocab_size += wl
     mask = inputs[1]
     segment_ids = inputs[2]
     with torch.no_grad():
-        neg_log_likelihood = lm(words, mask, segment_ids, words)
+        neg_log_likelihood = lm(words, mask, segment_ids, target) * wl
     nlls.append(neg_log_likelihood)
 print (nlls, torch.stack(nlls).sum()/vocab_size)
 ppl = torch.exp(torch.stack(nlls).sum()/vocab_size)
