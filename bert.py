@@ -10,7 +10,7 @@ from utils import constant, torch_utils
 
 class BertForMaskedLM(BertPreTrainedModel):
     def __init__(self, bert):
-        super().__init__()
+        super().__init__(bert.config)
         self.bert = bert
         self.cls = BertOnlyMLMHead(bert.config, bert.embeddings.word_embeddings.weight)
         self.apply(self.init_bert_weights)
