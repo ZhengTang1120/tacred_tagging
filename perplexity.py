@@ -1,4 +1,5 @@
 from bert import BERTencoder, BertForMaskedLM
+import random
 import argparse
 import torch
 from dataloader import DataLoader
