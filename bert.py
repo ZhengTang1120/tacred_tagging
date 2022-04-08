@@ -8,6 +8,25 @@ from pytorch_pretrained_bert.modeling import BertModel
 
 from utils import constant, torch_utils
 
+class BertForMaskedLM(nn.Module):
+    def __init__(self, bert):
+        super().__init__()
+        self.bert = bert
+        self.cls = BertOnlyMLMHead(bert.config, bert.embeddings.word_embeddings.weight)
+        self.apply(self.init_bert_weights)
+
+    def forward(self, input_ids, token_type_ids=None, attention_mask=None, masked_lm_labels=None):
+        sequence_output, _ = self.bert(input_ids, token_type_ids, attention_mask,
+                                       output_all_encoded_layers=False)
+        prediction_scores = self.cls(sequence_output)
+
+        if masked_lm_labels is not None:
+            loss_fct = CrossEntropyLoss(ignore_index=-1)
+            masked_lm_loss = loss_fct(prediction_scores.view(-1, self.bert.config.vocab_size), masked_lm_labels.view(-1))
+            return masked_lm_loss
+        else:
+            return prediction_scores
+
 class BERTencoder(nn.Module):
     def __init__(self):
         super().__init__()
