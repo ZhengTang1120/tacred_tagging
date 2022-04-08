@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
 
-from pytorch_pretrained_bert.modeling import BertModel, BertOnlyMLMHead
+from pytorch_pretrained_bert.modeling import BertModel, BertOnlyMLMHead, BertPreTrainedModel
 
 from utils import constant, torch_utils
 
