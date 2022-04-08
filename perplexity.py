@@ -42,10 +42,10 @@ if args.loaded:
     opt['device'] = args.device
     trainer = BERTtrainer(opt)
     trainer.load(model_file)
-    lm = BertForMaskedLM(trainer.encoder.bert)
+    lm = BertForMaskedLM(trainer.encoder.model)
 else:
     encoder = BERTencoder()
-    lm = BertForMaskedLM(encoder.bert)
+    lm = BertForMaskedLM(encoder.model)
 
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
