@@ -8,7 +8,7 @@ from pytorch_pretrained_bert.modeling import BertModel, BertOnlyMLMHead
 
 from utils import constant, torch_utils
 
-class BertForMaskedLM(nn.Module):
+class BertForMaskedLM(BertPreTrainedModel):
     def __init__(self, bert):
         super().__init__()
         self.bert = bert
