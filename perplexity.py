@@ -68,7 +68,7 @@ for c, b in enumerate(batch):
     with torch.no_grad():
         neg_log_likelihood = lm(words, mask, segment_ids, words)
     nlls.append(neg_log_likelihood)
-
+print (nlls)
 ppl = torch.exp(torch.stack(nlls).sum())
 print (ppl)
 
