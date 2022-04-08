@@ -64,10 +64,11 @@ nlls = []
 for c, b in enumerate(batch):
     inputs, labels, has_tag = unpack_batch(b, opt['cuda'], opt['device'])
     words = inputs[0]
+    words_lens = words.sum()
     mask = inputs[1]
     segment_ids = inputs[2]
     with torch.no_grad():
-        neg_log_likelihood = lm(words, mask, segment_ids, words)
+        neg_log_likelihood = lm(words, mask, segment_ids, words).loss
     nlls.append(neg_log_likelihood)
 print (nlls, torch.stack(nlls).sum())
 ppl = torch.exp(torch.stack(nlls).sum())
