@@ -7,7 +7,7 @@ import numpy as np
 from pytorch_pretrained_bert.modeling import BertModel, BertOnlyMLMHead, BertPreTrainedModel
 
 from utils import constant, torch_utils
-from torch.nn import NLLLoss
+from torch.nn import CrossEntropyLoss
 
 class BertForMaskedLM(BertPreTrainedModel):
     def __init__(self, bert):
@@ -22,7 +22,7 @@ class BertForMaskedLM(BertPreTrainedModel):
         prediction_scores = self.cls(sequence_output)
 
         if masked_lm_labels is not None:
-            loss_fct = NLLLoss(ignore_index=-1)
+            loss_fct = CrossEntropyLoss(ignore_index=-1)
             masked_lm_loss = loss_fct(prediction_scores.view(-1, self.bert.config.vocab_size), masked_lm_labels.view(-1))
             return masked_lm_loss
         else:
