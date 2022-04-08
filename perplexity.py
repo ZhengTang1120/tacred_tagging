@@ -47,6 +47,9 @@ else:
     encoder = BERTencoder()
     lm = BertForMaskedLM(encoder.model)
 
+with torch.cuda.device(opt['device']):
+    lm.cuda()
+
 # load data
 data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
