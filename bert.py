@@ -7,6 +7,7 @@ import numpy as np
 from pytorch_pretrained_bert.modeling import BertModel, BertOnlyMLMHead, BertPreTrainedModel
 
 from utils import constant, torch_utils
+from torch.nn import CrossEntropyLoss
 
 class BertForMaskedLM(BertPreTrainedModel):
     def __init__(self, bert):
