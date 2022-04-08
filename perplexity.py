@@ -58,7 +58,7 @@ id2label = dict([(v,k) for k,v in label2id.items()])
 
 nlls = []
 for c, b in enumerate(batch):
-    inputs, labels, has_tag = unpack_batch(batch, opt['cuda'], opt['device'])
+    inputs, labels, has_tag = unpack_batch(b, opt['cuda'], opt['device'])
     words = inputs[0]
     mask = inputs[1]
     segment_ids = inputs[2]
