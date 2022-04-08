@@ -20,7 +20,7 @@ parser.add_argument('--cpu', action='store_true')
 
 parser.add_argument('--device', type=int, default=0, help='Word embedding dimension.')
 
-parser.add_argument('--loaded', type=bool, default=True, help='Word embedding dimension.')
+parser.add_argument('--loaded', type=int, default=1, help='Word embedding dimension.')
 
 args = parser.parse_args()
 
@@ -34,7 +34,7 @@ elif args.cuda:
 tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
 
 
-if args.loaded:
+if args.loaded == 1:
     # load opt
     model_file = args.model_dir + '/' + args.model
     print("Loading model from {}".format(model_file))
@@ -44,6 +44,7 @@ if args.loaded:
     trainer.load(model_file)
     lm = BertForMaskedLM(trainer.encoder.model)
 else:
+    print ("New Language model")
     encoder = BERTencoder()
     lm = BertForMaskedLM(encoder.model)
 
@@ -68,7 +69,7 @@ for c, b in enumerate(batch):
     with torch.no_grad():
         neg_log_likelihood = lm(words, mask, segment_ids, words)
     nlls.append(neg_log_likelihood)
-print (nlls)
+print (nlls, torch.stack(nlls).sum())
 ppl = torch.exp(torch.stack(nlls).sum())
 print (ppl)
 
