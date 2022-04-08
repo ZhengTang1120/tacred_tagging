@@ -71,7 +71,7 @@ for c, b in enumerate(batch):
     mask = inputs[1]
     segment_ids = inputs[2]
     with torch.no_grad():
-        neg_log_likelihood = lm(words, mask, segment_ids, target) * wl
+        neg_log_likelihood = lm(words, mask, segment_ids, target)
     nlls.append(neg_log_likelihood)
 print (nlls, torch.stack(nlls).sum()/vocab_size)
 ppl = torch.exp(torch.stack(nlls).sum()/vocab_size)
