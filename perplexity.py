@@ -33,13 +33,13 @@ elif args.cuda:
 
 tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
 
+# load opt
+model_file = args.model_dir + '/' + args.model
+print("Loading model from {}".format(model_file))
+opt = torch_utils.load_config(model_file)
+opt['device'] = args.device
 
 if args.loaded == 1:
-    # load opt
-    model_file = args.model_dir + '/' + args.model
-    print("Loading model from {}".format(model_file))
-    opt = torch_utils.load_config(model_file)
-    opt['device'] = args.device
     trainer = BERTtrainer(opt)
     trainer.load(model_file)
     lm = BertForMaskedLM(trainer.encoder.model)
