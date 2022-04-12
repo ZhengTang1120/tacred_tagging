@@ -38,6 +38,7 @@ model_file = args.model_dir + '/' + args.model
 print("Loading model from {}".format(model_file))
 opt = torch_utils.load_config(model_file)
 opt['device'] = args.device
+opt['batch_size'] = 1
 
 if args.loaded == 1:
     trainer = BERTtrainer(opt)
@@ -61,6 +62,7 @@ label2id = constant.LABEL_TO_ID
 id2label = dict([(v,k) for k,v in label2id.items()])
 
 nlls = []
+ppls = []
 vocab_size = 0
 for c, b in enumerate(batch):
     inputs, labels, has_tag = unpack_batch(b, opt['cuda'], opt['device'])
@@ -72,9 +74,10 @@ for c, b in enumerate(batch):
     segment_ids = inputs[2]
     with torch.no_grad():
         neg_log_likelihood = lm(words, mask, segment_ids, target)
+        ppls.append(torch.exp(neg_log_likelihood))
     nlls.append(neg_log_likelihood)
-print (nlls, torch.stack(nlls).sum()/vocab_size)
 ppl = torch.exp(torch.stack(nlls).sum()/vocab_size)
+ppl_avg = torch.stack(nlls).sum()/len(batch)
 print (ppl)
 
 
