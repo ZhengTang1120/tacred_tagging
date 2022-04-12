@@ -78,7 +78,7 @@ for c, b in enumerate(batch):
     nlls.append(neg_log_likelihood)
 ppl = torch.exp(torch.stack(nlls).sum()/vocab_size)
 ppl_avg = torch.stack(nlls).sum()/len(batch)
-print (ppl)
+print (torch.stack(nlls).sum(), ppl, ppl_avg)
 
 
 
