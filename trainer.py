@@ -148,12 +148,12 @@ class BERTtrainer(Trainer):
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         tags = []
         for i, p in enumerate(predictions):
-            if p != 0:
-                t = tagging[i].data.cpu().numpy().tolist()
-                if sum(t) == 0:
-                    t[tagging_max[i]] = 1
-                tags += [t]
-            else:
-                tags += [[]]
+            # if p != 0:
+            t = tagging[i].data.cpu().numpy().tolist()
+            if sum(t) == 0:
+                t[tagging_max[i]] = 1
+            tags += [t]
+            # else:
+            #     tags += [[]]
         return predictions, tags, loss
 
