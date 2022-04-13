@@ -108,10 +108,11 @@ for i, p in enumerate(predictions):
                 pred += 1
                 if j in tagged:
                     correct += 1
-            elif j in tagged:
-                tokens2.append(colored(t[0], "red"))
             else:
                 tokens.append(t[0])
+            if j in tagged:
+                tokens2.append(colored(t[0], "red"))
+            else:
                 tokens2.append(t[0])
         print (" ".join(tokens))
         print (" ".join(tokens2))
