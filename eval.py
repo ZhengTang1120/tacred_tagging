@@ -104,16 +104,15 @@ for i, p in enumerate(predictions):
         pred = 0
         for j, t in enumerate(batch.words[i]):
             if check(tags[i], t[1]):
-                tokens.append(colored(t, "red"))
+                tokens.append(colored(t[0], "red"))
                 pred += 1
                 if j in tagged:
                     correct += 1
             elif j in tagged:
-                tokens2.append(colored(t, "red"))
+                tokens2.append(colored(t[0], "red"))
             else:
-                tokens.append(t)
-                tokens2.append(t)
-        print (tokens)
+                tokens.append(t[0])
+                tokens2.append(t[0])
         print (" ".join(tokens))
         print (" ".join(tokens2))
         if pred > 0:
