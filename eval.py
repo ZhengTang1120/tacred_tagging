@@ -115,6 +115,7 @@ for i, p in enumerate(predictions):
                 tokens2.append(t[0])
         print (" ".join(tokens))
         print (" ".join(tokens2))
+        print ()
         if pred > 0:
             r = correct / pred
         else:
