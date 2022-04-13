@@ -93,31 +93,31 @@ for i, p in enumerate(predictions):
     pred_output.write(id2label[p]+'\n')
     output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'predicted_tags':[], 'gold_tags':[]})
 
-    if p!=0:
-        output[-1]["predicted_tags"] = [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])]
-        if len(tagged)>0:
-            output[-1]['gold_tags'] = tagged
-            correct = 0
-            pred = 0
-            for j, t in enumerate(batch.words[i]):
-                if check(tags[i], t[1]):
-                    pred += 1
-                    if j in tagged:
-                        correct += 1
-            if pred > 0:
-                r = correct / pred
-            else:
-                print (tags[i])
-                r = 0
-            if len(tagged) > 0:
-                p = correct / len(tagged)
-            else:
-                p = 0
-            try:
-                f1 = 2.0 * p * r / (p + r)
-            except ZeroDivisionError:
-                f1 = 0
-            tagging_scores.append((r, p, f1))
+    # if p!=0:
+    output[-1]["predicted_tags"] = [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])]
+    if len(tagged)>0:
+        output[-1]['gold_tags'] = tagged
+        correct = 0
+        pred = 0
+        for j, t in enumerate(batch.words[i]):
+            if check(tags[i], t[1]):
+                pred += 1
+                if j in tagged:
+                    correct += 1
+        if pred > 0:
+            r = correct / pred
+        else:
+            print (tags[i])
+            r = 0
+        if len(tagged) > 0:
+            p = correct / len(tagged)
+        else:
+            p = 0
+        try:
+            f1 = 2.0 * p * r / (p + r)
+        except ZeroDivisionError:
+            f1 = 0
+        tagging_scores.append((r, p, f1))
 pred_output.close()
 with open("output_tagging_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
     f.write(json.dumps(output))
