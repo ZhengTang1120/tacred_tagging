@@ -86,6 +86,9 @@ tagging_scores = []
 output = list()
 pred_output = open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.txt')), 'w')
 for i, p in enumerate(predictions):
+    tokens = []
+    tokens2 = []
+
     _, tagged = tagging[i].split('\t')
     tagged = eval(tagged)
     
@@ -101,9 +104,17 @@ for i, p in enumerate(predictions):
         pred = 0
         for j, t in enumerate(batch.words[i]):
             if check(tags[i], t[1]):
+                tokens.append(colored(t, "red"))
                 pred += 1
                 if j in tagged:
                     correct += 1
+            elif j in tagged:
+                tokens2.append(colored(t, "red"))
+            else:
+                tokens.append(t)
+                tokens2.append(t)
+        print (" ".join(tokens))
+        print (" ".join(tokens2))
         if pred > 0:
             r = correct / pred
         else:
