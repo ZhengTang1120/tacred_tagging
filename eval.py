@@ -114,6 +114,7 @@ for i, p in enumerate(predictions):
                 tokens2.append(colored(t[0], "red"))
             else:
                 tokens2.append(t[0])
+        print (output[-1])
         print (" ".join(tokens))
         print (" ".join(tokens2))
         print ()
