@@ -113,6 +113,7 @@ for i, p in enumerate(predictions):
             else:
                 tokens.append(t)
                 tokens2.append(t)
+        print (tokens)
         print (" ".join(tokens))
         print (" ".join(tokens2))
         if pred > 0:
