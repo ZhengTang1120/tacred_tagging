@@ -68,8 +68,7 @@ tagging = []
 with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
     # tagging = f.readlines()
     for i, line in enumerate(f):
-        if origin[i]['relation'] in hide_relations:
-            tagging.append(line)
+        tagging.append(line)
 
 helper.print_config(opt)
 label2id = constant.LABEL_TO_ID
