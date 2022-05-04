@@ -58,14 +58,14 @@ trainer = BERTtrainer(opt)
 trainer.load(model_file)
 
 # load data
-data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
+data_file = opt['data_dir'] + '/{}_fewshot.json'.format(args.dataset)
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
 batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, True)
 
 origin = json.load(open(data_file))
 hide_relations = ["per:employee_of", "per:age", "org:city_of_headquarters", "org:country_of_headquarters", "org:stateorprovince_of_headquarters", "per:origin"]
 tagging = []
-with open(opt['data_dir'] + '/tagging_{}.txt'.format(args.dataset)) as f:
+with open(opt['data_dir'] + '/tagging_{}_fewshot.txt'.format(args.dataset)) as f:
     # tagging = f.readlines()
     for i, line in enumerate(f):
         tagging.append(line)
