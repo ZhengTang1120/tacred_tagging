@@ -16,6 +16,7 @@ from trainer import BERTtrainer
 from utils import torch_utils, scorer, constant, helper
 
 from pytorch_pretrained_bert.tokenization import BertTokenizer
+import statistics
 
 def check(tags, ids):
     for i in ids:
@@ -161,7 +162,6 @@ for epoch in range(1, opt['num_epoch']+1):
                             pred += 1
                             if k in tagged:
                                 correct += 1
-
                     if pred > 0:
                         precison = correct / pred
                     else:
@@ -176,6 +176,7 @@ for epoch in range(1, opt['num_epoch']+1):
                         f1 = 0
                     tagging_scores.append((precison, recall, f1))
             dev_p, dev_r, dev_f1 = zip(*tagging_scores)
+            dev_f1 = statistics.mean(dev_f1)
             print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
                 train_loss, dev_loss, dev_f1))
             dev_score = dev_f1
