@@ -158,7 +158,6 @@ for epoch in range(1, opt['num_epoch']+1):
 
                     for k, t in enumerate(dev_batch.words[j]):
                         if check(tgs, t[1]):
-                            tokens.append(colored(t[0], "red"))
                             pred += 1
                             if k in tagged:
                                 correct += 1
