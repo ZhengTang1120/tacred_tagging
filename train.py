@@ -17,6 +17,12 @@ from utils import torch_utils, scorer, constant, helper
 
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 
+def check(tags, ids):
+    for i in ids:
+        if i<len(tags) and tags[i] == 1:
+            return True
+    return False
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', type=str, default='dataset/tacred')
 parser.set_defaults(lower=False)
@@ -69,6 +75,12 @@ train_batch = DataLoader(opt['data_dir'] + '/train_fewshot.json', opt['batch_siz
 train_num_example = train_batch.num_examples
 train_batch = list(train_batch)
 dev_batch = DataLoader(opt['data_dir'] + '/dev_fewshot.json', opt['batch_size'], opt, tokenizer)
+
+tagging = []
+with open(opt['data_dir'] + '/tagging_dev_fewshot.txt'.format(args.dataset)) as f:
+    # tagging = f.readlines()
+    for i, line in enumerate(f):
+        tagging.append(line)
 
 model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
 model_save_dir = opt['save_dir'] + '/' + model_id
@@ -130,15 +142,43 @@ for epoch in range(1, opt['num_epoch']+1):
             dev_loss = 0
             for _, batch in enumerate(dev_batch):
                 preds, tags, dloss = trainer.predict(batch, id2label, tokenizer)
-                predictions += preds
+                predictions += tags
                 dev_loss += dloss
-            predictions = [id2label[p] for p in predictions]
-            train_loss = train_loss / train_num_example * opt['batch_size'] # avg loss per batch
-            dev_loss = dev_loss / dev_batch.num_examples * opt['batch_size']
+            # predictions = [id2label[p] for p in predictions]
+            # train_loss = train_loss / train_num_example * opt['batch_size'] # avg loss per batch
+            # dev_loss = dev_loss / dev_batch.num_examples * opt['batch_size']
+            tagging_scores = []
+            for j, tgs in enumerate(predictions):
+                _, tagged = tagging[j].split('\t')
+                tagged = eval(tagged)
 
-            dev_p, dev_r, dev_f1, bi_acc = scorer.score(dev_batch.gold(), predictions)
-            print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}, binary_accuracy = {:.4f}".format(epoch,\
-                train_loss, dev_loss, dev_f1, bi_acc))
+                if len(tagged)>0:
+                    correct = 0
+                    pred = 0
+
+                    for k, t in enumerate(dev_batch.words[j]):
+                        if check(tgs, t[1]):
+                            tokens.append(colored(t[0], "red"))
+                            pred += 1
+                            if k in tagged:
+                                correct += 1
+
+                    if pred > 0:
+                        precison = correct / pred
+                    else:
+                        precison = 0
+                    if len(tagged) > 0:
+                        recall = correct / len(tagged)
+                    else:
+                        recall = 0
+                    try:
+                        f1 = 2.0 * precison * recall / (precison + recall)
+                    except ZeroDivisionError:
+                        f1 = 0
+                    tagging_scores.append((precison, recall, f1))
+            dev_p, dev_r, dev_f1 = zip(*tagging_scores)
+            print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
+                train_loss, dev_loss, dev_f1))
             dev_score = dev_f1
             file_logger.log("{}\t{:.6f}\t{:.6f}\t{:.4f}\t{:.4f}".format(epoch, train_loss, dev_loss, dev_score, max([dev_score] + dev_score_history)))
 
