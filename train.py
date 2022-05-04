@@ -176,6 +176,8 @@ for epoch in range(1, opt['num_epoch']+1):
                         f1 = 0
                     tagging_scores.append((precison, recall, f1))
             dev_p, dev_r, dev_f1 = zip(*tagging_scores)
+            dev_p = statistics.mean(dev_p)
+            dev_r = statistics.mean(dev_r)
             dev_f1 = statistics.mean(dev_f1)
             print("epoch {}: train_loss = {:.6f}, dev_loss = {:.6f}, dev_f1 = {:.4f}".format(epoch,\
                 train_loss, dev_loss, dev_f1))
