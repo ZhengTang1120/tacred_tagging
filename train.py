@@ -77,7 +77,7 @@ train_batch = list(train_batch)
 dev_batch = DataLoader(opt['data_dir'] + '/dev_fewshot.json', opt['batch_size'], opt, tokenizer)
 
 tagging = []
-with open(opt['data_dir'] + '/tagging_dev_fewshot.txt'.format(args.dataset)) as f:
+with open(opt['data_dir'] + '/tagging_dev_fewshot.txt') as f:
     # tagging = f.readlines()
     for i, line in enumerate(f):
         tagging.append(line)
