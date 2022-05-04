@@ -50,7 +50,7 @@ class DataLoader(object):
         print("{} batches created for {}".format(len(self.data), filename))
 
     def preprocess(self, data, opt):
-
+        rels = set()
         missed = 0
         """ Preprocess the data and convert to ids. """
         processed = []
@@ -96,7 +96,7 @@ class DataLoader(object):
             
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
-            print (d['relation'])
+            rels.add(d['relation'])
             tagging_mask = [0]+tagging_mask+[0]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
             if len(tokens) > self.opt['max_length']:
@@ -114,6 +114,7 @@ class DataLoader(object):
             #     print (words)
             #     print ([w for i,w in enumerate(d['token']) if i in tagged])
             #     print ([w for i, w in enumerate(words) if tagging_mask[i]==1])
+        print (rels)
         return processed
 
     def gold(self):
