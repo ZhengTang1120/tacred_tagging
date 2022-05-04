@@ -96,6 +96,7 @@ class DataLoader(object):
             
             words = ['[CLS]'] + words + ['[SEP]']
             relation = self.label2id[d['relation']]
+            print (d['relation'])
             tagging_mask = [0]+tagging_mask+[0]
             tokens = self.tokenizer.convert_tokens_to_ids(words)
             if len(tokens) > self.opt['max_length']:
