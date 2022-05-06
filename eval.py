@@ -103,7 +103,7 @@ for i, p in enumerate(predictions):
 
     # if p!=0:
     output[-1]["predicted_tags"] = [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])]
-    if len(tagged)>0:
+    if len(output[-1]["predicted_tags"])>0:
         output[-1]['gold_tags'] = tagged
         correct = 0
         pred = 0
