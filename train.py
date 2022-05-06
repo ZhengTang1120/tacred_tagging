@@ -54,6 +54,7 @@ parser.add_argument('--burnin', type=int, default=5)
 
 parser.add_argument("--eval_per_epoch", default=10, type=int, help="How many times it evaluates on dev set per epoch")
 parser.add_argument("--top", default=1, type=int, help="How many times it evaluates on dev set per epoch")
+parser.add_argument("--loo", default=1, type=str, help="Leave one relation out")
 
 args = parser.parse_args()
 
@@ -72,7 +73,7 @@ elif args.cuda:
 
 tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
 
-train_batch = DataLoader(opt['data_dir'] + '/train_fewshot.json', opt['batch_size'], opt, tokenizer, False, opt['data_dir'] + '/tagging_train_fewshot.txt')
+train_batch = DataLoader(opt['data_dir'] + '/train_fewshot__wo_{args.loo}.json', opt['batch_size'], opt, tokenizer, False, opt['data_dir'] + '/tagging_train_fewshot_wo_{args.loo}.txt')
 train_num_example = train_batch.num_examples
 train_batch = list(train_batch)
 dev_batch = DataLoader(opt['data_dir'] + '/dev_fewshot.json', opt['batch_size'], opt, tokenizer)
