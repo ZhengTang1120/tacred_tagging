@@ -91,7 +91,6 @@ class BERTtrainer(Trainer):
 
     def update(self, batch, epoch):
         inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
-        labels =
 
         # step forward
         self.encoder.train()
