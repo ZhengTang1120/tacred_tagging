@@ -100,7 +100,6 @@ class BERTtrainer(Trainer):
         subj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(0), inputs[0].unsqueeze(2).lt(3))
         obj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(2), inputs[0].unsqueeze(2).lt(20))
         logits, rationale = self.classifier(h, subj_mask, obj_mask)
-        print (self.criterion(logits, labels),torch.sum(rationale),torch.sum(rationale[:, 1:]  - rationale[:, :-1]))
         loss = self.criterion(logits, labels) + torch.sum(rationale) + torch.sum(rationale[:, 1:]  - rationale[:, :-1])
         loss_val = loss.item()
         # backward
