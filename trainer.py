@@ -64,7 +64,7 @@ class BERTtrainer(Trainer):
         self.opt = opt
         self.encoder = BERTencoder()
         self.classifier = BERTclassifier(opt)
-        self.criterion = nn.CrossEntropyLoss()
+        self.criterion = nn.MSELoss()
 
         param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())
         no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
@@ -91,6 +91,7 @@ class BERTtrainer(Trainer):
 
     def update(self, batch, epoch):
         inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        labels = F.one_hot(labels, num_classes=self.opt['num_class'])
 
         # step forward
         self.encoder.train()
