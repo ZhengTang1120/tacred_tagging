@@ -53,10 +53,10 @@ def unpack_batch(batch, cuda, device):
     if cuda:
         with torch.cuda.device(device):
             inputs = [batch[i].to('cuda') for i in range(3)]
-            labels = Variable(batch[-1].cuda())
+            labels = Variable(F.one_hot(batch[-1].cuda(), num_classes=self.opt['num_class']))
     else:
         inputs = [Variable(batch[i]) for i in range(3)]
-        labels = Variable(batch[-1])
+        labels = Variable(F.one_hot(batch[-1], num_classes=self.opt['num_class']))
     return inputs, labels
 
 class BERTtrainer(Trainer):
@@ -91,7 +91,7 @@ class BERTtrainer(Trainer):
 
     def update(self, batch, epoch):
         inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
-        labels = F.one_hot(labels, num_classes=self.opt['num_class'])
+        labels =
 
         # step forward
         self.encoder.train()
