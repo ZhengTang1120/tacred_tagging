@@ -99,7 +99,7 @@ class BERTtrainer(Trainer):
         h = self.encoder(inputs)
         subj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(0), inputs[0].unsqueeze(2).lt(3))
         obj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(2), inputs[0].unsqueeze(2).lt(20))
-        logits = self.classifier(h, subj_mask, obj_mask)
+        logits, _ = self.classifier(h, subj_mask, obj_mask)
         loss = self.criterion(logits, labels)
         loss_val = loss.item()
         # backward
@@ -118,9 +118,9 @@ class BERTtrainer(Trainer):
             h = self.encoder(inputs)
             subj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(0), inputs[0].unsqueeze(2).lt(3))
             obj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(2), inputs[0].unsqueeze(2).lt(20))
-            probs = self.classifier(h, subj_mask, obj_mask)
+            probs, rationale = self.classifier(h, subj_mask, obj_mask)
         loss = self.criterion(probs, labels).item()
         # probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         
-        return predictions, loss
+        return predictions, loss, rationale.cpu().numpy()
