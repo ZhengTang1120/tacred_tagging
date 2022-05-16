@@ -64,7 +64,7 @@ class BERTtrainer(Trainer):
         self.opt = opt
         self.encoder = BERTencoder()
         self.classifier = BERTclassifier(opt)
-        self.criterion = nn.MSELoss()
+        self.criterion = nn.CrossEntropyLoss()
 
         param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())
         no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
