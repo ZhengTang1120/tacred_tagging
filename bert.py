@@ -44,7 +44,7 @@ def pool(h, mask, type):
     elif type == 'avg':
         h = h.masked_fill(mask, 0)
         # print ('size: ', (mask.size(1) - mask.float().sum(1)))
-        return h.sum(1) / (mask.size(1) - mask.float().sum(1))
+        return h.sum(1) / (mask.size(1) - mask.float().sum(1)) if mask.size(1) > mask.float().sum(1) else h.sum(1) # solution for masked all tokens, not sure if there is a better solution or not...
     else:
         h = h.masked_fill(mask, 0)
         return h.sum(1)
