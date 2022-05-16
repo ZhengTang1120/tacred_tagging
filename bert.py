@@ -27,11 +27,12 @@ class BERTclassifier(nn.Module):
         self.classifier = nn.Linear(in_dim * 3, opt['num_class'])
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
         self.generator = nn.Linear(in_dim, 1)
+        self.sigmoid = nn.Sigmoid()
         self.opt = opt
 
     def forward(self, h, subj_mask, obj_mask):
         # cls_out = self.dropout(h)
-        rationale_mask = torch.round(self.generator(h))
+        rationale_mask = torch.round(self.sigmoid(self.generator(h)))
         cls_out = torch.cat([pool(h, rationale_mask.eq(0), type="avg"), pool(h, subj_mask.eq(0), type="avg"), pool(h, obj_mask.eq(0), type="avg")], 1)
         print (cls_out)
         cls_out = self.dropout(cls_out)
