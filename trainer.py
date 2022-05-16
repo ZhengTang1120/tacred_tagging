@@ -48,15 +48,15 @@ class Trainer(object):
             print("[Warning: Saving failed... continuing anyway.]")
 
 
-def unpack_batch(batch, cuda, device):
+def unpack_batch(batch, cuda, device, num_class):
     rules = None
     if cuda:
         with torch.cuda.device(device):
             inputs = [batch[i].to('cuda') for i in range(3)]
-            labels = Variable(F.one_hot(batch[-1].cuda(), num_classes=self.opt['num_class']))
+            labels = Variable(F.one_hot(batch[-1].cuda(), num_classes=num_class))
     else:
         inputs = [Variable(batch[i]) for i in range(3)]
-        labels = Variable(F.one_hot(batch[-1], num_classes=self.opt['num_class']))
+        labels = Variable(F.one_hot(batch[-1], num_classes=num_class))
     return inputs, labels
 
 class BERTtrainer(Trainer):
@@ -90,7 +90,7 @@ class BERTtrainer(Trainer):
             param.requires_grad = False
 
     def update(self, batch, epoch):
-        inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'], self.opt['num_class'])
 
         # step forward
         self.encoder.train()
@@ -110,7 +110,7 @@ class BERTtrainer(Trainer):
         return loss_val, self.optimizer.get_lr()[0]
 
     def predict(self, batch, id2label, tokenizer):
-        inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'], self.opt['num_class'])
         # forward
         self.encoder.eval()
         self.classifier.eval()
