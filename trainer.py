@@ -110,6 +110,8 @@ class BERTtrainer(Trainer):
                 print (h[i].size(), inputs[0][i].unsqueeze(0).size(), inputs[3][i].unsqueeze(0).size())
                 logits = self.classifier(h[i], inputs[0][i].unsqueeze(0), inputs[3][i].unsqueeze(0))
                 print (logits.size())
+                temp = self.classifier(h[i], torch.cat(n*[inputs[0][i].unsqueeze(0)], dim=0), torch.cat(n*[inputs[3][i].unsqueeze(0)], dim=0))
+                print (temp.size())
                 loss += self.criterion(logits, labels.unsqueeze(1)[i])
             elif epoch > self.opt['burnin']:
                 tag_cands, n = self.tagger.generate_cand_tags(tagging_output[i], self.opt['device'])
