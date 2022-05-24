@@ -107,17 +107,13 @@ class BERTtrainer(Trainer):
         for i, f in enumerate(has_tag):
             if f:
                 loss += self.criterion2(tagging_output[i], inputs[3][i].unsqueeze(1).to(torch.float32))
-                print (h[i].size(), inputs[0][i].unsqueeze(0).size(), inputs[3][i].unsqueeze(0).size())
                 logits = self.classifier(h[i], inputs[0][i].unsqueeze(0), inputs[3][i].unsqueeze(0))
-                print (logits.size())
                 temp = self.classifier(h[i], torch.cat(3*[inputs[0][i].unsqueeze(0)], dim=0), torch.cat(3*[inputs[3][i].unsqueeze(0)], dim=0))
-                print (temp.size())
                 loss += self.criterion(logits, labels.unsqueeze(1)[i])
             elif epoch > self.opt['burnin']:
                 tag_cands, n = self.tagger.generate_cand_tags(tagging_output[i], self.opt['device'])
                 if n != -1 and len(tag_cands)!=0:
                     logits = self.classifier(h[i], torch.cat(n*[inputs[0][i].unsqueeze(0)], dim=0), tag_cands)
-                    print (h[i].size(), torch.cat(n*[inputs[0][i].unsqueeze(0)], dim=0).size(), tag_cands.size())
                     best = np.argmax(logits.data.cpu().numpy(), axis=0).tolist()[labels[i]]
                     # loss += self.criterion2(tagging_output[i], tag_cands[best].unsqueeze(1).to(torch.float32))
                     loss += self.criterion(logits[best].unsqueeze(0), labels.unsqueeze(1)[i])
