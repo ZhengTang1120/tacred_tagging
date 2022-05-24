@@ -117,9 +117,6 @@ class BERTtrainer(Trainer):
                     best = np.argmax(logits.data.cpu().numpy(), axis=0).tolist()[labels[i]]
                     # loss += self.criterion2(tagging_output[i], tag_cands[best].unsqueeze(1).to(torch.float32))
                     loss += self.criterion(logits[best].unsqueeze(0), labels.unsqueeze(1)[i])
-                    print (tag_cands)
-                    print ()
-                    print ('3', loss)
                 else:
                     print (n, tag_cands)
         if loss != 0:
