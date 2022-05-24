@@ -106,6 +106,7 @@ class DataLoader(object):
             if self.do_eval:
                 processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, origin)]
             elif len([aa for aa in tokens if aa>0 and aa<20]) == 2:# or relation == 0) and d['relation'] not in hide_relations:
+                print (tokens)
                 processed += [(tokens, mask, segment_ids, tagging_mask, sum(tagging_mask)!=0, relation, origin)]
                 
             # if sum(tagging_mask)!=0:
