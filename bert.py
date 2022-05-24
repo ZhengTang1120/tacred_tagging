@@ -91,7 +91,6 @@ class Tagger(nn.Module):
     def generate_cand_tags(self, tag_logits, device):
         cand_tags = [[]]
         for t in tag_logits:
-            print (t)
             if t < self.threshold1 and t > self.threshold2:
                 temp = []
                 for ct in cand_tags:
