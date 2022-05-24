@@ -124,6 +124,9 @@ class BERTtrainer(Trainer):
 
             # backward
             loss.backward()
+        else:
+            loss_val = 0
+            
         self.optimizer.step()
         self.optimizer.zero_grad()
         h = logits = inputs = labels = None
