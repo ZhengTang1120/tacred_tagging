@@ -118,7 +118,7 @@ class BERTtrainer(Trainer):
                     loss += self.criterion(logits[best].unsqueeze(0), labels.unsqueeze(1)[i])
                 else:
                     print (n, tag_cands)
-
+        print (loss)
         if loss != 0:
             loss_val = loss.item()
 
