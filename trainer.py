@@ -122,5 +122,6 @@ class BERTtrainer(Trainer):
         loss = self.criterion(probs, labels).item()
         # probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
+
         
-        return predictions, loss, rationale.cpu().numpy()
+        return predictions, loss, rationale.squeeze(2).cpu().numpy()
