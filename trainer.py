@@ -119,9 +119,17 @@ class BERTtrainer(Trainer):
             subj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(0), inputs[0].unsqueeze(2).lt(3))
             obj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(2), inputs[0].unsqueeze(2).lt(20))
             probs, rationale = self.classifier(h, subj_mask, obj_mask)
+            tagging_max = np.argmax(rationale.squeeze(2).data.cpu().numpy(), axis=1)
+            tagging = torch.round(rationale).squeeze(2)
         loss = self.criterion(probs, labels).item()
         # probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
-
+        tags = []
+        for i, p in enumerate(predictions):
+            # if p != 0:
+            t = tagging[i].data.cpu().numpy().tolist()
+            if sum(t) == 0:
+                t[tagging_max[i]] = 1
+            tags += [t]
         
-        return predictions, loss, rationale.squeeze(2).cpu().numpy().tolist()
+        return predictions, loss, tags
