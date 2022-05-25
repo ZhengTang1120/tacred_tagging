@@ -143,7 +143,7 @@ with open("output_tagging_{}_{}_{}".format(args.model_dir.split('/')[-1], args.d
 
 # with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
-p, r, f1, ba = scorer.score(batch.gold(), predictions, verbose=True)
+p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
 print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p*100,r*100,f1*100))
 tr, tp, tf = zip(*tagging_scores)
 print("{} set tagging  result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,statistics.mean(tr)*100,statistics.mean(tp)*100,statistics.mean(tf)*100))
