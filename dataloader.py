@@ -12,6 +12,7 @@ from utils import constant, helper
 from collections import defaultdict
 from statistics import mean
 
+from termcolor import colored
 
 class DataLoader(object):
     """
@@ -49,6 +50,7 @@ class DataLoader(object):
         for c, d in enumerate(data):
             tokens = list()
             words  = list()
+            origin = list()
             # anonymize tokens
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
@@ -59,11 +61,12 @@ class DataLoader(object):
                 if i == os:
                     words.append("[unused%d]"%(constant.ENTITY_TOKEN_TO_ID['[OBJ-'+d['obj_type']+']']+1))
                 if i>=ss and i<=se:
-                    pass
+                    origin.append((colored(t, "blue"), [len(words)]))
                 elif i>=os and i<=oe:
-                    pass
+                    origin.append((colored(t, "yellow"), [len(words)]))
                 else:
                     t = convert_token(t)
+                    origin.append((t, range(len(words)+1, len(words)+1+len(self.tokenizer.tokenize(t)))))
                     for j, sub_token in enumerate(self.tokenizer.tokenize(t)):
                         words.append(sub_token)
             words = ['[CLS]'] + words + ['[SEP]']
@@ -74,9 +77,9 @@ class DataLoader(object):
             mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
             if self.do_eval:
-                processed += [(tokens, mask, segment_ids, relation, words)]
+                processed += [(tokens, mask, segment_ids, relation, origin)]
             elif (len([aa for aa in tokens if aa>0 and aa<20]) == 2):
-                processed += [(tokens, mask, segment_ids, relation, words)]
+                processed += [(tokens, mask, segment_ids, relation, origin)]
         return processed
 
     def gold(self):
