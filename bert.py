@@ -23,7 +23,7 @@ class BERTencoder(nn.Module):
 class BERTclassifier(nn.Module):
     def __init__(self, opt):
         super().__init__()
-        in_dim = 1024
+        in_dim = 1024 * 3
         self.classifier = nn.Linear(in_dim, opt['num_class'])
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
         self.generator = nn.Linear(in_dim, 1)
