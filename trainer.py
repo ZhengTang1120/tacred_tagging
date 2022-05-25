@@ -124,4 +124,4 @@ class BERTtrainer(Trainer):
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
 
         
-        return predictions, loss, rationale.squeeze(2).cpu().numpy()
+        return predictions, loss, rationale.squeeze(2).cpu().numpy().tolist()
