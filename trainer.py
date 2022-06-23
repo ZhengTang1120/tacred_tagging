@@ -115,8 +115,10 @@ class BERTtrainer(Trainer):
                     loss += self.criterion(logits[best].unsqueeze(0), labels.unsqueeze(1)[i])
                 else:
                     print (n, tag_cands)
-
-        loss_val = loss.item()
+        if loss != 0:
+            loss_val = loss.item()
+        else:
+            loss_val = 0
 
         # backward
         loss.backward()
@@ -131,7 +133,6 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
         self.tagger.eval()
-        loss = 0
         with torch.no_grad():
             h = self.encoder(inputs)
             tagging_output = self.tagger(h)
