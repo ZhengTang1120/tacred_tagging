@@ -117,13 +117,13 @@ class BERTtrainer(Trainer):
                     print (n, tag_cands)
         if loss != 0:
             loss_val = loss.item()
+            # backward
+            loss.backward()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
         else:
             loss_val = 0
 
-        # backward
-        loss.backward()
-        self.optimizer.step()
-        self.optimizer.zero_grad()
         h = logits = inputs = labels = None
         return loss_val, self.optimizer.get_lr()[0]
 
