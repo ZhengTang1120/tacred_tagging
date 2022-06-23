@@ -101,7 +101,7 @@ class BERTtrainer(Trainer):
 
         h = self.encoder(inputs)
         tagging_output = self.tagger(h)
-        
+        loss = 0
         for i, f in enumerate(has_tag):
             if f:
                 loss += self.criterion2(tagging_output[i], inputs[3][i].unsqueeze(1).to(torch.float32))
@@ -131,6 +131,7 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.classifier.eval()
         self.tagger.eval()
+        loss = 0
         with torch.no_grad():
             h = self.encoder(inputs)
             tagging_output = self.tagger(h)
