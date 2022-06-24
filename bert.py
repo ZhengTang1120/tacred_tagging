@@ -31,7 +31,7 @@ class BERTclassifier(nn.Module):
 
     def forward(self, h, subj_mask, obj_mask):
         h2 = torch.cat([pool(h, subj_mask.eq(0), type="avg"), pool(h, obj_mask.eq(0), type="avg")], 1)
-        rationale = torch.sigmoid(self.generator(self.dropout(h2)))
+        rationale = torch.sigmoid(self.generator(F.relu(self.dropout(h2))))
         rationale_mask = torch.round(rationale)
         cls_out = torch.cat([pool(h, rationale_mask.eq(0), type="avg"), h2], 1)
         cls_out = self.dropout(cls_out)
