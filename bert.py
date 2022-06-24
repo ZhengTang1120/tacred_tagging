@@ -26,7 +26,7 @@ class BERTclassifier(nn.Module):
         in_dim = 1024 
         self.classifier = nn.Linear(in_dim * 3, opt['num_class'])
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
-        self.generator = nn.Linear(in_dim * 2, 1)
+        self.generator = nn.Linear(in_dim, 1)
         self.opt = opt
 
     def forward(self, h, subj_mask, obj_mask):
