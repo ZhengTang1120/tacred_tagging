@@ -66,7 +66,7 @@ class BERTtrainer(Trainer):
         self.encoder = BERTencoder()
         self.classifier = BERTclassifier(opt)
         self.tagger = Tagger()
-        self.criterion = nn.CrossEntropyLoss(ignore_index=0)
+        self.criterion = nn.CrossEntropyLoss()
         self.criterion2 = nn.BCELoss()
 
         param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())+list(self.tagger.named_parameters())
