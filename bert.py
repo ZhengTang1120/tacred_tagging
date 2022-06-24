@@ -30,11 +30,9 @@ class BERTclassifier(nn.Module):
         self.opt = opt
 
     def forward(self, h, subj_mask, obj_mask):
-        h2 = torch.cat([pool(h, subj_mask.eq(0), type="avg"), pool(h, obj_mask.eq(0), type="avg")], 1)
-        rationale = torch.sigmoid(self.generator(F.relu(self.dropout(h2))))
+        rationale = torch.sigmoid(self.generator(F.relu(self.dropout(h))))
         rationale_mask = torch.round(rationale)
-        print (h2.size(), h.size(), rationale_mask.size())
-        cls_out = torch.cat([pool(h, rationale_mask.eq(0), type="avg"), h2], 1)
+        cls_out = torch.cat([pool(h, rationale_mask.eq(0), type="avg"), pool(h, subj_mask.eq(0), type="avg"), pool(h, obj_mask.eq(0), type="avg")], 1)
         cls_out = self.dropout(cls_out)
         logits = self.classifier(cls_out)
         return logits, rationale_mask
