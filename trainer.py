@@ -90,6 +90,9 @@ class BERTtrainer(Trainer):
             param.requires_grad = False
 
     def update(self, batch, epoch):
+        selection_lambda = 0.001
+        continuity_lambda = 0.001
+
         inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'], self.opt['num_class'])
 
         # step forward
@@ -100,7 +103,7 @@ class BERTtrainer(Trainer):
         subj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(0), inputs[0].unsqueeze(2).lt(3))
         obj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(2), inputs[0].unsqueeze(2).lt(20))
         logits, rationale = self.classifier(h, subj_mask, obj_mask)
-        loss = self.criterion(logits, labels) + torch.sum(rationale) + torch.sum(rationale[:, 1:]  - rationale[:, :-1])
+        loss = self.criterion(logits, labels) + selection_lambda*(torch.sum(rationale)) + continuity_lambda*(torch.sum(rationale[:, 1:]  - rationale[:, :-1]))
         loss_val = loss.item()
         # backward
         loss.backward()
