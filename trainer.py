@@ -90,8 +90,8 @@ class BERTtrainer(Trainer):
             param.requires_grad = False
 
     def update(self, batch, epoch):
-        selection_lambda = 0.001
-        continuity_lambda = 0.001
+        selection_lambda = 1
+        continuity_lambda = 1
 
         inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'], self.opt['num_class'])
 
