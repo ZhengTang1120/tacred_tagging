@@ -18,7 +18,7 @@ from utils import torch_utils, scorer, constant, helper
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_dir', type=str, default='dataset/tacred')
+parser.add_argument('--data_dir', type=str, default='dataset/conll04')
 parser.set_defaults(lower=False)
 
 parser.add_argument('--lr', type=float, default=1.0, help='Applies to sgd and adagrad.')
