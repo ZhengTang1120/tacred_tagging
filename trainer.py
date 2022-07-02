@@ -87,7 +87,8 @@ class BERTtrainer(Trainer):
 
     def update(self, batch, epoch):
         inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
-
+        selection_lambda = 1
+        continuity_lambda = 1
         # step forward
         self.encoder.train()
         self.classifier.train()
