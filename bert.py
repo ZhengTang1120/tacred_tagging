@@ -32,65 +32,19 @@ class BERTclassifier(nn.Module):
         in_dim = 1024
         self.classifier = nn.Linear(3 * in_dim, opt['num_class'])
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
+        self.generator = nn.Linear(in_dim, 1)
         self.opt = opt
 
-    def forward(self, h, words, tags):
+    def forward(self, h, words):
         pool_type = self.opt['pooling']
         subj_mask = torch.logical_and(words.unsqueeze(2).gt(4), words.unsqueeze(2).lt(9))
         obj_mask = torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(5))
-        tag_mask = tags.unsqueeze(2).eq(1)
-        for i, x in enumerate(torch.sum(subj_mask, 1)):
-            if x[0].item() == 0:
-                print ("subj missing", words[i])
-        for i, x in enumerate(torch.sum(obj_mask, 1)):
-            if x[0].item() == 0:
-                print ("obj missing", words[i])
-        for i, x in enumerate(torch.sum(tag_mask, 1)):
-            if x[0].item() == 0:
-                print ("tag missing", tags[i])
-        cls_out = torch.cat([pool(h, tag_mask.eq(0), type=pool_type), pool(h, subj_mask.eq(0), type=pool_type), pool(h, obj_mask.eq(0), type=pool_type)], 1)
+        rationale = torch.sigmoid(self.generator(F.relu(self.dropout(h))))
+        rationale_mask = torch.round(rationale)
+        cls_out = torch.cat([pool(h, rationale_mask.eq(0), type=pool_type), pool(h, subj_mask.eq(0), type=pool_type), pool(h, obj_mask.eq(0), type=pool_type)], 1)
         cls_out = self.dropout(cls_out)
         logits = self.classifier(cls_out)
-        return logits
-
-class Tagger(nn.Module):
-    def __init__(self):
-        super().__init__()
-        in_dim = 1024
-
-        self.tagger = nn.Linear(in_dim, 1)
-        self.threshold1 = 0.8
-        self.threshold2 = 0.2
-
-    def forward(self, h):
-
-        tag_logits = torch.sigmoid(self.tagger(h))
-        
-        return tag_logits
-
-    def generate_cand_tags(self, tag_logits, device):
-        cand_tags = [[]]
-        for t in tag_logits:
-            if t < self.threshold1 and t > self.threshold2:
-                temp = []
-                for ct in cand_tags:
-                    temp.append(ct+[0])
-                    ct.append(1)
-                cand_tags += temp
-                if len(cand_tags) > 2048:
-                    return None, -1
-            elif t > self.threshold1:
-                for ct in cand_tags:
-                    ct.append(1)
-            else:
-                for ct in cand_tags:
-                    ct.append(0)
-        cand_tags = [ct for ct in cand_tags if sum(ct)!=0]
-        if device is not None:
-            with torch.cuda.device(device):
-                return torch.BoolTensor(cand_tags).cuda(), len(cand_tags)
-        else:
-            return torch.BoolTensor(cand_tags), len(cand_tags)
+        return logits, rationale_mask
 
 def pool(h, mask, type='max'):
     if type == 'max':
@@ -99,7 +53,7 @@ def pool(h, mask, type='max'):
     elif type == 'avg':
         h = h.masked_fill(mask, 0)
         # print ('size: ', (mask.size(1) - mask.float().sum(1)))
-        return h.sum(1) / (mask.size(1) - mask.float().sum(1))
+        return torch.nan_to_num(h.sum(1) / (mask.size(1) - mask.float().sum(1)))
     else:
         h = h.masked_fill(mask, 0)
         return h.sum(1)
