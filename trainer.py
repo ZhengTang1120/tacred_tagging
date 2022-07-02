@@ -115,7 +115,7 @@ class BERTtrainer(Trainer):
             probs, rationale = self.classifier(h, inputs[0])
             tagging_max = np.argmax(rationale.squeeze(2).data.cpu().numpy(), axis=1)
             tagging = torch.round(rationale).squeeze(2)
-        loss = self.criterion(logits, labels).item()
+        loss = self.criterion(probs, labels).item()
         for i, f in enumerate(has_tag):
             if f:
                 loss += self.criterion2(tagging_output[i], inputs[3][i].unsqueeze(1).to(torch.float32))
