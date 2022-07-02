@@ -66,7 +66,7 @@ class BERTtrainer(Trainer):
         self.encoder = BERTencoder()
         self.classifier = BERTclassifier(opt)
         self.tagger = Tagger()
-        self.criterion = nn.CrossEntropyLoss(ignore_index=0)
+        self.criterion = nn.CrossEntropyLoss()
         self.criterion2 = nn.BCELoss()
 
         param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())+list(self.tagger.named_parameters())
@@ -99,16 +99,16 @@ class BERTtrainer(Trainer):
         self.classifier.train()
         self.tagger.train()
 
-        h, b_out = self.encoder(inputs)
+        h = self.encoder(inputs)
         tagging_output = self.tagger(h)
         
-        loss = self.criterion2(b_out, (~(labels.eq(0))).to(torch.float32).unsqueeze(1))
+        loss = 0
         for i, f in enumerate(has_tag):
             if f:
                 loss += self.criterion2(tagging_output[i], inputs[3][i].unsqueeze(1).to(torch.float32))
                 logits = self.classifier(h[i], inputs[0][i].unsqueeze(0), inputs[3][i].unsqueeze(0))
                 loss += self.criterion(logits, labels.unsqueeze(1)[i])
-            elif labels[i] != 0 and epoch > self.opt['burnin']:
+            elif epoch > self.opt['burnin']:
                 tag_cands, n = self.tagger.generate_cand_tags(tagging_output[i], self.opt['device'])
                 if n != -1 and len(tag_cands)!=0:
                     logits = self.classifier(h[i], torch.cat(n*[inputs[0][i].unsqueeze(0)], dim=0), tag_cands)
@@ -118,13 +118,16 @@ class BERTtrainer(Trainer):
                 else:
                     print (n, tag_cands)
 
-        loss_val = loss.item()
+        if loss != 0:
+            loss_val = loss.item()
 
-        # backward
-        loss.backward()
-        self.optimizer.step()
-        self.optimizer.zero_grad()
-        h = b_out = logits = inputs = labels = None
+            # backward
+            loss.backward()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
+        else:
+            loss_val = 0
+        h = logits = inputs = labels = None
         return loss_val, self.optimizer.get_lr()[0]
 
     def predict(self, batch, id2label, tokenizer):
@@ -134,7 +137,7 @@ class BERTtrainer(Trainer):
         self.classifier.eval()
         self.tagger.eval()
         with torch.no_grad():
-            h, b_out = self.encoder(inputs)
+            h = self.encoder(inputs)
             tagging_output = self.tagger(h)
             words = inputs[0]
             ent_mask = torch.logical_and(words.unsqueeze(2).ge(0), words.unsqueeze(2).lt(9))
@@ -142,8 +145,8 @@ class BERTtrainer(Trainer):
             tagging_max = np.argmax(tagging_output.masked_fill(ent_mask, -constant.INFINITY_NUMBER).squeeze(2).data.cpu().numpy(), axis=1)
             tagging = torch.round(tagging_output).squeeze(2)
             logits = self.classifier(h, inputs[0], tagging_mask)
-            probs = F.softmax(logits, 1) * torch.round(b_out)
-        loss = self.criterion2(b_out, (~(labels.eq(0))).to(torch.float32).unsqueeze(1)) + self.criterion(logits, labels).item()
+            probs = F.softmax(logits, 1)
+        loss = self.criterion(logits, labels).item()
         for i, f in enumerate(has_tag):
             if f:
                 loss += self.criterion2(tagging_output[i], inputs[3][i].unsqueeze(1).to(torch.float32))

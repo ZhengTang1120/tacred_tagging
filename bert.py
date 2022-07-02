@@ -13,8 +13,6 @@ class BERTencoder(nn.Module):
         super().__init__()
         in_dim = 1024
         self.model = BertModel.from_pretrained("spanbert-large-cased")
-        self.classifier = nn.Linear(in_dim, 1)
-        self.dropout = nn.Dropout(constant.DROPOUT_PROB)
 
     def forward(self, inputs):
         words = inputs[0]
@@ -22,9 +20,7 @@ class BERTencoder(nn.Module):
         segment_ids = inputs[2]
         h, pooled_output = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
         
-        out = torch.sigmoid(self.classifier(self.dropout(pooled_output)))
-
-        return h, out
+        return h
 
 class BERTclassifier(nn.Module):
     def __init__(self, opt):
