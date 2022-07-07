@@ -80,7 +80,7 @@ x = 0
 exact_match = 0
 other = 0
 tags = []
-for c, b in enumerate(batch):
+for c, b in tqdm(enumerate(batch)):
     preds,t,_ = trainer.predict(b, id2label, tokenizer)
     predictions += preds
     tags += t
