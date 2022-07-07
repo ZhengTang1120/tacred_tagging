@@ -79,11 +79,9 @@ predictions = []
 x = 0
 exact_match = 0
 other = 0
-tags = []
-for c, b in enumerate(batch):
-    preds,t,_ = trainer.predict(b, id2label, tokenizer)
+for c, b in tqdm(enumerate(batch)):
+    preds,_ = trainer.predict(b, id2label, tokenizer)
     predictions += preds
-    tags += t
     batch_size = len(preds)
 output = list()
 tagging_scores = []
@@ -98,53 +96,6 @@ for i, p in enumerate(predictions):
     
     predictions[i] = id2label[p]
     pred_output.write(id2label[p]+'\n')
-    output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'predicted_tags':[], 'gold_tags':[]})
-
-    # if p!=0:
-    output[-1]["predicted_tags"] = [j for j, t in enumerate(batch.words[i]) if check(tags[i], t[1])]
-    if len(tagged)>0:
-        output[-1]['gold_tags'] = tagged
-        correct = 0
-        pred = 0
-        for j, t in enumerate(batch.words[i]):
-            if check(tags[i], t[1]):
-                tokens.append(colored(t[0], "red"))
-                pred += 1
-                if j in tagged:
-                    correct += 1
-            else:
-                tokens.append(t[0])
-            if j in tagged:
-                tokens2.append(colored(t[0], "red"))
-            else:
-                tokens2.append(t[0])
-        print (output[-1])
-        print (" ".join(tokens))
-        print (" ".join(tokens2))
-        print ()
-        if pred > 0:
-            r = correct / pred
-        else:
-            print (tags[i])
-            r = 0
-        if len(tagged) > 0:
-            p = correct / len(tagged)
-        else:
-            p = 0
-        try:
-            f1 = 2.0 * p * r / (p + r)
-        except ZeroDivisionError:
-            f1 = 0
-        tagging_scores.append((r, p, f1))
 pred_output.close()
-with open("output_tagging_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
-    f.write(json.dumps(output))
-
-
-# with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
-#     f.write(json.dumps(output))
 p, r, f1, ba = scorer.score(batch.gold(), predictions, verbose=True)
 print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p*100,r*100,f1*100))
-tr, tp, tf = zip(*tagging_scores)
-print("{} set tagging  result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,statistics.mean(tr)*100,statistics.mean(tp)*100,statistics.mean(tf)*100))
-print("Evaluation ended.")
