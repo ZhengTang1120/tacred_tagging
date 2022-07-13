@@ -137,12 +137,12 @@ for i, p in enumerate(predictions):
             f1 = 0
         tagging_scores.append((r, p, f1))
 pred_output.close()
-with open("output_tagging_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
-    f.write(json.dumps(output))
-
-
-# with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
+# with open("output_tagging_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
+
+
+with open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
+    f.write(json.dumps(output))
 p, r, f1, ba = scorer.score(batch.gold(), predictions, verbose=True)
 print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p*100,r*100,f1*100))
 tr, tp, tf = zip(*tagging_scores)

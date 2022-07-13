@@ -17,6 +17,8 @@ from utils import torch_utils, scorer, constant, helper
 
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 
+import statistics
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', type=str, default='dataset/tacred')
 parser.set_defaults(lower=False)
@@ -66,7 +68,7 @@ elif args.cuda:
 
 tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
 
-train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer, False, opt['data_dir'] + '/tagging_train_top%d.txt'%args.top)
+train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, tokenizer, False, opt['data_dir'] + '/tagging_train.txt')
 train_num_example = train_batch.num_examples
 train_batch = list(train_batch)
 dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, tokenizer)
@@ -108,6 +110,7 @@ current_lr = opt['lr']
 eval_step = max(1, len(train_batch) // args.eval_per_epoch)
 dev_score_history = []
 # start training
+durations = list()
 for epoch in range(1, opt['num_epoch']+1):
     
     train_loss = 0
@@ -120,11 +123,12 @@ for epoch in range(1, opt['num_epoch']+1):
             with torch.cuda.device(args.device):
                 torch.cuda.empty_cache()
         train_loss += loss
-        if global_step % opt['log_step'] == 0:
-            duration = time.time() - start_time
-            print(format_str.format(datetime.now(), global_step, max_steps, epoch,\
-                    opt['num_epoch'], loss, duration, current_lr))
-
+        # if global_step % opt['log_step'] == 0:
+        #     duration = time.time() - start_time
+        #     print(format_str.format(datetime.now(), global_step, max_steps, epoch,\
+        #             opt['num_epoch'], loss, duration, current_lr))
+        duration = time.time() - start_time
+        durations.append(duration)
         if (i + 1) % eval_step == 0:
             # eval on dev
             print("Evaluating on dev set...")
@@ -154,5 +158,5 @@ for epoch in range(1, opt['num_epoch']+1):
 
             dev_score_history += [dev_score]
             print("")
-
+    print ("Average: {:.3f} sec/batch".format(statistics.mean(durations)))
 print("Training ended with {} epochs.".format(epoch))
