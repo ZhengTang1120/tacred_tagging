@@ -115,11 +115,11 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.generator.eval()
         with torch.no_grad():
-            rationale = self.generator(inputs, False)
+            rationale = self.generator(inputs)
             tagging_max = np.argmax(rationale.squeeze(2).data.cpu().numpy(), axis=1)
-            tagging = torch.round(rationale).squeeze(2)
+            tagging = torch.round(rationale)
             probs = self.encoder(inputs, tagging)
-            
+            tagging = tagging.squeeze(2)
         loss = self.criterion(probs, labels).item()
         # probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()

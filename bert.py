@@ -31,8 +31,9 @@ class BERTencoder(nn.Module):
         in_dim = 1024 
         self.model = BertModel.from_pretrained("spanbert-large-cased")
         self.classifier = nn.Linear(in_dim * 3, num_class)
+        self.dropout = nn.Dropout(constant.DROPOUT_PROB)
 
-    def forward(self, inputs, rationale, subj_mask, obj_mask):
+    def forward(self, inputs, rationale_mask):
         words = inputs[0]
         mask = inputs[1]
         segment_ids = inputs[2]
@@ -51,6 +52,6 @@ def pool(h, mask, type):
         h = h.masked_fill(mask, -constant.INFINITY_NUMBER)
         return torch.max(h, 1)[0]
     elif type == 'avg':
-        return torch.nan_to_num(h* mask / torch.count_nonzero(mask, dim=1))
+        return torch.nan_to_num((h* mask).sum(1) / torch.count_nonzero(mask, dim=1))
     else:
         return (h*mask).sum(1)
