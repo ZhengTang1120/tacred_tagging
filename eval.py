@@ -82,7 +82,10 @@ exact_match = 0
 other = 0
 tags = []
 for c, b in tqdm(enumerate(batch)):
+    start_time = time.time()
     preds,t,_ = trainer.predict(b, id2label, tokenizer)
+    duration = time.time() - start_time
+    durations.append(duration)
     predictions += preds
     tags += t
     batch_size = len(preds)
@@ -92,14 +95,11 @@ output = list()
 pred_output = open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.txt')), 'w')
 durations = list()
 for i, p in enumerate(predictions):
-    start_time = time.time()
+    
     tokens = []
     tokens2 = []
-
     _, tagged = tagging[i].split('\t')
     tagged = eval(tagged)
-    duration = time.time() - start_time
-    durations.append(duration)
     predictions[i] = id2label[p]
     pred_output.write(id2label[p]+'\n')
     output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'predicted_tags':[], 'gold_tags':[]})
