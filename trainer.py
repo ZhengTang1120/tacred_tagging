@@ -68,6 +68,7 @@ class BERTtrainer(Trainer):
         self.tagger = Tagger()
         self.criterion = nn.CrossEntropyLoss(ignore_index=0)
         self.criterion2 = nn.BCELoss()
+        self.ns = list()
 
         param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())+list(self.tagger.named_parameters())
         no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
@@ -110,6 +111,7 @@ class BERTtrainer(Trainer):
                 loss += self.criterion(logits, labels.unsqueeze(1)[i])
             elif labels[i] != 0 and epoch > self.opt['burnin']:
                 tag_cands, n = self.tagger.generate_cand_tags(tagging_output[i], self.opt['device'])
+                self.ns.append(n)
                 if n != -1 and len(tag_cands)!=0:
                     logits = self.classifier(h[i], torch.cat(n*[inputs[0][i].unsqueeze(0)], dim=0), tag_cands)
                     best = np.argmax(logits.data.cpu().numpy(), axis=0).tolist()[labels[i]]

@@ -159,4 +159,5 @@ for epoch in range(1, opt['num_epoch']+1):
         #     dev_score_history += [dev_score]
         #     print("")
     print ("Average: {:.3f} sec/batch".format(statistics.mean(durations)))
+    print ("Average: {:.3f} sec/batch".format(statistics.mean(trainer.ns)))
 print("Training ended with {} epochs.".format(epoch))
