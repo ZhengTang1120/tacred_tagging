@@ -117,6 +117,7 @@ class BERTtrainer(Trainer):
         with torch.no_grad():
             h = self.encoder(inputs)
             probs = self.classifier(h)
+        print (probs.size(), labels.size())
         loss = self.criterion(probs, labels).item()
         # probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
