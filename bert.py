@@ -23,26 +23,12 @@ class BERTencoder(nn.Module):
 class BERTclassifier(nn.Module):
     def __init__(self, opt):
         super().__init__()
-        in_dim = 2048
+        in_dim = 1024
         self.classifier = nn.Linear(in_dim, opt['num_class'])
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
         self.opt = opt
 
-    def forward(self, h, subj_mask, obj_mask):
-        # cls_out = self.dropout(h)
-        cls_out = torch.cat([pool(h, subj_mask.eq(0), type="avg"), pool(h, obj_mask.eq(0), type="avg")], 1)
-        cls_out = self.dropout(cls_out)
+    def forward(self, h):
+        cls_out = self.dropout(h)#pool(h, out_mask.eq(0), type=pool_type)
         logits = self.classifier(cls_out)
         return logits
-
-def pool(h, mask, type):
-    if type == 'max':
-        h = h.masked_fill(mask, -constant.INFINITY_NUMBER)
-        return torch.max(h, 1)[0]
-    elif type == 'avg':
-        h = h.masked_fill(mask, 0)
-        # print ('size: ', (mask.size(1) - mask.float().sum(1)))
-        return h.sum(1) / (mask.size(1) - mask.float().sum(1))
-    else:
-        h = h.masked_fill(mask, 0)
-        return h.sum(1)
