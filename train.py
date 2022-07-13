@@ -115,6 +115,7 @@ for epoch in range(1, opt['num_epoch']+1):
         torch.cuda.empty_cache()
         train_loss += loss
         duration = time.time() - start_time
+        durations.append(duration)
         # if global_step % opt['log_step'] == 0:
         #     duration = time.time() - start_time
         #     print(format_str.format(datetime.now(), global_step, max_steps, epoch,\
