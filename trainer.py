@@ -118,7 +118,7 @@ class BERTtrainer(Trainer):
                     # loss += self.criterion2(tagging_output[i], tag_cands[best].unsqueeze(1).to(torch.float32))
                     loss += self.criterion(logits[best].unsqueeze(0), labels.unsqueeze(1)[i])
                 else:
-                    print (n, tag_cands)
+                    pass#print (n, tag_cands)
 
         loss_val = loss.item()
 
