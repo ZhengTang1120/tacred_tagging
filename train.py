@@ -160,5 +160,6 @@ for epoch in range(1, opt['num_epoch']+1):
         #     print("")
     print ("Average: {:.3f} sec/batch".format(statistics.mean(durations)))
     if len(trainer.ns) > 0:
-        print ("Average: {:.3f} sec/batch".format(statistics.mean(trainer.ns)))
+        print ("Average: {:.3f} candidates/instance".format(statistics.mean(trainer.ns)))
+        trainer.ns = []
 print("Training ended with {} epochs.".format(epoch))
