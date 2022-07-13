@@ -81,6 +81,7 @@ x = 0
 exact_match = 0
 other = 0
 tags = []
+durations = list()
 for c, b in tqdm(enumerate(batch)):
     start_time = time.time()
     preds,t,_ = trainer.predict(b, id2label, tokenizer)
@@ -93,7 +94,7 @@ output = list()
 tagging_scores = []
 output = list()
 pred_output = open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.txt')), 'w')
-durations = list()
+
 for i, p in enumerate(predictions):
     
     tokens = []
