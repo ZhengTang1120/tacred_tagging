@@ -51,7 +51,7 @@ trainer = BERTtrainer(opt)
 trainer.load(model_file)
 
 # load data
-data_file = opt['data_dir'] + '/{}.json'.format(args.dataset)
+data_file = 'dataset/tacred' + '/{}.json'.format(args.dataset)
 print("Loading data from {} with batch size {}...".format(data_file, opt['batch_size']))
 batch = DataLoader(data_file, opt['batch_size'], opt, tokenizer, True)
 
