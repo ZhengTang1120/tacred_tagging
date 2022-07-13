@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
 
-from bert import BERTencoder, BERTclassifier
+from bert import BERTencoder, BERTgenerator
 from utils import constant, torch_utils
 
 from pytorch_pretrained_bert.optimization import BertAdam
@@ -29,7 +29,7 @@ class Trainer(object):
         except BaseException:
             print("Cannot load model from {}".format(filename))
             exit()
-        self.classifier.load_state_dict(checkpoint['classifier'])
+        self.generator.load_state_dict(checkpoint['generator'])
         self.encoder.load_state_dict(checkpoint['encoder'])
         device = self.opt['device']
         self.opt = checkpoint['config']
@@ -37,7 +37,7 @@ class Trainer(object):
 
     def save(self, filename):
         params = {
-                'classifier': self.classifier.state_dict(),
+                'generator': self.generator.state_dict(),
                 'encoder': self.encoder.state_dict(),
                 'config': self.opt,
                 }
@@ -62,11 +62,11 @@ def unpack_batch(batch, cuda, device, num_class):
 class BERTtrainer(Trainer):
     def __init__(self, opt):
         self.opt = opt
-        self.encoder = BERTencoder()
-        self.classifier = BERTclassifier(opt)
+        self.generator = BERTgenerator()
+        self.encoder = BERTencoder(opt['num_class'])
         self.criterion = nn.CrossEntropyLoss()
 
-        param_optimizer = list(self.classifier.named_parameters())+list(self.encoder.named_parameters())
+        param_optimizer = list(self.generator.named_parameters())+list(self.encoder.named_parameters())
         no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
         optimizer_grouped_parameters = [
             {'params': [p for n, p in param_optimizer
@@ -74,11 +74,10 @@ class BERTtrainer(Trainer):
             {'params': [p for n, p in param_optimizer
                         if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
         ]
-        # parameters = [p for p in self.classifier.parameters() if p.requires_grad] + [p for p in self.encoder.parameters() if p.requires_grad]
         if opt['cuda']:
             with torch.cuda.device(self.opt['device']):
                 self.encoder.cuda()
-                self.classifier.cuda()
+                self.generator.cuda()
                 self.criterion.cuda()
 
         self.optimizer = BertAdam(optimizer_grouped_parameters,
@@ -97,12 +96,10 @@ class BERTtrainer(Trainer):
 
         # step forward
         self.encoder.train()
-        self.classifier.train()
+        self.generator.train()
 
-        h = self.encoder(inputs)
-        subj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(0), inputs[0].unsqueeze(2).lt(3))
-        obj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(2), inputs[0].unsqueeze(2).lt(20))
-        logits, rationale = self.classifier(h, subj_mask, obj_mask)
+        rationale = self.generator(inputs)
+        logits = self.encoder(inputs, rationale)
         loss = self.criterion(logits, labels) + selection_lambda*(torch.sum(rationale)) + continuity_lambda*(torch.sum(rationale[:, 1:]  - rationale[:, :-1]))
         loss_val = loss.item()
         # backward
@@ -116,14 +113,13 @@ class BERTtrainer(Trainer):
         inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'], self.opt['num_class'])
         # forward
         self.encoder.eval()
-        self.classifier.eval()
+        self.generator.eval()
         with torch.no_grad():
-            h = self.encoder(inputs)
-            subj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(0), inputs[0].unsqueeze(2).lt(3))
-            obj_mask = torch.logical_and(inputs[0].unsqueeze(2).gt(2), inputs[0].unsqueeze(2).lt(20))
-            probs, rationale = self.classifier(h, subj_mask, obj_mask)
+            rationale = self.generator(inputs, False)
             tagging_max = np.argmax(rationale.squeeze(2).data.cpu().numpy(), axis=1)
             tagging = torch.round(rationale).squeeze(2)
+            probs = self.encoder(inputs, tagging)
+            
         loss = self.criterion(probs, labels).item()
         # probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
