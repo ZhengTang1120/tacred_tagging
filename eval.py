@@ -1,6 +1,7 @@
 """
 Run evaluation with saved models.
 """
+import time
 import random
 import argparse
 from tqdm import tqdm
@@ -89,13 +90,16 @@ output = list()
 tagging_scores = []
 output = list()
 pred_output = open("output_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.txt')), 'w')
+durations = list()
 for i, p in enumerate(predictions):
+    start_time = time.time()
     tokens = []
     tokens2 = []
 
     _, tagged = tagging[i].split('\t')
     tagged = eval(tagged)
-    
+    duration = time.time() - start_time
+    durations.append(duration)
     predictions[i] = id2label[p]
     pred_output.write(id2label[p]+'\n')
     output.append({'gold_label':batch.gold()[i], 'predicted_label':id2label[p], 'predicted_tags':[], 'gold_tags':[]})
@@ -136,6 +140,7 @@ for i, p in enumerate(predictions):
         except ZeroDivisionError:
             f1 = 0
         tagging_scores.append((r, p, f1))
+print ("Average: {:.3f} sec/batch".format(statistics.mean(durations)))
 pred_output.close()
 # with open("output_tagging_{}_{}_{}".format(args.model_dir.split('/')[-1], args.dataset, args.model.replace('.pt', '.json')), 'w') as f:
 #     f.write(json.dumps(output))
