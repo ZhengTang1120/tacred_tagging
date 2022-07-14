@@ -27,7 +27,7 @@ class BERTencoder(nn.Module):
         obj_mask = torch.logical_and(words.unsqueeze(2).gt(2), words.unsqueeze(2).lt(20))
 
         rationale_mask = rationale_mask.unsqueeze(2)
-        cls_out = torch.cat([torch.nan_to_num(h * rationale_mask / rationale_mask.float().sum(1)), pool(h, subj_mask.eq(0), type="avg"), pool(h, obj_mask.eq(0), type="avg")], 1)
+        cls_out = torch.cat([torch.nan_to_num((h * rationale_mask).sum(1) / rationale_mask.float().sum(1)), pool(h, subj_mask.eq(0), type="avg"), pool(h, obj_mask.eq(0), type="avg")], 1)
         cls_out = self.dropout(cls_out)
         logits = self.classifier(cls_out)
         return logits
