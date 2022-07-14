@@ -64,7 +64,7 @@ class Generator(nn.Module):
         '''
         activ = activ.transpose(1,2)
         logits = self.hidden(activ)
-        probs = gumbel_softmax(logits, 1, self.opt['cuda'], opt['device'])
+        probs = gumbel_softmax(logits, 1, self.opt['cuda'], self.opt['device'])
         z = probs[:,:,1]
         return z
 
@@ -76,7 +76,7 @@ class Generator(nn.Module):
         '''
         x = self.embedding_layer(x_indx)
         if self.opt['cuda']:
-            with torch.cuda.device(opt['device']):
+            with torch.cuda.device(self.opt['device']):
                 x = x.cuda()
         x = torch.transpose(x, 1, 2) # Switch X to (Batch, Embed, Length)
         activ = self.cnn(x)
