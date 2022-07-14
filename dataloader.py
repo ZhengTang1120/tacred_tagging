@@ -74,11 +74,12 @@ class DataLoader(object):
             tokens = self.tokenizer.convert_tokens_to_ids(words)
             if len(tokens) > 128:
                 tokens = tokens[:128]
+            mask = [1] * len(tokens)
             segment_ids = [0] * len(tokens)
             if self.do_eval:
-                processed += [(tokens, segment_ids, relation, origin)]
+                processed += [(tokens, mask, segment_ids, relation, origin)]
             elif (len([aa for aa in tokens if aa>0 and aa<20]) == 2):
-                processed += [(tokens, segment_ids, relation, origin)]
+                processed += [(tokens, mask, segment_ids, relation, origin)]
         return processed
 
     def gold(self):
@@ -100,14 +101,16 @@ class DataLoader(object):
         
         # word dropout
         words = batch[0]
-        segment_ids = batch[1]
+        mask = batch[1]
+        segment_ids = batch[2]
         # convert to tensors
         words = get_long_tensor(words, batch_size)
+        mask = get_long_tensor(mask, batch_size)
         segment_ids = get_long_tensor(segment_ids, batch_size)
 
         rels = torch.LongTensor(batch[-2])#
 
-        return (words, segment_ids, rels)
+        return (words, mask, segment_ids, rels)
 
     def __iter__(self):
         for i in range(self.__len__()):
