@@ -13,7 +13,7 @@ class BERTencoder(nn.Module):
         super().__init__()
         in_dim = 1024 
         self.model = BertModel.from_pretrained("spanbert-large-cased")
-        self.classifier = nn.Linear(in_dim * 3, num_class)
+        self.classifier = nn.Linear(in_dim, num_class)
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
 
     def forward(self, inputs, rationale_mask):
@@ -21,14 +21,14 @@ class BERTencoder(nn.Module):
         mask = inputs[1]
         segment_ids = inputs[2]
 
-        h, pooled_output = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
-
         subj_mask = torch.logical_and(words.unsqueeze(2).gt(0), words.unsqueeze(2).lt(3))
         obj_mask = torch.logical_and(words.unsqueeze(2).gt(2), words.unsqueeze(2).lt(20))
+        entity_mask = subj_mask + obj_mask
+        rationale_mask.masked_fill(entity_mask.squeeze(2), 1) # Force to set subject and object as important features
 
-        rationale_mask = rationale_mask.unsqueeze(2)
-        cls_out = torch.cat([torch.nan_to_num((h * rationale_mask).sum(1) / rationale_mask.float().sum(1)), pool(h, subj_mask.eq(0), type="avg"), pool(h, obj_mask.eq(0), type="avg")], 1)
-        cls_out = self.dropout(cls_out)
+        h, pooled_output = self.model(words, segment_ids, rationale_mask, output_all_encoded_layers=False)
+        # cls_out = torch.cat([pool(h, subj_mask.eq(0), type="avg"), pool(h, obj_mask.eq(0), type="avg")], 1)
+        cls_out = self.dropout(pooled_output)
         logits = self.classifier(cls_out)
         return logits
 

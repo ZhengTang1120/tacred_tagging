@@ -313,7 +313,7 @@ class BertSelfAttention(nn.Module):
         # assert not torch.isnan(attention_scores).any()
         attention_scores = torch.clamp(attention_scores, -10000., 10000.)
         # Apply the attention mask is (precomputed for all layers in BertModel forward() function)
-        attention_scores = attention_scores + attention_mask
+        attention_scores = attention_scores * attention_mask
 
         # Normalize the attention scores to probabilities.
         attention_probs = nn.Softmax(dim=-1)(attention_scores)
