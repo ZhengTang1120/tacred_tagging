@@ -135,4 +135,4 @@ class BERTtrainer(Trainer):
                 t[tagging_max[i]] = 1
             tags += [t]
         
-        return predictions, loss, tags
+        return predictions, tags, loss
