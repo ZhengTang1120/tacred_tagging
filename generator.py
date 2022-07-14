@@ -23,13 +23,14 @@ def get_hard_mask(z, return_ind=False):
     del z
     return masked
 
-def gumbel_softmax(input, temperature, cuda):
+def gumbel_softmax(input, temperature, cuda, device):
     noise = torch.rand(input.size())
     noise.add_(1e-9).log_().neg_()
     noise.add_(1e-9).log_().neg_()
     noise = autograd.Variable(noise)
     if cuda:
-        noise = noise.cuda()
+        with torch.cuda.device(device):
+            noise = noise.cuda()
     x = (input + noise) / temperature
     x = F.softmax(x.view(-1,  x.size()[-1]), dim=-1)
     return x.view_as(input)
@@ -63,7 +64,7 @@ class Generator(nn.Module):
         '''
         activ = activ.transpose(1,2)
         logits = self.hidden(activ)
-        probs = gumbel_softmax(logits, 1, self.opt['cuda'])
+        probs = gumbel_softmax(logits, 1, self.opt['cuda'], self.opt['device'])
         z = probs[:,:,1]
         return z
 
@@ -75,7 +76,8 @@ class Generator(nn.Module):
         '''
         x = self.embedding_layer(x_indx)
         if self.opt['cuda']:
-            x = x.cuda()
+            with torch.cuda.device(self.opt['device']):
+                x = x.cuda()
         x = torch.transpose(x, 1, 2) # Switch X to (Batch, Embed, Length)
         activ = self.cnn(x)
         z = self.__z_forward(F.relu(activ))
