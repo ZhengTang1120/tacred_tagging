@@ -45,6 +45,11 @@ parser.add_argument('--warmup_prop', type=float, default=0.1, help='Proportion o
 
 parser.add_argument("--eval_per_epoch", default=10, type=int, help="How many times it evaluates on dev set per epoch")
 
+# For Unsupervised Rationale 
+parser.add_argument('--num_layers', type=int, default=1, help='Number of layers for CNN.')
+parser.add_argument('--selection_lambda', type=float, default=0.001, help='lambda for selection loss.')
+parser.add_argument('--continuity_lambda', type=float, default=0, help='lambda for continuity loss.')
+
 args = parser.parse_args()
 
 opt = vars(args)

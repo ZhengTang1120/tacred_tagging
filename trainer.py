@@ -8,7 +8,8 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
 
-from bert import BERTencoder, BERTgenerator
+from bert import BERTencoder
+from generator import Generator
 from utils import constant, torch_utils
 
 from pytorch_pretrained_bert.optimization import BertAdam
@@ -52,18 +53,18 @@ def unpack_batch(batch, cuda, device, num_class):
     rules = None
     if cuda:
         with torch.cuda.device(device):
-            inputs = [batch[i].to('cuda') for i in range(3)]
+            inputs = [batch[i].to('cuda') for i in range(2)]
             labels = Variable(F.one_hot(batch[-1].cuda(), num_classes=num_class)).float()
     else:
-        inputs = [Variable(batch[i]) for i in range(3)]
+        inputs = [Variable(batch[i]) for i in range(2)]
         labels = Variable(F.one_hot(batch[-1], num_classes=num_class)).float()
     return inputs, labels
 
 class BERTtrainer(Trainer):
     def __init__(self, opt):
         self.opt = opt
-        self.generator = BERTgenerator()
         self.encoder = BERTencoder(opt['num_class'])
+        self.generator = Generator(opt, self.encoder.model.config)
         self.criterion = nn.CrossEntropyLoss()
 
         param_optimizer = list(self.generator.named_parameters())+list(self.encoder.named_parameters())
@@ -98,10 +99,15 @@ class BERTtrainer(Trainer):
         self.encoder.train()
         self.generator.train()
 
-        rationale = self.generator(inputs)
+        rationale = self.generator(inputs[0])
         logits = self.encoder(inputs, rationale)
-        loss = self.criterion(logits, labels) + selection_lambda*(torch.sum(rationale)) + continuity_lambda*(torch.sum(rationale[:, 1:]  - rationale[:, :-1]))
-        loss_val = loss.item()
+
+        loss = self.criterion(logits, labels)
+        loss_val = loss.item() # I only care about the classification loss for debugging purpose
+        selection_cost, continuity_cost = self.generator.loss(rationale)
+        loss += self.opt['selection_lambda'] * selection_cost
+        loss += self.opt['continuity_lambda'] * continuity_cost
+
         # backward
         loss.backward()
         self.optimizer.step()
@@ -115,11 +121,10 @@ class BERTtrainer(Trainer):
         self.encoder.eval()
         self.generator.eval()
         with torch.no_grad():
-            rationale = self.generator(inputs)
-            tagging_max = np.argmax(rationale.squeeze(2).data.cpu().numpy(), axis=1)
+            rationale = self.generator(inputs[0])
+            tagging_max = np.argmax(rationale.data.cpu().numpy(), axis=1)
             tagging = torch.round(rationale)
             probs = self.encoder(inputs, tagging)
-            tagging = tagging.squeeze(2)
         loss = self.criterion(probs, labels).item()
         # probs = F.softmax(logits, 1)
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
