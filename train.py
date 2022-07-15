@@ -62,7 +62,8 @@ random.seed(args.seed)
 if args.cpu:
     args.cuda = False
 elif args.cuda:
-    torch.cuda.manual_seed(args.seed)
+    with torch.cuda.device(args.device):
+        torch.cuda.manual_seed(args.seed)
 
 tokenizer = BertTokenizer.from_pretrained('spanbert-large-cased')
 
@@ -115,7 +116,9 @@ for epoch in range(1, opt['num_epoch']+1):
         start_time = time.time()
         global_step += 1
         loss, current_lr = trainer.update(batch, epoch)
-        torch.cuda.empty_cache()
+        if args.cuda:
+            with torch.cuda.device(args.device):
+                torch.cuda.empty_cache()
         train_loss += loss
         if global_step % opt['log_step'] == 0:
             duration = time.time() - start_time
