@@ -56,7 +56,7 @@ def unpack_batch(batch, cuda, device):
     else:
         inputs = [Variable(batch[i]) for i in range(4)]
         labels = Variable(batch[-1])
-    return inputs, labels, batch[4]
+    return inputs, labels
 
 class BERTtrainer(Trainer):
     def __init__(self, opt):
@@ -86,7 +86,7 @@ class BERTtrainer(Trainer):
              t_total= opt['steps'])
 
     def update(self, batch, epoch):
-        inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
         selection_lambda = 1
         continuity_lambda = 1
         # step forward
@@ -106,7 +106,7 @@ class BERTtrainer(Trainer):
         return loss_val, self.optimizer.get_lr()[0]
 
     def predict(self, batch, id2label, tokenizer):
-        inputs, labels, has_tag = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
+        inputs, labels = unpack_batch(batch, self.opt['cuda'], self.opt['device'])
         # forward
         self.encoder.eval()
         self.classifier.eval()
@@ -116,9 +116,6 @@ class BERTtrainer(Trainer):
             tagging_max = np.argmax(rationale.squeeze(2).data.cpu().numpy(), axis=1)
             tagging = torch.round(rationale).squeeze(2)
         loss = self.criterion(probs, labels).item()
-        for i, f in enumerate(has_tag):
-            if f:
-                loss += self.criterion2(tagging_output[i], inputs[3][i].unsqueeze(1).to(torch.float32))
         predictions = np.argmax(probs.data.cpu().numpy(), axis=1).tolist()
         tags = []
         for i, p in enumerate(predictions):
