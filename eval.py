@@ -105,14 +105,14 @@ for i, p in enumerate(predictions):
                     if j in tagged:
                         correct += 1
             if pred > 0:
-                r = correct / pred
+                p = correct / pred
             else:
-                print (tags[i])
-                r = 0
-            if len(tagged) > 0:
-                p = correct / len(tagged)
-            else:
+                # print (tags[i])
                 p = 0
+            if len(tagged) > 0:
+                r = correct / len(tagged)
+            else:
+                r = 0
             try:
                 f1 = 2.0 * p * r / (p + r)
             except ZeroDivisionError:
@@ -127,5 +127,5 @@ tr, tp, tf = zip(*tagging_scores)
 #     f.write(json.dumps(output))
 p, r, f1, ba = scorer.score(batch.gold(), predictions, verbose=True)
 print("{} set evaluate result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,p,r,f1))
-print("{} set tagging  result: {:.2f}\t{:.2f}\t{:.2f}".format(args.dataset,statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
+print("{} set tagging  result: {:.4f}\t{:.4f}\t{:.4f}".format(args.dataset,statistics.mean(tr),statistics.mean(tp),statistics.mean(tf)))
 print("Evaluation ended.")
