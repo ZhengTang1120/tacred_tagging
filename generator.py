@@ -6,7 +6,7 @@ import cnn as cnn
 
 from utils import constant
 
-from pytorch_pretrained_bert.modeling import BertEmbeddings, BertConfig
+from pytorch_pretrained_bert.modeling import BertEmbeddings, BertConfig, BertModel
 
 def get_hard_mask(z, return_ind=False):
     '''
@@ -56,6 +56,8 @@ class Generator(nn.Module):
         self.hidden = nn.Linear(300, self.z_dim)
         self.dropout = nn.Dropout(constant.DROPOUT_PROB)
 
+        self.classifier = nn.Linear(300, 1)
+
 
 
     def  __z_forward(self, activ):
@@ -69,11 +71,12 @@ class Generator(nn.Module):
         return z
 
 
-    def forward(self, x_indx):
+    def forward(self, inputs):
         '''
             Given input x_indx of dim (batch, length), return z (batch, length) such that z
             can act as element-wise mask on x
         '''
+        x_indx = inputs[0]
         x = self.embedding_layer(x_indx)
         if self.opt['cuda']:
             with torch.cuda.device(self.opt['device']):
@@ -98,6 +101,63 @@ class Generator(nn.Module):
             mask = get_hard_mask(z)
         return mask
 
+
+    def loss(self, mask):
+        '''
+            Compute the generator specific costs, i.e selection cost, continuity cost, and global vocab cost
+        '''
+        selection_cost = torch.mean( torch.sum(mask, dim=1) )
+        l_padded_mask =  torch.cat( [mask[:,0].unsqueeze(1), mask] , dim=1)
+        r_padded_mask =  torch.cat( [mask, mask[:,-1].unsqueeze(1)] , dim=1)
+        continuity_cost = torch.mean( torch.sum( torch.abs( l_padded_mask - r_padded_mask ) , dim=1) )
+        return selection_cost, continuity_cost
+
+class BERTgenerator(nn.Module):
+    def __init__(self, opt, config):
+        super().__init__()
+        self.model = BertModel.from_pretrained("spanbert-base-cased")
+        self.opt = opt
+
+        self.z_dim = 2
+
+        self.hidden = nn.Linear(768, self.z_dim)
+        self.dropout = nn.Dropout(constant.DROPOUT_PROB)
+
+        self.classifier = nn.Linear(768, 1)
+
+    def forward(self, inputs):
+        '''
+            Given input x_indx of dim (batch, length), return z (batch, length) such that z
+            can act as element-wise mask on x
+        '''
+
+        words = inputs[0]
+        mask = inputs[1]
+        segment_ids = inputs[2]
+
+        x, pooled_output = self.model(words, segment_ids, mask, output_all_encoded_layers=False)
+
+        out = torch.sigmoid(self.classifier(self.dropout(pooled_output)))
+        
+        logits = self.hidden(x)
+        probs = gumbel_softmax(logits, 1, self.opt['cuda'], self.opt['device'])
+        z = probs[:,:,1]
+
+        mask = self.sample(z)
+        return mask, out
+
+    def sample(self, z):
+        '''
+            Get mask from probablites at each token. Use gumbel
+            softmax at train time, hard mask at test time
+        '''
+        mask = z
+        if self.training:
+            mask = z
+        else:
+            ## pointwise set <.5 to 0 >=.5 to 1
+            mask = get_hard_mask(z)
+        return mask
 
     def loss(self, mask):
         '''

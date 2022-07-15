@@ -47,11 +47,6 @@ parser.add_argument('--burnin', type=int, default=5)
 
 parser.add_argument("--eval_per_epoch", default=10, type=int, help="How many times it evaluates on dev set per epoch")
 
-# For Unsupervised Rationale 
-parser.add_argument('--num_layers', type=int, default=1, help='Number of layers for CNN.')
-parser.add_argument('--selection_lambda', type=float, default=0.001, help='lambda for selection loss.')
-parser.add_argument('--continuity_lambda', type=float, default=0, help='lambda for continuity loss.')
-
 args = parser.parse_args()
 
 opt = vars(args)
@@ -90,7 +85,7 @@ global_step = 0
 format_str = '{}: step {}/{} (epoch {}/{}), loss = {:.6f} ({:.3f} sec/batch), lr: {:.6f}'
 max_steps = len(train_batch) * opt['num_epoch']
 
-opt['steps'] = max_steps
+opt['train_batch'] = len(train_batch)
 
 # model
 if not opt['load']:
